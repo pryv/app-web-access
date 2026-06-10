@@ -144,11 +144,23 @@ function requestAccess() {
 
     settings.spanButtonID = 'pryvButton';
 
-    settings.onStateChange = function (state) {
+    settings.onStateChange = async function (state) {
       logToConsole('##pryvAuthStateChange \t ' + JSON.stringify(state));
       if (state.id === Pryv.Browser.AuthStates.AUTHORIZED) {
-        apiEndpointArea.text(state.apiEndpoint);
-        logToConsole('# Auth succeeded for user ' + state.apiEndpoint);
+        try {
+          // cookie-autologin delivers the full legacy state (apiEndpoint included);
+          // a fresh login delivers only { status, id, key, serviceInfo? } and the
+          // apiEndpoint is resolved from the key.
+          var apiEndpoint = state.apiEndpoint;
+          if (!apiEndpoint && state.key) {
+            var connection = await Pryv.connectFromKey(state.key, serviceInfoUrlArea.val());
+            apiEndpoint = connection.apiEndpoint;
+          }
+          apiEndpointArea.text(apiEndpoint);
+          logToConsole('# Auth succeeded for user ' + apiEndpoint);
+        } catch (err) {
+          logToConsole('# Error resolving access from key: ' + err);
+        }
       }
       if (state.id === Pryv.Browser.AuthStates.LOGOUT) {
         logToConsole('# Logout');

@@ -1,6 +1,7 @@
 {
   "predef": [],
 
+  "esversion": 11,
   "bitwise": true,
   "camelcase": false,
   "curly": true,

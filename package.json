@@ -5,16 +5,17 @@
   "description": "This is a web app to generate pryv access tokens.",
   "scripts": {
     "grunt": "grunt",
-    "webserver": "node node_modules/rec-la/webserver/main.js ./dist 4444"
+    "webserver": "backloop.dev ./dist 4443"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/pryv/app-web-access"
   },
   "dependencies": {
-    "pryv": "git://github.com/pryv/lib-js.git#2.0.1"
+    "pryv": "^3.5.0"
   },
   "devDependencies": {
+    "backloop.dev": "^3.0.2",
     "grunt": "latest",
     "grunt-browserify": "latest",
     "grunt-build-gh-pages": "latest",
@@ -24,10 +25,9 @@
     "grunt-contrib-jshint": "latest",
     "grunt-contrib-watch": "latest",
     "grunt-shell": "latest",
-    "jquery": "latest",
-    "rec-la": "latest"
+    "jquery": "latest"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=20.0.0"
   }
 }
