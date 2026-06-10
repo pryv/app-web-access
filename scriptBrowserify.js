@@ -1,179 +1,15 @@
 require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-module.exports = stringify
-stringify.default = stringify
-stringify.stable = deterministicStringify
-stringify.stableStringify = deterministicStringify
-
-var arr = []
-var replacerStack = []
-
-// Regular stringify
-function stringify (obj, replacer, spacer) {
-  decirc(obj, '', [], undefined)
-  var res
-  if (replacerStack.length === 0) {
-    res = JSON.stringify(obj, replacer, spacer)
-  } else {
-    res = JSON.stringify(obj, replaceGetterValues(replacer), spacer)
-  }
-  while (arr.length !== 0) {
-    var part = arr.pop()
-    if (part.length === 4) {
-      Object.defineProperty(part[0], part[1], part[3])
-    } else {
-      part[0][part[1]] = part[2]
-    }
-  }
-  return res
-}
-function decirc (val, k, stack, parent) {
-  var i
-  if (typeof val === 'object' && val !== null) {
-    for (i = 0; i < stack.length; i++) {
-      if (stack[i] === val) {
-        var propertyDescriptor = Object.getOwnPropertyDescriptor(parent, k)
-        if (propertyDescriptor.get !== undefined) {
-          if (propertyDescriptor.configurable) {
-            Object.defineProperty(parent, k, { value: '[Circular]' })
-            arr.push([parent, k, val, propertyDescriptor])
-          } else {
-            replacerStack.push([val, k])
-          }
-        } else {
-          parent[k] = '[Circular]'
-          arr.push([parent, k, val])
-        }
-        return
-      }
-    }
-    stack.push(val)
-    // Optimize for Arrays. Big arrays could kill the performance otherwise!
-    if (Array.isArray(val)) {
-      for (i = 0; i < val.length; i++) {
-        decirc(val[i], i, stack, val)
-      }
-    } else {
-      var keys = Object.keys(val)
-      for (i = 0; i < keys.length; i++) {
-        var key = keys[i]
-        decirc(val[key], key, stack, val)
-      }
-    }
-    stack.pop()
-  }
-}
-
-// Stable-stringify
-function compareFunction (a, b) {
-  if (a < b) {
-    return -1
-  }
-  if (a > b) {
-    return 1
-  }
-  return 0
-}
-
-function deterministicStringify (obj, replacer, spacer) {
-  var tmp = deterministicDecirc(obj, '', [], undefined) || obj
-  var res
-  if (replacerStack.length === 0) {
-    res = JSON.stringify(tmp, replacer, spacer)
-  } else {
-    res = JSON.stringify(tmp, replaceGetterValues(replacer), spacer)
-  }
-  while (arr.length !== 0) {
-    var part = arr.pop()
-    if (part.length === 4) {
-      Object.defineProperty(part[0], part[1], part[3])
-    } else {
-      part[0][part[1]] = part[2]
-    }
-  }
-  return res
-}
-
-function deterministicDecirc (val, k, stack, parent) {
-  var i
-  if (typeof val === 'object' && val !== null) {
-    for (i = 0; i < stack.length; i++) {
-      if (stack[i] === val) {
-        var propertyDescriptor = Object.getOwnPropertyDescriptor(parent, k)
-        if (propertyDescriptor.get !== undefined) {
-          if (propertyDescriptor.configurable) {
-            Object.defineProperty(parent, k, { value: '[Circular]' })
-            arr.push([parent, k, val, propertyDescriptor])
-          } else {
-            replacerStack.push([val, k])
-          }
-        } else {
-          parent[k] = '[Circular]'
-          arr.push([parent, k, val])
-        }
-        return
-      }
-    }
-    if (typeof val.toJSON === 'function') {
-      return
-    }
-    stack.push(val)
-    // Optimize for Arrays. Big arrays could kill the performance otherwise!
-    if (Array.isArray(val)) {
-      for (i = 0; i < val.length; i++) {
-        deterministicDecirc(val[i], i, stack, val)
-      }
-    } else {
-      // Create a temporary object in the required way
-      var tmp = {}
-      var keys = Object.keys(val).sort(compareFunction)
-      for (i = 0; i < keys.length; i++) {
-        var key = keys[i]
-        deterministicDecirc(val[key], key, stack, val)
-        tmp[key] = val[key]
-      }
-      if (parent !== undefined) {
-        arr.push([parent, k, val])
-        parent[k] = tmp
-      } else {
-        return tmp
-      }
-    }
-    stack.pop()
-  }
-}
-
-// wraps replacer function to handle values we couldn't replace
-// and mark them as [Circular]
-function replaceGetterValues (replacer) {
-  replacer = replacer !== undefined ? replacer : function (k, v) { return v }
-  return function (key, val) {
-    if (replacerStack.length > 0) {
-      for (var i = 0; i < replacerStack.length; i++) {
-        var part = replacerStack[i]
-        if (part[1] === key && part[0] === val) {
-          val = '[Circular]'
-          replacerStack.splice(i, 1)
-          break
-        }
-      }
-    }
-    return replacer.call(this, key, val)
-  }
-}
 
 },{}],2:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v3.5.0
+ * jQuery JavaScript Library v4.0.0
  * https://jquery.com/
  *
- * Includes Sizzle.js
- * https://sizzlejs.com/
- *
- * Copyright JS Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license
- * https://jquery.org/license
+ * https://jquery.com/license/
  *
- * Date: 2020-04-10T15:07Z
+ * Date: 2026-01-18T00:20Z
  */
 ( function( global, factory ) {
 
@@ -183,19 +19,7 @@ function replaceGetterValues (replacer) {
 
 		// For CommonJS and CommonJS-like environments where a proper `window`
 		// is present, execute the factory and get jQuery.
-		// For environments that do not have a `window` with a `document`
-		// (such as Node.js), expose a factory as module.exports.
-		// This accentuates the need for the creation of a real `window`.
-		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info.
-		module.exports = global.document ?
-			factory( global, true ) :
-			function( w ) {
-				if ( !w.document ) {
-					throw new Error( "jQuery requires a window with a document" );
-				}
-				return factory( w );
-			};
+		module.exports = factory( global, true );
 	} else {
 		factory( global );
 	}
@@ -203,11 +27,11 @@ function replaceGetterValues (replacer) {
 // Pass this if window is not defined yet
 } )( typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
 
-// Edge <= 12 - 13+, Firefox <=18 - 45+, IE 10 - 11, Safari 5.1 - 9+, iOS 6 - 9.1
-// throw exceptions when non-strict code (e.g., ASP.NET 4.5) accesses strict mode
-// arguments.callee.caller (trac-13335). But as of jQuery 3.0 (2016), strict mode should be common
-// enough that all such attempts are guarded in a try block.
 "use strict";
+
+if ( !window.document ) {
+	throw new Error( "jQuery requires a window with a document" );
+}
 
 var arr = [];
 
@@ -215,17 +39,19 @@ var getProto = Object.getPrototypeOf;
 
 var slice = arr.slice;
 
+// Support: IE 11+
+// IE doesn't have Array#flat; provide a fallback.
 var flat = arr.flat ? function( array ) {
 	return arr.flat.call( array );
 } : function( array ) {
 	return arr.concat.apply( [], array );
 };
 
-
 var push = arr.push;
 
 var indexOf = arr.indexOf;
 
+// [[Class]] -> type pairs
 var class2type = {};
 
 var toString = class2type.toString;
@@ -236,82 +62,66 @@ var fnToString = hasOwn.toString;
 
 var ObjectFunctionString = fnToString.call( Object );
 
+// All support tests are defined in their respective modules.
 var support = {};
-
-var isFunction = function isFunction( obj ) {
-
-      // Support: Chrome <=57, Firefox <=52
-      // In some browsers, typeof returns "function" for HTML <object> elements
-      // (i.e., `typeof document.createElement( "object" ) === "function"`).
-      // We don't want to classify *any* DOM node as a function.
-      return typeof obj === "function" && typeof obj.nodeType !== "number";
-  };
-
-
-var isWindow = function isWindow( obj ) {
-		return obj != null && obj === obj.window;
-	};
-
-
-var document = window.document;
-
-
-
-	var preservedScriptAttributes = {
-		type: true,
-		src: true,
-		nonce: true,
-		noModule: true
-	};
-
-	function DOMEval( code, node, doc ) {
-		doc = doc || document;
-
-		var i, val,
-			script = doc.createElement( "script" );
-
-		script.text = code;
-		if ( node ) {
-			for ( i in preservedScriptAttributes ) {
-
-				// Support: Firefox 64+, Edge 18+
-				// Some browsers don't support the "nonce" property on scripts.
-				// On the other hand, just using `getAttribute` is not enough as
-				// the `nonce` attribute is reset to an empty string whenever it
-				// becomes browsing-context connected.
-				// See https://github.com/whatwg/html/issues/2369
-				// See https://html.spec.whatwg.org/#nonce-attributes
-				// The `node.getAttribute` check was added for the sake of
-				// `jQuery.globalEval` so that it can fake a nonce-containing node
-				// via an object.
-				val = node[ i ] || node.getAttribute && node.getAttribute( i );
-				if ( val ) {
-					script.setAttribute( i, val );
-				}
-			}
-		}
-		doc.head.appendChild( script ).parentNode.removeChild( script );
-	}
-
 
 function toType( obj ) {
 	if ( obj == null ) {
 		return obj + "";
 	}
 
-	// Support: Android <=2.3 only (functionish RegExp)
-	return typeof obj === "object" || typeof obj === "function" ?
+	return typeof obj === "object" ?
 		class2type[ toString.call( obj ) ] || "object" :
 		typeof obj;
 }
-/* global Symbol */
-// Defining this global in .eslintrc.json would create a danger of using the global
-// unguarded in another place, it seems safer to define global only for this module
 
+function isWindow( obj ) {
+	return obj != null && obj === obj.window;
+}
 
+function isArrayLike( obj ) {
 
-var
-	version = "3.5.0",
+	var length = !!obj && obj.length,
+		type = toType( obj );
+
+	if ( typeof obj === "function" || isWindow( obj ) ) {
+		return false;
+	}
+
+	return type === "array" || length === 0 ||
+		typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+}
+
+var document$1 = window.document;
+
+var preservedScriptAttributes = {
+	type: true,
+	src: true,
+	nonce: true,
+	noModule: true
+};
+
+function DOMEval( code, node, doc ) {
+	doc = doc || document$1;
+
+	var i,
+		script = doc.createElement( "script" );
+
+	script.text = code;
+	for ( i in preservedScriptAttributes ) {
+		if ( node && node[ i ] ) {
+			script[ i ] = node[ i ];
+		}
+	}
+
+	if ( doc.head.appendChild( script ).parentNode ) {
+		script.parentNode.removeChild( script );
+	}
+}
+
+var version = "4.0.0",
+
+	rhtmlSuffix = /HTML$/i,
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -405,13 +215,7 @@ jQuery.fn = jQuery.prototype = {
 
 	end: function() {
 		return this.prevObject || this.constructor();
-	},
-
-	// For internal use only.
-	// Behaves like an Array's method, not like a jQuery method.
-	push: push,
-	sort: arr.sort,
-	splice: arr.splice
+	}
 };
 
 jQuery.extend = jQuery.fn.extend = function() {
@@ -431,7 +235,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	}
 
 	// Handle case when target is a string or something (possible in deep copy)
-	if ( typeof target !== "object" && !isFunction( target ) ) {
+	if ( typeof target !== "object" && typeof target !== "function" ) {
 		target = {};
 	}
 
@@ -557,6 +361,39 @@ jQuery.extend( {
 		return obj;
 	},
 
+
+	// Retrieve the text value of an array of DOM nodes
+	text: function( elem ) {
+		var node,
+			ret = "",
+			i = 0,
+			nodeType = elem.nodeType;
+
+		if ( !nodeType ) {
+
+			// If no nodeType, this is expected to be an array
+			while ( ( node = elem[ i++ ] ) ) {
+
+				// Do not traverse comment nodes
+				ret += jQuery.text( node );
+			}
+		}
+		if ( nodeType === 1 || nodeType === 11 ) {
+			return elem.textContent;
+		}
+		if ( nodeType === 9 ) {
+			return elem.documentElement.textContent;
+		}
+		if ( nodeType === 3 || nodeType === 4 ) {
+			return elem.nodeValue;
+		}
+
+		// Do not include comment or processing instruction nodes
+
+		return ret;
+	},
+
+
 	// results is for internal usage only
 	makeArray: function( arr, results ) {
 		var ret = results || [];
@@ -565,7 +402,7 @@ jQuery.extend( {
 			if ( isArrayLike( Object( arr ) ) ) {
 				jQuery.merge( ret,
 					typeof arr === "string" ?
-					[ arr ] : arr
+						[ arr ] : arr
 				);
 			} else {
 				push.call( ret, arr );
@@ -579,8 +416,29 @@ jQuery.extend( {
 		return arr == null ? -1 : indexOf.call( arr, elem, i );
 	},
 
-	// Support: Android <=4.0 only, PhantomJS 1 only
-	// push.apply(_, arraylike) throws on ancient WebKit
+	isXMLDoc: function( elem ) {
+		var namespace = elem && elem.namespaceURI,
+			docElem = elem && ( elem.ownerDocument || elem ).documentElement;
+
+		// Assume HTML when documentElement doesn't yet exist, such as inside
+		// document fragments.
+		return !rhtmlSuffix.test( namespace || docElem && docElem.nodeName || "HTML" );
+	},
+
+	// Note: an element does not contain itself
+	contains: function( a, b ) {
+		var bup = b && b.parentNode;
+
+		return a === bup || !!( bup && bup.nodeType === 1 && (
+
+			// Support: IE 9 - 11+
+			// IE doesn't have `contains` on SVG.
+			a.contains ?
+				a.contains( bup ) :
+				a.compareDocumentPosition && a.compareDocumentPosition( bup ) & 16
+		) );
+	},
+
 	merge: function( first, second ) {
 		var len = +second.length,
 			j = 0,
@@ -660,263 +518,663 @@ if ( typeof Symbol === "function" ) {
 
 // Populate the class2type map
 jQuery.each( "Boolean Number String Function Array Date RegExp Object Error Symbol".split( " " ),
-function( _i, name ) {
-	class2type[ "[object " + name + "]" ] = name.toLowerCase();
-} );
+	function( _i, name ) {
+		class2type[ "[object " + name + "]" ] = name.toLowerCase();
+	} );
 
-function isArrayLike( obj ) {
-
-	// Support: real iOS 8.2 only (not reproducible in simulator)
-	// `in` check used to prevent JIT error (gh-2145)
-	// hasOwn isn't used here due to false negatives
-	// regarding Nodelist length in IE
-	var length = !!obj && "length" in obj && obj.length,
-		type = toType( obj );
-
-	if ( isFunction( obj ) || isWindow( obj ) ) {
-		return false;
-	}
-
-	return type === "array" || length === 0 ||
-		typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+function nodeName( elem, name ) {
+	return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
 }
-var Sizzle =
-/*!
- * Sizzle CSS Selector Engine v2.3.5
- * https://sizzlejs.com/
- *
- * Copyright JS Foundation and other contributors
- * Released under the MIT license
- * https://js.foundation/
- *
- * Date: 2020-03-14
+
+var pop = arr.pop;
+
+// https://www.w3.org/TR/css3-selectors/#whitespace
+var whitespace = "[\\x20\\t\\r\\n\\f]";
+
+var isIE = document$1.documentMode;
+
+var rbuggyQSA = isIE && new RegExp(
+
+	// Support: IE 9 - 11+
+	// IE's :disabled selector does not pick up the children of disabled fieldsets
+	":enabled|:disabled|" +
+
+	// Support: IE 11+
+	// IE 11 doesn't find elements on a `[name='']` query in some cases.
+	// Adding a temporary attribute to the document before the selection works
+	// around the issue.
+	"\\[" + whitespace + "*name" + whitespace + "*=" +
+	whitespace + "*(?:''|\"\")"
+
+);
+
+var rtrimCSS = new RegExp(
+	"^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$",
+	"g"
+);
+
+// https://www.w3.org/TR/css-syntax-3/#ident-token-diagram
+var identifier = "(?:\\\\[\\da-fA-F]{1,6}" + whitespace +
+	"?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+";
+
+var rleadingCombinator = new RegExp( "^" + whitespace + "*([>+~]|" +
+	whitespace + ")" + whitespace + "*" );
+
+var rdescend = new RegExp( whitespace + "|>" );
+
+var rsibling = /[+~]/;
+
+var documentElement$1 = document$1.documentElement;
+
+// Support: IE 9 - 11+
+// IE requires a prefix.
+var matches = documentElement$1.matches || documentElement$1.msMatchesSelector;
+
+/**
+ * Create key-value caches of limited size
+ * @returns {function(string, object)} Returns the Object data after storing it on itself with
+ *	property name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)
+ *	deleting the oldest entry
  */
-( function( window ) {
-var i,
-	support,
-	Expr,
-	getText,
-	isXML,
-	tokenize,
-	compile,
-	select,
-	outermostContext,
-	sortInput,
-	hasDuplicate,
+function createCache() {
+	var keys = [];
 
-	// Local document vars
-	setDocument,
-	document,
-	docElem,
-	documentIsHTML,
-	rbuggyQSA,
-	rbuggyMatches,
-	matches,
-	contains,
+	function cache( key, value ) {
 
-	// Instance-specific data
-	expando = "sizzle" + 1 * new Date(),
-	preferredDoc = window.document,
-	dirruns = 0,
-	done = 0,
-	classCache = createCache(),
-	tokenCache = createCache(),
-	compilerCache = createCache(),
-	nonnativeSelectorCache = createCache(),
-	sortOrder = function( a, b ) {
-		if ( a === b ) {
-			hasDuplicate = true;
+		// Use (key + " ") to avoid collision with native prototype properties
+		// (see https://github.com/jquery/sizzle/issues/157)
+		if ( keys.push( key + " " ) > jQuery.expr.cacheLength ) {
+
+			// Only keep the most recent entries
+			delete cache[ keys.shift() ];
 		}
-		return 0;
-	},
+		return ( cache[ key + " " ] = value );
+	}
+	return cache;
+}
 
-	// Instance methods
-	hasOwn = ( {} ).hasOwnProperty,
-	arr = [],
-	pop = arr.pop,
-	pushNative = arr.push,
-	push = arr.push,
-	slice = arr.slice,
+/**
+ * Checks a node for validity as a jQuery selector context
+ * @param {Element|Object=} context
+ * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
+ */
+function testContext( context ) {
+	return context && typeof context.getElementsByTagName !== "undefined" && context;
+}
 
-	// Use a stripped-down indexOf as it's faster than native
-	// https://jsperf.com/thor-indexof-vs-for/5
-	indexOf = function( list, elem ) {
-		var i = 0,
-			len = list.length;
-		for ( ; i < len; i++ ) {
-			if ( list[ i ] === elem ) {
-				return i;
-			}
-		}
-		return -1;
-	},
+// Attribute selectors: https://www.w3.org/TR/selectors/#attribute-selectors
+var attributes = "\\[" + whitespace + "*(" + identifier + ")(?:" + whitespace +
 
-	booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|" +
-		"ismap|loop|multiple|open|readonly|required|scoped",
+	// Operator (capture 2)
+	"*([*^$|!~]?=)" + whitespace +
 
-	// Regular expressions
+	// "Attribute values must be CSS identifiers [capture 5] or strings [capture 3 or capture 4]"
+	"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" +
+	whitespace + "*\\]";
 
-	// http://www.w3.org/TR/css3-selectors/#whitespace
-	whitespace = "[\\x20\\t\\r\\n\\f]",
+var pseudos = ":(" + identifier + ")(?:\\((" +
 
-	// https://www.w3.org/TR/css-syntax-3/#ident-token-diagram
-	identifier = "(?:\\\\[\\da-fA-F]{1,6}" + whitespace +
-		"?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+",
+	// To reduce the number of selectors needing tokenize in the preFilter, prefer arguments:
+	// 1. quoted (capture 3; capture 4 or capture 5)
+	"('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|" +
 
-	// Attribute selectors: http://www.w3.org/TR/selectors/#attribute-selectors
-	attributes = "\\[" + whitespace + "*(" + identifier + ")(?:" + whitespace +
+	// 2. simple (capture 6)
+	"((?:\\\\.|[^\\\\()[\\]]|" + attributes + ")*)|" +
 
-		// Operator (capture 2)
-		"*([*^$|!~]?=)" + whitespace +
+	// 3. anything else (capture 2)
+	".*" +
+	")\\)|)";
 
-		// "Attribute values must be CSS identifiers [capture 5]
-		// or strings [capture 3 or capture 4]"
-		"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" +
-		whitespace + "*\\]",
+var filterMatchExpr = {
+	ID: new RegExp( "^#(" + identifier + ")" ),
+	CLASS: new RegExp( "^\\.(" + identifier + ")" ),
+	TAG: new RegExp( "^(" + identifier + "|[*])" ),
+	ATTR: new RegExp( "^" + attributes ),
+	PSEUDO: new RegExp( "^" + pseudos ),
+	CHILD: new RegExp(
+		"^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" +
+		whitespace + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" +
+		whitespace + "*(\\d+)|))" + whitespace + "*\\)|)", "i" )
+};
 
-	pseudos = ":(" + identifier + ")(?:\\((" +
+var rpseudo = new RegExp( pseudos );
 
-		// To reduce the number of selectors needing tokenize in the preFilter, prefer arguments:
-		// 1. quoted (capture 3; capture 4 or capture 5)
-		"('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|" +
+// CSS escapes
+// https://www.w3.org/TR/CSS21/syndata.html#escaped-characters
 
-		// 2. simple (capture 6)
-		"((?:\\\\.|[^\\\\()[\\]]|" + attributes + ")*)|" +
-
-		// 3. anything else (capture 2)
-		".*" +
-		")\\)|)",
-
-	// Leading and non-escaped trailing whitespace, capturing some non-whitespace characters preceding the latter
-	rwhitespace = new RegExp( whitespace + "+", "g" ),
-	rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" +
-		whitespace + "+$", "g" ),
-
-	rcomma = new RegExp( "^" + whitespace + "*," + whitespace + "*" ),
-	rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace +
-		"*" ),
-	rdescend = new RegExp( whitespace + "|>" ),
-
-	rpseudo = new RegExp( pseudos ),
-	ridentifier = new RegExp( "^" + identifier + "$" ),
-
-	matchExpr = {
-		"ID": new RegExp( "^#(" + identifier + ")" ),
-		"CLASS": new RegExp( "^\\.(" + identifier + ")" ),
-		"TAG": new RegExp( "^(" + identifier + "|[*])" ),
-		"ATTR": new RegExp( "^" + attributes ),
-		"PSEUDO": new RegExp( "^" + pseudos ),
-		"CHILD": new RegExp( "^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" +
-			whitespace + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" +
-			whitespace + "*(\\d+)|))" + whitespace + "*\\)|)", "i" ),
-		"bool": new RegExp( "^(?:" + booleans + ")$", "i" ),
-
-		// For use in libraries implementing .is()
-		// We use this for POS matching in `select`
-		"needsContext": new RegExp( "^" + whitespace +
-			"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace +
-			"*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
-	},
-
-	rhtml = /HTML$/i,
-	rinputs = /^(?:input|select|textarea|button)$/i,
-	rheader = /^h\d$/i,
-
-	rnative = /^[^{]+\{\s*\[native \w/,
-
-	// Easily-parseable/retrievable ID or TAG or CLASS selectors
-	rquickExpr = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,
-
-	rsibling = /[+~]/,
-
-	// CSS escapes
-	// http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
-	runescape = new RegExp( "\\\\[\\da-fA-F]{1,6}" + whitespace + "?|\\\\([^\\r\\n\\f])", "g" ),
+var runescape = new RegExp( "\\\\[\\da-fA-F]{1,6}" + whitespace +
+	"?|\\\\([^\\r\\n\\f])", "g" ),
 	funescape = function( escape, nonHex ) {
 		var high = "0x" + escape.slice( 1 ) - 0x10000;
 
-		return nonHex ?
+		if ( nonHex ) {
 
 			// Strip the backslash prefix from a non-hex escape sequence
-			nonHex :
-
-			// Replace a hexadecimal escape sequence with the encoded Unicode code point
-			// Support: IE <=11+
-			// For values outside the Basic Multilingual Plane (BMP), manually construct a
-			// surrogate pair
-			high < 0 ?
-				String.fromCharCode( high + 0x10000 ) :
-				String.fromCharCode( high >> 10 | 0xD800, high & 0x3FF | 0xDC00 );
-	},
-
-	// CSS string/identifier serialization
-	// https://drafts.csswg.org/cssom/#common-serializing-idioms
-	rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,
-	fcssescape = function( ch, asCodePoint ) {
-		if ( asCodePoint ) {
-
-			// U+0000 NULL becomes U+FFFD REPLACEMENT CHARACTER
-			if ( ch === "\0" ) {
-				return "\uFFFD";
-			}
-
-			// Control characters and (dependent upon position) numbers get escaped as code points
-			return ch.slice( 0, -1 ) + "\\" +
-				ch.charCodeAt( ch.length - 1 ).toString( 16 ) + " ";
+			return nonHex;
 		}
 
-		// Other potentially-special ASCII characters get backslash-escaped
-		return "\\" + ch;
+		// Replace a hexadecimal escape sequence with the encoded Unicode code point
+		// Support: IE <=11+
+		// For values outside the Basic Multilingual Plane (BMP), manually construct a
+		// surrogate pair
+		return high < 0 ?
+			String.fromCharCode( high + 0x10000 ) :
+			String.fromCharCode( high >> 10 | 0xD800, high & 0x3FF | 0xDC00 );
+	};
+
+function unescapeSelector( sel ) {
+	return sel.replace( runescape, funescape );
+}
+
+function selectorError( msg ) {
+	jQuery.error( "Syntax error, unrecognized expression: " + msg );
+}
+
+var rcomma = new RegExp( "^" + whitespace + "*," + whitespace + "*" );
+
+var tokenCache = createCache();
+
+function tokenize( selector, parseOnly ) {
+	var matched, match, tokens, type,
+		soFar, groups, preFilters,
+		cached = tokenCache[ selector + " " ];
+
+	if ( cached ) {
+		return parseOnly ? 0 : cached.slice( 0 );
+	}
+
+	soFar = selector;
+	groups = [];
+	preFilters = jQuery.expr.preFilter;
+
+	while ( soFar ) {
+
+		// Comma and first run
+		if ( !matched || ( match = rcomma.exec( soFar ) ) ) {
+			if ( match ) {
+
+				// Don't consume trailing commas as valid
+				soFar = soFar.slice( match[ 0 ].length ) || soFar;
+			}
+			groups.push( ( tokens = [] ) );
+		}
+
+		matched = false;
+
+		// Combinators
+		if ( ( match = rleadingCombinator.exec( soFar ) ) ) {
+			matched = match.shift();
+			tokens.push( {
+				value: matched,
+
+				// Cast descendant combinators to space
+				type: match[ 0 ].replace( rtrimCSS, " " )
+			} );
+			soFar = soFar.slice( matched.length );
+		}
+
+		// Filters
+		for ( type in filterMatchExpr ) {
+			if ( ( match = jQuery.expr.match[ type ].exec( soFar ) ) && ( !preFilters[ type ] ||
+				( match = preFilters[ type ]( match ) ) ) ) {
+				matched = match.shift();
+				tokens.push( {
+					value: matched,
+					type: type,
+					matches: match
+				} );
+				soFar = soFar.slice( matched.length );
+			}
+		}
+
+		if ( !matched ) {
+			break;
+		}
+	}
+
+	// Return the length of the invalid excess
+	// if we're just parsing
+	// Otherwise, throw an error or return tokens
+	if ( parseOnly ) {
+		return soFar.length;
+	}
+
+	return soFar ?
+		selectorError( selector ) :
+
+		// Cache the tokens
+		tokenCache( selector, groups ).slice( 0 );
+}
+
+var preFilter = {
+	ATTR: function( match ) {
+		match[ 1 ] = unescapeSelector( match[ 1 ] );
+
+		// Move the given value to match[3] whether quoted or unquoted
+		match[ 3 ] = unescapeSelector( match[ 3 ] || match[ 4 ] || match[ 5 ] || "" );
+
+		if ( match[ 2 ] === "~=" ) {
+			match[ 3 ] = " " + match[ 3 ] + " ";
+		}
+
+		return match.slice( 0, 4 );
 	},
 
-	// Used for iframes
-	// See setDocument()
+	CHILD: function( match ) {
+
+		/* matches from filterMatchExpr["CHILD"]
+			1 type (only|nth|...)
+			2 what (child|of-type)
+			3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
+			4 xn-component of xn+y argument ([+-]?\d*n|)
+			5 sign of xn-component
+			6 x of xn-component
+			7 sign of y-component
+			8 y of y-component
+		*/
+		match[ 1 ] = match[ 1 ].toLowerCase();
+
+		if ( match[ 1 ].slice( 0, 3 ) === "nth" ) {
+
+			// nth-* requires argument
+			if ( !match[ 3 ] ) {
+				selectorError( match[ 0 ] );
+			}
+
+			// numeric x and y parameters for jQuery.expr.filter.CHILD
+			// remember that false/true cast respectively to 0/1
+			match[ 4 ] = +( match[ 4 ] ?
+				match[ 5 ] + ( match[ 6 ] || 1 ) :
+				2 * ( match[ 3 ] === "even" || match[ 3 ] === "odd" )
+			);
+			match[ 5 ] = +( ( match[ 7 ] + match[ 8 ] ) || match[ 3 ] === "odd" );
+
+		// other types prohibit arguments
+		} else if ( match[ 3 ] ) {
+			selectorError( match[ 0 ] );
+		}
+
+		return match;
+	},
+
+	PSEUDO: function( match ) {
+		var excess,
+			unquoted = !match[ 6 ] && match[ 2 ];
+
+		if ( filterMatchExpr.CHILD.test( match[ 0 ] ) ) {
+			return null;
+		}
+
+		// Accept quoted arguments as-is
+		if ( match[ 3 ] ) {
+			match[ 2 ] = match[ 4 ] || match[ 5 ] || "";
+
+		// Strip excess characters from unquoted arguments
+		} else if ( unquoted && rpseudo.test( unquoted ) &&
+
+			// Get excess from tokenize (recursively)
+			( excess = tokenize( unquoted, true ) ) &&
+
+			// advance to the next closing parenthesis
+			( excess = unquoted.indexOf( ")", unquoted.length - excess ) -
+				unquoted.length ) ) {
+
+			// excess is a negative index
+			match[ 0 ] = match[ 0 ].slice( 0, excess );
+			match[ 2 ] = unquoted.slice( 0, excess );
+		}
+
+		// Return only captures needed by the pseudo filter method (type and argument)
+		return match.slice( 0, 3 );
+	}
+};
+
+function toSelector( tokens ) {
+	var i = 0,
+		len = tokens.length,
+		selector = "";
+	for ( ; i < len; i++ ) {
+		selector += tokens[ i ].value;
+	}
+	return selector;
+}
+
+// Multifunctional method to get and set values of a collection
+// The value/s can optionally be executed if it's a function
+function access( elems, fn, key, value, chainable, emptyGet, raw ) {
+	var i = 0,
+		len = elems.length,
+		bulk = key == null;
+
+	// Sets many values
+	if ( toType( key ) === "object" ) {
+		chainable = true;
+		for ( i in key ) {
+			access( elems, fn, i, key[ i ], true, emptyGet, raw );
+		}
+
+	// Sets one value
+	} else if ( value !== undefined ) {
+		chainable = true;
+
+		if ( typeof value !== "function" ) {
+			raw = true;
+		}
+
+		if ( bulk ) {
+
+			// Bulk operations run against the entire set
+			if ( raw ) {
+				fn.call( elems, value );
+				fn = null;
+
+			// ...except when executing function values
+			} else {
+				bulk = fn;
+				fn = function( elem, _key, value ) {
+					return bulk.call( jQuery( elem ), value );
+				};
+			}
+		}
+
+		if ( fn ) {
+			for ( ; i < len; i++ ) {
+				fn(
+					elems[ i ], key, raw ?
+						value :
+						value.call( elems[ i ], i, fn( elems[ i ], key ) )
+				);
+			}
+		}
+	}
+
+	if ( chainable ) {
+		return elems;
+	}
+
+	// Gets
+	if ( bulk ) {
+		return fn.call( elems );
+	}
+
+	return len ? fn( elems[ 0 ], key ) : emptyGet;
+}
+
+// Only count HTML whitespace
+// Other whitespace should count in values
+// https://infra.spec.whatwg.org/#ascii-whitespace
+var rnothtmlwhite = /[^\x20\t\r\n\f]+/g;
+
+jQuery.fn.extend( {
+	attr: function( name, value ) {
+		return access( this, jQuery.attr, name, value, arguments.length > 1 );
+	},
+
+	removeAttr: function( name ) {
+		return this.each( function() {
+			jQuery.removeAttr( this, name );
+		} );
+	}
+} );
+
+jQuery.extend( {
+	attr: function( elem, name, value ) {
+		var ret, hooks,
+			nType = elem.nodeType;
+
+		// Don't get/set attributes on text, comment and attribute nodes
+		if ( nType === 3 || nType === 8 || nType === 2 ) {
+			return;
+		}
+
+		// Fallback to prop when attributes are not supported
+		if ( typeof elem.getAttribute === "undefined" ) {
+			return jQuery.prop( elem, name, value );
+		}
+
+		// Attribute hooks are determined by the lowercase version
+		// Grab necessary hook if one is defined
+		if ( nType !== 1 || !jQuery.isXMLDoc( elem ) ) {
+			hooks = jQuery.attrHooks[ name.toLowerCase() ];
+		}
+
+		if ( value !== undefined ) {
+			if ( value === null ||
+
+				// For compat with previous handling of boolean attributes,
+				// remove when `false` passed. For ARIA attributes -
+				// many of which recognize a `"false"` value - continue to
+				// set the `"false"` value as jQuery <4 did.
+				( value === false && name.toLowerCase().indexOf( "aria-" ) !== 0 ) ) {
+
+				jQuery.removeAttr( elem, name );
+				return;
+			}
+
+			if ( hooks && "set" in hooks &&
+				( ret = hooks.set( elem, value, name ) ) !== undefined ) {
+				return ret;
+			}
+
+			elem.setAttribute( name, value );
+			return value;
+		}
+
+		if ( hooks && "get" in hooks && ( ret = hooks.get( elem, name ) ) !== null ) {
+			return ret;
+		}
+
+		ret = elem.getAttribute( name );
+
+		// Non-existent attributes return null, we normalize to undefined
+		return ret == null ? undefined : ret;
+	},
+
+	attrHooks: {},
+
+	removeAttr: function( elem, value ) {
+		var name,
+			i = 0,
+
+			// Attribute names can contain non-HTML whitespace characters
+			// https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
+			attrNames = value && value.match( rnothtmlwhite );
+
+		if ( attrNames && elem.nodeType === 1 ) {
+			while ( ( name = attrNames[ i++ ] ) ) {
+				elem.removeAttribute( name );
+			}
+		}
+	}
+} );
+
+// Support: IE <=11+
+// An input loses its value after becoming a radio
+if ( isIE ) {
+	jQuery.attrHooks.type = {
+		set: function( elem, value ) {
+			if ( value === "radio" && nodeName( elem, "input" ) ) {
+				var val = elem.value;
+				elem.setAttribute( "type", value );
+				if ( val ) {
+					elem.value = val;
+				}
+				return value;
+			}
+		}
+	};
+}
+
+// CSS string/identifier serialization
+// https://drafts.csswg.org/cssom/#common-serializing-idioms
+var rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g;
+
+function fcssescape( ch, asCodePoint ) {
+	if ( asCodePoint ) {
+
+		// U+0000 NULL becomes U+FFFD REPLACEMENT CHARACTER
+		if ( ch === "\0" ) {
+			return "\uFFFD";
+		}
+
+		// Control characters and (dependent upon position) numbers get escaped as code points
+		return ch.slice( 0, -1 ) + "\\" + ch.charCodeAt( ch.length - 1 ).toString( 16 ) + " ";
+	}
+
+	// Other potentially-special ASCII characters get backslash-escaped
+	return "\\" + ch;
+}
+
+jQuery.escapeSelector = function( sel ) {
+	return ( sel + "" ).replace( rcssescape, fcssescape );
+};
+
+var sort = arr.sort;
+
+var splice = arr.splice;
+
+var hasDuplicate;
+
+// Document order sorting
+function sortOrder( a, b ) {
+
+	// Flag for duplicate removal
+	if ( a === b ) {
+		hasDuplicate = true;
+		return 0;
+	}
+
+	// Sort on method existence if only one input has compareDocumentPosition
+	var compare = !a.compareDocumentPosition - !b.compareDocumentPosition;
+	if ( compare ) {
+		return compare;
+	}
+
+	// Calculate position if both inputs belong to the same document
+	// Support: IE 11+
+	// IE sometimes throws a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	compare = ( a.ownerDocument || a ) == ( b.ownerDocument || b ) ?
+		a.compareDocumentPosition( b ) :
+
+		// Otherwise we know they are disconnected
+		1;
+
+	// Disconnected nodes
+	if ( compare & 1 ) {
+
+		// Choose the first element that is related to the document
+		// Support: IE 11+
+		// IE sometimes throws a "Permission denied" error when strict-comparing
+		// two documents; shallow comparisons work.
+		// eslint-disable-next-line eqeqeq
+		if ( a == document$1 || a.ownerDocument == document$1 &&
+			jQuery.contains( document$1, a ) ) {
+			return -1;
+		}
+
+		// Support: IE 11+
+		// IE sometimes throws a "Permission denied" error when strict-comparing
+		// two documents; shallow comparisons work.
+		// eslint-disable-next-line eqeqeq
+		if ( b == document$1 || b.ownerDocument == document$1 &&
+			jQuery.contains( document$1, b ) ) {
+			return 1;
+		}
+
+		// Maintain original order
+		return 0;
+	}
+
+	return compare & 4 ? -1 : 1;
+}
+
+/**
+ * Document sorting and removing duplicates
+ * @param {ArrayLike} results
+ */
+jQuery.uniqueSort = function( results ) {
+	var elem,
+		duplicates = [],
+		j = 0,
+		i = 0;
+
+	hasDuplicate = false;
+
+	sort.call( results, sortOrder );
+
+	if ( hasDuplicate ) {
+		while ( ( elem = results[ i++ ] ) ) {
+			if ( elem === results[ i ] ) {
+				j = duplicates.push( i );
+			}
+		}
+		while ( j-- ) {
+			splice.call( results, duplicates[ j ], 1 );
+		}
+	}
+
+	return results;
+};
+
+jQuery.fn.uniqueSort = function() {
+	return this.pushStack( jQuery.uniqueSort( slice.apply( this ) ) );
+};
+
+var i,
+	outermostContext,
+
+	// Local document vars
+	document,
+	documentElement,
+	documentIsHTML,
+
+	// Instance-specific data
+	dirruns = 0,
+	done = 0,
+	classCache = createCache(),
+	compilerCache = createCache(),
+	nonnativeSelectorCache = createCache(),
+
+	// Regular expressions
+
+	// Leading and non-escaped trailing whitespace, capturing some non-whitespace characters preceding the latter
+	rwhitespace = new RegExp( whitespace + "+", "g" ),
+
+	ridentifier = new RegExp( "^" + identifier + "$" ),
+
+	matchExpr = jQuery.extend( {
+
+		// For use in libraries implementing .is()
+		// We use this for POS matching in `select`
+		needsContext: new RegExp( "^" + whitespace +
+			"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace +
+			"*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
+	}, filterMatchExpr ),
+
+	rinputs = /^(?:input|select|textarea|button)$/i,
+	rheader = /^h\d$/i,
+
+	// Easily-parseable/retrievable ID or TAG or CLASS selectors
+	rquickExpr$1 = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,
+
+	// Used for iframes; see `setDocument`.
+	// Support: IE 9 - 11+
 	// Removing the function wrapper causes a "Permission Denied"
-	// error in IE
+	// error in IE.
 	unloadHandler = function() {
 		setDocument();
 	},
 
 	inDisabledFieldset = addCombinator(
 		function( elem ) {
-			return elem.disabled === true && elem.nodeName.toLowerCase() === "fieldset";
+			return elem.disabled === true && nodeName( elem, "fieldset" );
 		},
 		{ dir: "parentNode", next: "legend" }
 	);
 
-// Optimize for push.apply( _, NodeList )
-try {
-	push.apply(
-		( arr = slice.call( preferredDoc.childNodes ) ),
-		preferredDoc.childNodes
-	);
-
-	// Support: Android<4.0
-	// Detect silently failing push.apply
-	// eslint-disable-next-line no-unused-expressions
-	arr[ preferredDoc.childNodes.length ].nodeType;
-} catch ( e ) {
-	push = { apply: arr.length ?
-
-		// Leverage slice if possible
-		function( target, els ) {
-			pushNative.apply( target, slice.call( els ) );
-		} :
-
-		// Support: IE<9
-		// Otherwise append directly
-		function( target, els ) {
-			var j = target.length,
-				i = 0;
-
-			// Can't trust NodeList.length
-			while ( ( target[ j++ ] = els[ i++ ] ) ) {}
-			target.length = j - 1;
-		}
-	};
-}
-
-function Sizzle( selector, context, results, seed ) {
+function find( selector, context, results, seed ) {
 	var m, i, elem, nid, match, groups, newSelector,
 		newContext = context && context.ownerDocument,
 
@@ -941,7 +1199,7 @@ function Sizzle( selector, context, results, seed ) {
 
 			// If the selector is sufficiently simple, try using a "get*By*" DOM method
 			// (excepting DocumentFragment context, where the methods don't exist)
-			if ( nodeType !== 11 && ( match = rquickExpr.exec( selector ) ) ) {
+			if ( nodeType !== 11 && ( match = rquickExpr$1.exec( selector ) ) ) {
 
 				// ID selector
 				if ( ( m = match[ 1 ] ) ) {
@@ -949,29 +1207,16 @@ function Sizzle( selector, context, results, seed ) {
 					// Document context
 					if ( nodeType === 9 ) {
 						if ( ( elem = context.getElementById( m ) ) ) {
-
-							// Support: IE, Opera, Webkit
-							// TODO: identify versions
-							// getElementById can match elements by name instead of ID
-							if ( elem.id === m ) {
-								results.push( elem );
-								return results;
-							}
-						} else {
-							return results;
+							push.call( results, elem );
 						}
+						return results;
 
 					// Element context
 					} else {
-
-						// Support: IE, Opera, Webkit
-						// TODO: identify versions
-						// getElementById can match elements by name instead of ID
 						if ( newContext && ( elem = newContext.getElementById( m ) ) &&
-							contains( context, elem ) &&
-							elem.id === m ) {
+							jQuery.contains( context, elem ) ) {
 
-							results.push( elem );
+							push.call( results, elem );
 							return results;
 						}
 					}
@@ -982,22 +1227,15 @@ function Sizzle( selector, context, results, seed ) {
 					return results;
 
 				// Class selector
-				} else if ( ( m = match[ 3 ] ) && support.getElementsByClassName &&
-					context.getElementsByClassName ) {
-
+				} else if ( ( m = match[ 3 ] ) && context.getElementsByClassName ) {
 					push.apply( results, context.getElementsByClassName( m ) );
 					return results;
 				}
 			}
 
 			// Take advantage of querySelectorAll
-			if ( support.qsa &&
-				!nonnativeSelectorCache[ selector + " " ] &&
-				( !rbuggyQSA || !rbuggyQSA.test( selector ) ) &&
-
-				// Support: IE 8 only
-				// Exclude object elements
-				( nodeType !== 1 || context.nodeName.toLowerCase() !== "object" ) ) {
+			if ( !nonnativeSelectorCache[ selector + " " ] &&
+				( !rbuggyQSA || !rbuggyQSA.test( selector ) ) ) {
 
 				newSelector = selector;
 				newContext = context;
@@ -1010,21 +1248,26 @@ function Sizzle( selector, context, results, seed ) {
 				// as such selectors are not recognized by querySelectorAll.
 				// Thanks to Andrew Dupont for this technique.
 				if ( nodeType === 1 &&
-					( rdescend.test( selector ) || rcombinators.test( selector ) ) ) {
+					( rdescend.test( selector ) || rleadingCombinator.test( selector ) ) ) {
 
 					// Expand context for sibling selectors
-					newContext = rsibling.test( selector ) && testContext( context.parentNode ) ||
+					newContext = rsibling.test( selector ) &&
+						testContext( context.parentNode ) ||
 						context;
 
-					// We can use :scope instead of the ID hack if the browser
-					// supports it & if we're not changing the context.
-					if ( newContext !== context || !support.scope ) {
+					// Outside of IE, if we're not changing the context we can
+					// use :scope instead of an ID.
+					// Support: IE 11+
+					// IE sometimes throws a "Permission denied" error when strict-comparing
+					// two documents; shallow comparisons work.
+					// eslint-disable-next-line eqeqeq
+					if ( newContext != context || isIE ) {
 
 						// Capture the context ID, setting it first if necessary
 						if ( ( nid = context.getAttribute( "id" ) ) ) {
-							nid = nid.replace( rcssescape, fcssescape );
+							nid = jQuery.escapeSelector( nid );
 						} else {
-							context.setAttribute( "id", ( nid = expando ) );
+							context.setAttribute( "id", ( nid = jQuery.expando ) );
 						}
 					}
 
@@ -1046,7 +1289,7 @@ function Sizzle( selector, context, results, seed ) {
 				} catch ( qsaError ) {
 					nonnativeSelectorCache( selector, true );
 				} finally {
-					if ( nid === expando ) {
+					if ( nid === jQuery.expando ) {
 						context.removeAttribute( "id" );
 					}
 				}
@@ -1055,103 +1298,16 @@ function Sizzle( selector, context, results, seed ) {
 	}
 
 	// All others
-	return select( selector.replace( rtrim, "$1" ), context, results, seed );
+	return select( selector.replace( rtrimCSS, "$1" ), context, results, seed );
 }
 
 /**
- * Create key-value caches of limited size
- * @returns {function(string, object)} Returns the Object data after storing it on itself with
- *	property name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)
- *	deleting the oldest entry
- */
-function createCache() {
-	var keys = [];
-
-	function cache( key, value ) {
-
-		// Use (key + " ") to avoid collision with native prototype properties (see Issue #157)
-		if ( keys.push( key + " " ) > Expr.cacheLength ) {
-
-			// Only keep the most recent entries
-			delete cache[ keys.shift() ];
-		}
-		return ( cache[ key + " " ] = value );
-	}
-	return cache;
-}
-
-/**
- * Mark a function for special use by Sizzle
+ * Mark a function for special use by jQuery selector module
  * @param {Function} fn The function to mark
  */
 function markFunction( fn ) {
-	fn[ expando ] = true;
+	fn[ jQuery.expando ] = true;
 	return fn;
-}
-
-/**
- * Support testing using an element
- * @param {Function} fn Passed the created element and returns a boolean result
- */
-function assert( fn ) {
-	var el = document.createElement( "fieldset" );
-
-	try {
-		return !!fn( el );
-	} catch ( e ) {
-		return false;
-	} finally {
-
-		// Remove from its parent by default
-		if ( el.parentNode ) {
-			el.parentNode.removeChild( el );
-		}
-
-		// release memory in IE
-		el = null;
-	}
-}
-
-/**
- * Adds the same handler for all of the specified attrs
- * @param {String} attrs Pipe-separated list of attributes
- * @param {Function} handler The method that will be applied
- */
-function addHandle( attrs, handler ) {
-	var arr = attrs.split( "|" ),
-		i = arr.length;
-
-	while ( i-- ) {
-		Expr.attrHandle[ arr[ i ] ] = handler;
-	}
-}
-
-/**
- * Checks document order of two siblings
- * @param {Element} a
- * @param {Element} b
- * @returns {Number} Returns less than 0 if a precedes b, greater than 0 if a follows b
- */
-function siblingCheck( a, b ) {
-	var cur = b && a,
-		diff = cur && a.nodeType === 1 && b.nodeType === 1 &&
-			a.sourceIndex - b.sourceIndex;
-
-	// Use IE sourceIndex if available on both nodes
-	if ( diff ) {
-		return diff;
-	}
-
-	// Check if b follows a
-	if ( cur ) {
-		while ( ( cur = cur.nextSibling ) ) {
-			if ( cur === b ) {
-				return -1;
-			}
-		}
-	}
-
-	return a ? 1 : -1;
 }
 
 /**
@@ -1160,8 +1316,7 @@ function siblingCheck( a, b ) {
  */
 function createInputPseudo( type ) {
 	return function( elem ) {
-		var name = elem.nodeName.toLowerCase();
-		return name === "input" && elem.type === type;
+		return nodeName( elem, "input" ) && elem.type === type;
 	};
 }
 
@@ -1171,8 +1326,8 @@ function createInputPseudo( type ) {
  */
 function createButtonPseudo( type ) {
 	return function( elem ) {
-		var name = elem.nodeName.toLowerCase();
-		return ( name === "input" || name === "button" ) && elem.type === type;
+		return ( nodeName( elem, "input" ) || nodeName( elem, "button" ) ) &&
+			elem.type === type;
 	};
 }
 
@@ -1208,14 +1363,13 @@ function createDisabledPseudo( disabled ) {
 					}
 				}
 
-				// Support: IE 6 - 11
+				// Support: IE 6 - 11+
 				// Use the isDisabled shortcut property to check for disabled fieldset ancestors
 				return elem.isDisabled === disabled ||
 
 					// Where there is no isDisabled, check manually
-					/* jshint -W018 */
 					elem.isDisabled !== !disabled &&
-					inDisabledFieldset( elem ) === disabled;
+						inDisabledFieldset( elem ) === disabled;
 			}
 
 			return elem.disabled === disabled;
@@ -1255,666 +1409,61 @@ function createPositionalPseudo( fn ) {
 }
 
 /**
- * Checks a node for validity as a Sizzle context
- * @param {Element|Object=} context
- * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
- */
-function testContext( context ) {
-	return context && typeof context.getElementsByTagName !== "undefined" && context;
-}
-
-// Expose support vars for convenience
-support = Sizzle.support = {};
-
-/**
- * Detects XML nodes
- * @param {Element|Object} elem An element or a document
- * @returns {Boolean} True iff elem is a non-HTML XML node
- */
-isXML = Sizzle.isXML = function( elem ) {
-	var namespace = elem.namespaceURI,
-		docElem = ( elem.ownerDocument || elem ).documentElement;
-
-	// Support: IE <=8
-	// Assume HTML when documentElement doesn't yet exist, such as inside loading iframes
-	// https://bugs.jquery.com/ticket/4833
-	return !rhtml.test( namespace || docElem && docElem.nodeName || "HTML" );
-};
-
-/**
  * Sets document-related variables once based on the current document
- * @param {Element|Object} [doc] An element or document object to use to set the document
- * @returns {Object} Returns the current document
+ * @param {Element|Object} [node] An element or document object to use to set the document
  */
-setDocument = Sizzle.setDocument = function( node ) {
-	var hasCompare, subWindow,
-		doc = node ? node.ownerDocument || node : preferredDoc;
+function setDocument( node ) {
+	var subWindow,
+		doc = node ? node.ownerDocument || node : document$1;
 
 	// Return early if doc is invalid or already selected
-	// Support: IE 11+, Edge 17 - 18+
-	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// Support: IE 11+
+	// IE sometimes throws a "Permission denied" error when strict-comparing
 	// two documents; shallow comparisons work.
 	// eslint-disable-next-line eqeqeq
-	if ( doc == document || doc.nodeType !== 9 || !doc.documentElement ) {
-		return document;
+	if ( doc == document || doc.nodeType !== 9 ) {
+		return;
 	}
 
 	// Update global variables
 	document = doc;
-	docElem = document.documentElement;
-	documentIsHTML = !isXML( document );
+	documentElement = document.documentElement;
+	documentIsHTML = !jQuery.isXMLDoc( document );
 
-	// Support: IE 9 - 11+, Edge 12 - 18+
-	// Accessing iframe documents after unload throws "permission denied" errors (jQuery #13936)
-	// Support: IE 11+, Edge 17 - 18+
-	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// Support: IE 9 - 11+
+	// Accessing iframe documents after unload throws "permission denied" errors (see trac-13936)
+	// Support: IE 11+
+	// IE sometimes throws a "Permission denied" error when strict-comparing
 	// two documents; shallow comparisons work.
 	// eslint-disable-next-line eqeqeq
-	if ( preferredDoc != document &&
+	if ( isIE && document$1 != document &&
 		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
-
-		// Support: IE 11, Edge
-		if ( subWindow.addEventListener ) {
-			subWindow.addEventListener( "unload", unloadHandler, false );
-
-		// Support: IE 9 - 10 only
-		} else if ( subWindow.attachEvent ) {
-			subWindow.attachEvent( "onunload", unloadHandler );
-		}
+		subWindow.addEventListener( "unload", unloadHandler );
 	}
+}
 
-	// Support: IE 8 - 11+, Edge 12 - 18+, Chrome <=16 - 25 only, Firefox <=3.6 - 31 only,
-	// Safari 4 - 5 only, Opera <=11.6 - 12.x only
-	// IE/Edge & older browsers don't support the :scope pseudo-class.
-	// Support: Safari 6.0 only
-	// Safari 6.0 supports :scope but it's an alias of :root there.
-	support.scope = assert( function( el ) {
-		docElem.appendChild( el ).appendChild( document.createElement( "div" ) );
-		return typeof el.querySelectorAll !== "undefined" &&
-			!el.querySelectorAll( ":scope fieldset div" ).length;
-	} );
-
-	/* Attributes
-	---------------------------------------------------------------------- */
-
-	// Support: IE<8
-	// Verify that getAttribute really returns attributes and not properties
-	// (excepting IE8 booleans)
-	support.attributes = assert( function( el ) {
-		el.className = "i";
-		return !el.getAttribute( "className" );
-	} );
-
-	/* getElement(s)By*
-	---------------------------------------------------------------------- */
-
-	// Check if getElementsByTagName("*") returns only elements
-	support.getElementsByTagName = assert( function( el ) {
-		el.appendChild( document.createComment( "" ) );
-		return !el.getElementsByTagName( "*" ).length;
-	} );
-
-	// Support: IE<9
-	support.getElementsByClassName = rnative.test( document.getElementsByClassName );
-
-	// Support: IE<10
-	// Check if getElementById returns elements by name
-	// The broken getElementById methods don't pick up programmatically-set names,
-	// so use a roundabout getElementsByName test
-	support.getById = assert( function( el ) {
-		docElem.appendChild( el ).id = expando;
-		return !document.getElementsByName || !document.getElementsByName( expando ).length;
-	} );
-
-	// ID filter and find
-	if ( support.getById ) {
-		Expr.filter[ "ID" ] = function( id ) {
-			var attrId = id.replace( runescape, funescape );
-			return function( elem ) {
-				return elem.getAttribute( "id" ) === attrId;
-			};
-		};
-		Expr.find[ "ID" ] = function( id, context ) {
-			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
-				var elem = context.getElementById( id );
-				return elem ? [ elem ] : [];
-			}
-		};
-	} else {
-		Expr.filter[ "ID" ] =  function( id ) {
-			var attrId = id.replace( runescape, funescape );
-			return function( elem ) {
-				var node = typeof elem.getAttributeNode !== "undefined" &&
-					elem.getAttributeNode( "id" );
-				return node && node.value === attrId;
-			};
-		};
-
-		// Support: IE 6 - 7 only
-		// getElementById is not reliable as a find shortcut
-		Expr.find[ "ID" ] = function( id, context ) {
-			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
-				var node, i, elems,
-					elem = context.getElementById( id );
-
-				if ( elem ) {
-
-					// Verify the id attribute
-					node = elem.getAttributeNode( "id" );
-					if ( node && node.value === id ) {
-						return [ elem ];
-					}
-
-					// Fall back on getElementsByName
-					elems = context.getElementsByName( id );
-					i = 0;
-					while ( ( elem = elems[ i++ ] ) ) {
-						node = elem.getAttributeNode( "id" );
-						if ( node && node.value === id ) {
-							return [ elem ];
-						}
-					}
-				}
-
-				return [];
-			}
-		};
-	}
-
-	// Tag
-	Expr.find[ "TAG" ] = support.getElementsByTagName ?
-		function( tag, context ) {
-			if ( typeof context.getElementsByTagName !== "undefined" ) {
-				return context.getElementsByTagName( tag );
-
-			// DocumentFragment nodes don't have gEBTN
-			} else if ( support.qsa ) {
-				return context.querySelectorAll( tag );
-			}
-		} :
-
-		function( tag, context ) {
-			var elem,
-				tmp = [],
-				i = 0,
-
-				// By happy coincidence, a (broken) gEBTN appears on DocumentFragment nodes too
-				results = context.getElementsByTagName( tag );
-
-			// Filter out possible comments
-			if ( tag === "*" ) {
-				while ( ( elem = results[ i++ ] ) ) {
-					if ( elem.nodeType === 1 ) {
-						tmp.push( elem );
-					}
-				}
-
-				return tmp;
-			}
-			return results;
-		};
-
-	// Class
-	Expr.find[ "CLASS" ] = support.getElementsByClassName && function( className, context ) {
-		if ( typeof context.getElementsByClassName !== "undefined" && documentIsHTML ) {
-			return context.getElementsByClassName( className );
-		}
-	};
-
-	/* QSA/matchesSelector
-	---------------------------------------------------------------------- */
-
-	// QSA and matchesSelector support
-
-	// matchesSelector(:active) reports false when true (IE9/Opera 11.5)
-	rbuggyMatches = [];
-
-	// qSa(:focus) reports false when true (Chrome 21)
-	// We allow this because of a bug in IE8/9 that throws an error
-	// whenever `document.activeElement` is accessed on an iframe
-	// So, we allow :focus to pass through QSA all the time to avoid the IE error
-	// See https://bugs.jquery.com/ticket/13378
-	rbuggyQSA = [];
-
-	if ( ( support.qsa = rnative.test( document.querySelectorAll ) ) ) {
-
-		// Build QSA regex
-		// Regex strategy adopted from Diego Perini
-		assert( function( el ) {
-
-			var input;
-
-			// Select is set to empty string on purpose
-			// This is to test IE's treatment of not explicitly
-			// setting a boolean content attribute,
-			// since its presence should be enough
-			// https://bugs.jquery.com/ticket/12359
-			docElem.appendChild( el ).innerHTML = "<a id='" + expando + "'></a>" +
-				"<select id='" + expando + "-\r\\' msallowcapture=''>" +
-				"<option selected=''></option></select>";
-
-			// Support: IE8, Opera 11-12.16
-			// Nothing should be selected when empty strings follow ^= or $= or *=
-			// The test attribute must be unknown in Opera but "safe" for WinRT
-			// https://msdn.microsoft.com/en-us/library/ie/hh465388.aspx#attribute_section
-			if ( el.querySelectorAll( "[msallowcapture^='']" ).length ) {
-				rbuggyQSA.push( "[*^$]=" + whitespace + "*(?:''|\"\")" );
-			}
-
-			// Support: IE8
-			// Boolean attributes and "value" are not treated correctly
-			if ( !el.querySelectorAll( "[selected]" ).length ) {
-				rbuggyQSA.push( "\\[" + whitespace + "*(?:value|" + booleans + ")" );
-			}
-
-			// Support: Chrome<29, Android<4.4, Safari<7.0+, iOS<7.0+, PhantomJS<1.9.8+
-			if ( !el.querySelectorAll( "[id~=" + expando + "-]" ).length ) {
-				rbuggyQSA.push( "~=" );
-			}
-
-			// Support: IE 11+, Edge 15 - 18+
-			// IE 11/Edge don't find elements on a `[name='']` query in some cases.
-			// Adding a temporary attribute to the document before the selection works
-			// around the issue.
-			// Interestingly, IE 10 & older don't seem to have the issue.
-			input = document.createElement( "input" );
-			input.setAttribute( "name", "" );
-			el.appendChild( input );
-			if ( !el.querySelectorAll( "[name='']" ).length ) {
-				rbuggyQSA.push( "\\[" + whitespace + "*name" + whitespace + "*=" +
-					whitespace + "*(?:''|\"\")" );
-			}
-
-			// Webkit/Opera - :checked should return selected option elements
-			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
-			// IE8 throws error here and will not see later tests
-			if ( !el.querySelectorAll( ":checked" ).length ) {
-				rbuggyQSA.push( ":checked" );
-			}
-
-			// Support: Safari 8+, iOS 8+
-			// https://bugs.webkit.org/show_bug.cgi?id=136851
-			// In-page `selector#id sibling-combinator selector` fails
-			if ( !el.querySelectorAll( "a#" + expando + "+*" ).length ) {
-				rbuggyQSA.push( ".#.+[+~]" );
-			}
-
-			// Support: Firefox <=3.6 - 5 only
-			// Old Firefox doesn't throw on a badly-escaped identifier.
-			el.querySelectorAll( "\\\f" );
-			rbuggyQSA.push( "[\\r\\n\\f]" );
-		} );
-
-		assert( function( el ) {
-			el.innerHTML = "<a href='' disabled='disabled'></a>" +
-				"<select disabled='disabled'><option/></select>";
-
-			// Support: Windows 8 Native Apps
-			// The type and name attributes are restricted during .innerHTML assignment
-			var input = document.createElement( "input" );
-			input.setAttribute( "type", "hidden" );
-			el.appendChild( input ).setAttribute( "name", "D" );
-
-			// Support: IE8
-			// Enforce case-sensitivity of name attribute
-			if ( el.querySelectorAll( "[name=d]" ).length ) {
-				rbuggyQSA.push( "name" + whitespace + "*[*^$|!~]?=" );
-			}
-
-			// FF 3.5 - :enabled/:disabled and hidden elements (hidden elements are still enabled)
-			// IE8 throws error here and will not see later tests
-			if ( el.querySelectorAll( ":enabled" ).length !== 2 ) {
-				rbuggyQSA.push( ":enabled", ":disabled" );
-			}
-
-			// Support: IE9-11+
-			// IE's :disabled selector does not pick up the children of disabled fieldsets
-			docElem.appendChild( el ).disabled = true;
-			if ( el.querySelectorAll( ":disabled" ).length !== 2 ) {
-				rbuggyQSA.push( ":enabled", ":disabled" );
-			}
-
-			// Support: Opera 10 - 11 only
-			// Opera 10-11 does not throw on post-comma invalid pseudos
-			el.querySelectorAll( "*,:x" );
-			rbuggyQSA.push( ",.*:" );
-		} );
-	}
-
-	if ( ( support.matchesSelector = rnative.test( ( matches = docElem.matches ||
-		docElem.webkitMatchesSelector ||
-		docElem.mozMatchesSelector ||
-		docElem.oMatchesSelector ||
-		docElem.msMatchesSelector ) ) ) ) {
-
-		assert( function( el ) {
-
-			// Check to see if it's possible to do matchesSelector
-			// on a disconnected node (IE 9)
-			support.disconnectedMatch = matches.call( el, "*" );
-
-			// This should fail with an exception
-			// Gecko does not error, returns false instead
-			matches.call( el, "[s!='']:x" );
-			rbuggyMatches.push( "!=", pseudos );
-		} );
-	}
-
-	rbuggyQSA = rbuggyQSA.length && new RegExp( rbuggyQSA.join( "|" ) );
-	rbuggyMatches = rbuggyMatches.length && new RegExp( rbuggyMatches.join( "|" ) );
-
-	/* Contains
-	---------------------------------------------------------------------- */
-	hasCompare = rnative.test( docElem.compareDocumentPosition );
-
-	// Element contains another
-	// Purposefully self-exclusive
-	// As in, an element does not contain itself
-	contains = hasCompare || rnative.test( docElem.contains ) ?
-		function( a, b ) {
-			var adown = a.nodeType === 9 ? a.documentElement : a,
-				bup = b && b.parentNode;
-			return a === bup || !!( bup && bup.nodeType === 1 && (
-				adown.contains ?
-					adown.contains( bup ) :
-					a.compareDocumentPosition && a.compareDocumentPosition( bup ) & 16
-			) );
-		} :
-		function( a, b ) {
-			if ( b ) {
-				while ( ( b = b.parentNode ) ) {
-					if ( b === a ) {
-						return true;
-					}
-				}
-			}
-			return false;
-		};
-
-	/* Sorting
-	---------------------------------------------------------------------- */
-
-	// Document order sorting
-	sortOrder = hasCompare ?
-	function( a, b ) {
-
-		// Flag for duplicate removal
-		if ( a === b ) {
-			hasDuplicate = true;
-			return 0;
-		}
-
-		// Sort on method existence if only one input has compareDocumentPosition
-		var compare = !a.compareDocumentPosition - !b.compareDocumentPosition;
-		if ( compare ) {
-			return compare;
-		}
-
-		// Calculate position if both inputs belong to the same document
-		// Support: IE 11+, Edge 17 - 18+
-		// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-		// two documents; shallow comparisons work.
-		// eslint-disable-next-line eqeqeq
-		compare = ( a.ownerDocument || a ) == ( b.ownerDocument || b ) ?
-			a.compareDocumentPosition( b ) :
-
-			// Otherwise we know they are disconnected
-			1;
-
-		// Disconnected nodes
-		if ( compare & 1 ||
-			( !support.sortDetached && b.compareDocumentPosition( a ) === compare ) ) {
-
-			// Choose the first element that is related to our preferred document
-			// Support: IE 11+, Edge 17 - 18+
-			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-			// two documents; shallow comparisons work.
-			// eslint-disable-next-line eqeqeq
-			if ( a == document || a.ownerDocument == preferredDoc &&
-				contains( preferredDoc, a ) ) {
-				return -1;
-			}
-
-			// Support: IE 11+, Edge 17 - 18+
-			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-			// two documents; shallow comparisons work.
-			// eslint-disable-next-line eqeqeq
-			if ( b == document || b.ownerDocument == preferredDoc &&
-				contains( preferredDoc, b ) ) {
-				return 1;
-			}
-
-			// Maintain original order
-			return sortInput ?
-				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
-				0;
-		}
-
-		return compare & 4 ? -1 : 1;
-	} :
-	function( a, b ) {
-
-		// Exit early if the nodes are identical
-		if ( a === b ) {
-			hasDuplicate = true;
-			return 0;
-		}
-
-		var cur,
-			i = 0,
-			aup = a.parentNode,
-			bup = b.parentNode,
-			ap = [ a ],
-			bp = [ b ];
-
-		// Parentless nodes are either documents or disconnected
-		if ( !aup || !bup ) {
-
-			// Support: IE 11+, Edge 17 - 18+
-			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-			// two documents; shallow comparisons work.
-			/* eslint-disable eqeqeq */
-			return a == document ? -1 :
-				b == document ? 1 :
-				/* eslint-enable eqeqeq */
-				aup ? -1 :
-				bup ? 1 :
-				sortInput ?
-				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
-				0;
-
-		// If the nodes are siblings, we can do a quick check
-		} else if ( aup === bup ) {
-			return siblingCheck( a, b );
-		}
-
-		// Otherwise we need full lists of their ancestors for comparison
-		cur = a;
-		while ( ( cur = cur.parentNode ) ) {
-			ap.unshift( cur );
-		}
-		cur = b;
-		while ( ( cur = cur.parentNode ) ) {
-			bp.unshift( cur );
-		}
-
-		// Walk down the tree looking for a discrepancy
-		while ( ap[ i ] === bp[ i ] ) {
-			i++;
-		}
-
-		return i ?
-
-			// Do a sibling check if the nodes have a common ancestor
-			siblingCheck( ap[ i ], bp[ i ] ) :
-
-			// Otherwise nodes in our document sort first
-			// Support: IE 11+, Edge 17 - 18+
-			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-			// two documents; shallow comparisons work.
-			/* eslint-disable eqeqeq */
-			ap[ i ] == preferredDoc ? -1 :
-			bp[ i ] == preferredDoc ? 1 :
-			/* eslint-enable eqeqeq */
-			0;
-	};
-
-	return document;
+find.matches = function( expr, elements ) {
+	return find( expr, null, null, elements );
 };
 
-Sizzle.matches = function( expr, elements ) {
-	return Sizzle( expr, null, null, elements );
-};
-
-Sizzle.matchesSelector = function( elem, expr ) {
+find.matchesSelector = function( elem, expr ) {
 	setDocument( elem );
 
-	if ( support.matchesSelector && documentIsHTML &&
+	if ( documentIsHTML &&
 		!nonnativeSelectorCache[ expr + " " ] &&
-		( !rbuggyMatches || !rbuggyMatches.test( expr ) ) &&
-		( !rbuggyQSA     || !rbuggyQSA.test( expr ) ) ) {
+		( !rbuggyQSA || !rbuggyQSA.test( expr ) ) ) {
 
 		try {
-			var ret = matches.call( elem, expr );
-
-			// IE 9's matchesSelector returns false on disconnected nodes
-			if ( ret || support.disconnectedMatch ||
-
-				// As well, disconnected nodes are said to be in a document
-				// fragment in IE 9
-				elem.document && elem.document.nodeType !== 11 ) {
-				return ret;
-			}
+			return matches.call( elem, expr );
 		} catch ( e ) {
 			nonnativeSelectorCache( expr, true );
 		}
 	}
 
-	return Sizzle( expr, document, null, [ elem ] ).length > 0;
+	return find( expr, document, null, [ elem ] ).length > 0;
 };
 
-Sizzle.contains = function( context, elem ) {
-
-	// Set document vars if needed
-	// Support: IE 11+, Edge 17 - 18+
-	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-	// two documents; shallow comparisons work.
-	// eslint-disable-next-line eqeqeq
-	if ( ( context.ownerDocument || context ) != document ) {
-		setDocument( context );
-	}
-	return contains( context, elem );
-};
-
-Sizzle.attr = function( elem, name ) {
-
-	// Set document vars if needed
-	// Support: IE 11+, Edge 17 - 18+
-	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-	// two documents; shallow comparisons work.
-	// eslint-disable-next-line eqeqeq
-	if ( ( elem.ownerDocument || elem ) != document ) {
-		setDocument( elem );
-	}
-
-	var fn = Expr.attrHandle[ name.toLowerCase() ],
-
-		// Don't get fooled by Object.prototype properties (jQuery #13807)
-		val = fn && hasOwn.call( Expr.attrHandle, name.toLowerCase() ) ?
-			fn( elem, name, !documentIsHTML ) :
-			undefined;
-
-	return val !== undefined ?
-		val :
-		support.attributes || !documentIsHTML ?
-			elem.getAttribute( name ) :
-			( val = elem.getAttributeNode( name ) ) && val.specified ?
-				val.value :
-				null;
-};
-
-Sizzle.escape = function( sel ) {
-	return ( sel + "" ).replace( rcssescape, fcssescape );
-};
-
-Sizzle.error = function( msg ) {
-	throw new Error( "Syntax error, unrecognized expression: " + msg );
-};
-
-/**
- * Document sorting and removing duplicates
- * @param {ArrayLike} results
- */
-Sizzle.uniqueSort = function( results ) {
-	var elem,
-		duplicates = [],
-		j = 0,
-		i = 0;
-
-	// Unless we *know* we can detect duplicates, assume their presence
-	hasDuplicate = !support.detectDuplicates;
-	sortInput = !support.sortStable && results.slice( 0 );
-	results.sort( sortOrder );
-
-	if ( hasDuplicate ) {
-		while ( ( elem = results[ i++ ] ) ) {
-			if ( elem === results[ i ] ) {
-				j = duplicates.push( i );
-			}
-		}
-		while ( j-- ) {
-			results.splice( duplicates[ j ], 1 );
-		}
-	}
-
-	// Clear input after sorting to release objects
-	// See https://github.com/jquery/sizzle/pull/225
-	sortInput = null;
-
-	return results;
-};
-
-/**
- * Utility function for retrieving the text value of an array of DOM nodes
- * @param {Array|Element} elem
- */
-getText = Sizzle.getText = function( elem ) {
-	var node,
-		ret = "",
-		i = 0,
-		nodeType = elem.nodeType;
-
-	if ( !nodeType ) {
-
-		// If no nodeType, this is expected to be an array
-		while ( ( node = elem[ i++ ] ) ) {
-
-			// Do not traverse comment nodes
-			ret += getText( node );
-		}
-	} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
-
-		// Use textContent for elements
-		// innerText usage removed for consistency of new lines (jQuery #11153)
-		if ( typeof elem.textContent === "string" ) {
-			return elem.textContent;
-		} else {
-
-			// Traverse its children
-			for ( elem = elem.firstChild; elem; elem = elem.nextSibling ) {
-				ret += getText( elem );
-			}
-		}
-	} else if ( nodeType === 3 || nodeType === 4 ) {
-		return elem.nodeValue;
-	}
-
-	// Do not include comment or processing instruction nodes
-
-	return ret;
-};
-
-Expr = Sizzle.selectors = {
+jQuery.expr = {
 
 	// Can be adjusted by the user
 	cacheLength: 50,
@@ -1923,9 +1472,30 @@ Expr = Sizzle.selectors = {
 
 	match: matchExpr,
 
-	attrHandle: {},
+	find: {
+		ID: function( id, context ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
+				var elem = context.getElementById( id );
+				return elem ? [ elem ] : [];
+			}
+		},
 
-	find: {},
+		TAG: function( tag, context ) {
+			if ( typeof context.getElementsByTagName !== "undefined" ) {
+				return context.getElementsByTagName( tag );
+
+				// DocumentFragment nodes don't have gEBTN
+			} else {
+				return context.querySelectorAll( tag );
+			}
+		},
+
+		CLASS: function( className, context ) {
+			if ( typeof context.getElementsByClassName !== "undefined" && documentIsHTML ) {
+				return context.getElementsByClassName( className );
+			}
+		}
+	},
 
 	relative: {
 		">": { dir: "parentNode", first: true },
@@ -1934,120 +1504,48 @@ Expr = Sizzle.selectors = {
 		"~": { dir: "previousSibling" }
 	},
 
-	preFilter: {
-		"ATTR": function( match ) {
-			match[ 1 ] = match[ 1 ].replace( runescape, funescape );
-
-			// Move the given value to match[3] whether quoted or unquoted
-			match[ 3 ] = ( match[ 3 ] || match[ 4 ] ||
-				match[ 5 ] || "" ).replace( runescape, funescape );
-
-			if ( match[ 2 ] === "~=" ) {
-				match[ 3 ] = " " + match[ 3 ] + " ";
-			}
-
-			return match.slice( 0, 4 );
-		},
-
-		"CHILD": function( match ) {
-
-			/* matches from matchExpr["CHILD"]
-				1 type (only|nth|...)
-				2 what (child|of-type)
-				3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
-				4 xn-component of xn+y argument ([+-]?\d*n|)
-				5 sign of xn-component
-				6 x of xn-component
-				7 sign of y-component
-				8 y of y-component
-			*/
-			match[ 1 ] = match[ 1 ].toLowerCase();
-
-			if ( match[ 1 ].slice( 0, 3 ) === "nth" ) {
-
-				// nth-* requires argument
-				if ( !match[ 3 ] ) {
-					Sizzle.error( match[ 0 ] );
-				}
-
-				// numeric x and y parameters for Expr.filter.CHILD
-				// remember that false/true cast respectively to 0/1
-				match[ 4 ] = +( match[ 4 ] ?
-					match[ 5 ] + ( match[ 6 ] || 1 ) :
-					2 * ( match[ 3 ] === "even" || match[ 3 ] === "odd" ) );
-				match[ 5 ] = +( ( match[ 7 ] + match[ 8 ] ) || match[ 3 ] === "odd" );
-
-				// other types prohibit arguments
-			} else if ( match[ 3 ] ) {
-				Sizzle.error( match[ 0 ] );
-			}
-
-			return match;
-		},
-
-		"PSEUDO": function( match ) {
-			var excess,
-				unquoted = !match[ 6 ] && match[ 2 ];
-
-			if ( matchExpr[ "CHILD" ].test( match[ 0 ] ) ) {
-				return null;
-			}
-
-			// Accept quoted arguments as-is
-			if ( match[ 3 ] ) {
-				match[ 2 ] = match[ 4 ] || match[ 5 ] || "";
-
-			// Strip excess characters from unquoted arguments
-			} else if ( unquoted && rpseudo.test( unquoted ) &&
-
-				// Get excess from tokenize (recursively)
-				( excess = tokenize( unquoted, true ) ) &&
-
-				// advance to the next closing parenthesis
-				( excess = unquoted.indexOf( ")", unquoted.length - excess ) - unquoted.length ) ) {
-
-				// excess is a negative index
-				match[ 0 ] = match[ 0 ].slice( 0, excess );
-				match[ 2 ] = unquoted.slice( 0, excess );
-			}
-
-			// Return only captures needed by the pseudo filter method (type and argument)
-			return match.slice( 0, 3 );
-		}
-	},
+	preFilter: preFilter,
 
 	filter: {
+		ID: function( id ) {
+			var attrId = unescapeSelector( id );
+			return function( elem ) {
+				return elem.getAttribute( "id" ) === attrId;
+			};
+		},
 
-		"TAG": function( nodeNameSelector ) {
-			var nodeName = nodeNameSelector.replace( runescape, funescape ).toLowerCase();
+		TAG: function( nodeNameSelector ) {
+			var expectedNodeName = unescapeSelector( nodeNameSelector ).toLowerCase();
 			return nodeNameSelector === "*" ?
+
 				function() {
 					return true;
 				} :
+
 				function( elem ) {
-					return elem.nodeName && elem.nodeName.toLowerCase() === nodeName;
+					return nodeName( elem, expectedNodeName );
 				};
 		},
 
-		"CLASS": function( className ) {
+		CLASS: function( className ) {
 			var pattern = classCache[ className + " " ];
 
 			return pattern ||
-				( pattern = new RegExp( "(^|" + whitespace +
-					")" + className + "(" + whitespace + "|$)" ) ) && classCache(
-						className, function( elem ) {
-							return pattern.test(
-								typeof elem.className === "string" && elem.className ||
-								typeof elem.getAttribute !== "undefined" &&
-									elem.getAttribute( "class" ) ||
-								""
-							);
+				( pattern = new RegExp( "(^|" + whitespace + ")" + className +
+					"(" + whitespace + "|$)" ) ) &&
+				classCache( className, function( elem ) {
+					return pattern.test(
+						typeof elem.className === "string" && elem.className ||
+							typeof elem.getAttribute !== "undefined" &&
+								elem.getAttribute( "class" ) ||
+							""
+					);
 				} );
 		},
 
-		"ATTR": function( name, operator, check ) {
+		ATTR: function( name, operator, check ) {
 			return function( elem ) {
-				var result = Sizzle.attr( elem, name );
+				var result = jQuery.attr( elem, name );
 
 				if ( result == null ) {
 					return operator === "!=";
@@ -2058,22 +1556,34 @@ Expr = Sizzle.selectors = {
 
 				result += "";
 
-				/* eslint-disable max-len */
+				if ( operator === "=" ) {
+					return result === check;
+				}
+				if ( operator === "!=" ) {
+					return result !== check;
+				}
+				if ( operator === "^=" ) {
+					return check && result.indexOf( check ) === 0;
+				}
+				if ( operator === "*=" ) {
+					return check && result.indexOf( check ) > -1;
+				}
+				if ( operator === "$=" ) {
+					return check && result.slice( -check.length ) === check;
+				}
+				if ( operator === "~=" ) {
+					return ( " " + result.replace( rwhitespace, " " ) + " " )
+						.indexOf( check ) > -1;
+				}
+				if ( operator === "|=" ) {
+					return result === check || result.slice( 0, check.length + 1 ) === check + "-";
+				}
 
-				return operator === "=" ? result === check :
-					operator === "!=" ? result !== check :
-					operator === "^=" ? check && result.indexOf( check ) === 0 :
-					operator === "*=" ? check && result.indexOf( check ) > -1 :
-					operator === "$=" ? check && result.slice( -check.length ) === check :
-					operator === "~=" ? ( " " + result.replace( rwhitespace, " " ) + " " ).indexOf( check ) > -1 :
-					operator === "|=" ? result === check || result.slice( 0, check.length + 1 ) === check + "-" :
-					false;
-				/* eslint-enable max-len */
-
+				return false;
 			};
 		},
 
-		"CHILD": function( type, what, _argument, first, last ) {
+		CHILD: function( type, what, _argument, first, last ) {
 			var simple = type.slice( 0, 3 ) !== "nth",
 				forward = type.slice( -4 ) !== "last",
 				ofType = what === "of-type";
@@ -2086,7 +1596,7 @@ Expr = Sizzle.selectors = {
 				} :
 
 				function( elem, _context, xml ) {
-					var cache, uniqueCache, outerCache, node, nodeIndex, start,
+					var cache, outerCache, node, nodeIndex, start,
 						dir = simple !== forward ? "nextSibling" : "previousSibling",
 						parent = elem.parentNode,
 						name = ofType && elem.nodeName.toLowerCase(),
@@ -2101,7 +1611,7 @@ Expr = Sizzle.selectors = {
 								node = elem;
 								while ( ( node = node[ dir ] ) ) {
 									if ( ofType ?
-										node.nodeName.toLowerCase() === name :
+										nodeName( node, name ) :
 										node.nodeType === 1 ) {
 
 										return false;
@@ -2120,17 +1630,9 @@ Expr = Sizzle.selectors = {
 						if ( forward && useCache ) {
 
 							// Seek `elem` from a previously-cached index
-
-							// ...in a gzip-friendly way
-							node = parent;
-							outerCache = node[ expando ] || ( node[ expando ] = {} );
-
-							// Support: IE <9 only
-							// Defend against cloned attroperties (jQuery gh-1709)
-							uniqueCache = outerCache[ node.uniqueID ] ||
-								( outerCache[ node.uniqueID ] = {} );
-
-							cache = uniqueCache[ type ] || [];
+							outerCache = parent[ jQuery.expando ] ||
+								( parent[ jQuery.expando ] = {} );
+							cache = outerCache[ type ] || [];
 							nodeIndex = cache[ 0 ] === dirruns && cache[ 1 ];
 							diff = nodeIndex && cache[ 2 ];
 							node = nodeIndex && parent.childNodes[ nodeIndex ];
@@ -2142,7 +1644,7 @@ Expr = Sizzle.selectors = {
 
 								// When found, cache indexes on `parent` and break
 								if ( node.nodeType === 1 && ++diff && node === elem ) {
-									uniqueCache[ type ] = [ dirruns, nodeIndex, diff ];
+									outerCache[ type ] = [ dirruns, nodeIndex, diff ];
 									break;
 								}
 							}
@@ -2151,17 +1653,9 @@ Expr = Sizzle.selectors = {
 
 							// Use previously-cached element index if available
 							if ( useCache ) {
-
-								// ...in a gzip-friendly way
-								node = elem;
-								outerCache = node[ expando ] || ( node[ expando ] = {} );
-
-								// Support: IE <9 only
-								// Defend against cloned attroperties (jQuery gh-1709)
-								uniqueCache = outerCache[ node.uniqueID ] ||
-									( outerCache[ node.uniqueID ] = {} );
-
-								cache = uniqueCache[ type ] || [];
+								outerCache = elem[ jQuery.expando ] ||
+									( elem[ jQuery.expando ] = {} );
+								cache = outerCache[ type ] || [];
 								nodeIndex = cache[ 0 ] === dirruns && cache[ 1 ];
 								diff = nodeIndex;
 							}
@@ -2175,21 +1669,15 @@ Expr = Sizzle.selectors = {
 									( diff = nodeIndex = 0 ) || start.pop() ) ) {
 
 									if ( ( ofType ?
-										node.nodeName.toLowerCase() === name :
+										nodeName( node, name ) :
 										node.nodeType === 1 ) &&
 										++diff ) {
 
 										// Cache the index of each encountered element
 										if ( useCache ) {
-											outerCache = node[ expando ] ||
-												( node[ expando ] = {} );
-
-											// Support: IE <9 only
-											// Defend against cloned attroperties (jQuery gh-1709)
-											uniqueCache = outerCache[ node.uniqueID ] ||
-												( outerCache[ node.uniqueID ] = {} );
-
-											uniqueCache[ type ] = [ dirruns, diff ];
+											outerCache = node[ jQuery.expando ] ||
+												( node[ jQuery.expando ] = {} );
+											outerCache[ type ] = [ dirruns, diff ];
 										}
 
 										if ( node === elem ) {
@@ -2207,39 +1695,21 @@ Expr = Sizzle.selectors = {
 				};
 		},
 
-		"PSEUDO": function( pseudo, argument ) {
+		PSEUDO: function( pseudo, argument ) {
 
 			// pseudo-class names are case-insensitive
-			// http://www.w3.org/TR/selectors/#pseudo-classes
+			// https://www.w3.org/TR/selectors/#pseudo-classes
 			// Prioritize by case sensitivity in case custom pseudos are added with uppercase letters
 			// Remember that setFilters inherits from pseudos
-			var args,
-				fn = Expr.pseudos[ pseudo ] || Expr.setFilters[ pseudo.toLowerCase() ] ||
-					Sizzle.error( "unsupported pseudo: " + pseudo );
+			var fn = jQuery.expr.pseudos[ pseudo ] ||
+				jQuery.expr.setFilters[ pseudo.toLowerCase() ] ||
+				selectorError( "unsupported pseudo: " + pseudo );
 
 			// The user may use createPseudo to indicate that
 			// arguments are needed to create the filter function
-			// just as Sizzle does
-			if ( fn[ expando ] ) {
+			// just as jQuery does
+			if ( fn[ jQuery.expando ] ) {
 				return fn( argument );
-			}
-
-			// But maintain support for old signatures
-			if ( fn.length > 1 ) {
-				args = [ pseudo, pseudo, "", argument ];
-				return Expr.setFilters.hasOwnProperty( pseudo.toLowerCase() ) ?
-					markFunction( function( seed, matches ) {
-						var idx,
-							matched = fn( seed, argument ),
-							i = matched.length;
-						while ( i-- ) {
-							idx = indexOf( seed, matched[ i ] );
-							seed[ idx ] = !( matches[ idx ] = matched[ i ] );
-						}
-					} ) :
-					function( elem ) {
-						return fn( elem, 0, args );
-					};
 			}
 
 			return fn;
@@ -2249,16 +1719,16 @@ Expr = Sizzle.selectors = {
 	pseudos: {
 
 		// Potentially complex pseudos
-		"not": markFunction( function( selector ) {
+		not: markFunction( function( selector ) {
 
 			// Trim the selector passed to compile
 			// to avoid treating leading and trailing
 			// spaces as combinators
 			var input = [],
 				results = [],
-				matcher = compile( selector.replace( rtrim, "$1" ) );
+				matcher = compile( selector.replace( rtrimCSS, "$1" ) );
 
-			return matcher[ expando ] ?
+			return matcher[ jQuery.expando ] ?
 				markFunction( function( seed, matches, _context, xml ) {
 					var elem,
 						unmatched = matcher( seed, null, xml, [] ),
@@ -2275,22 +1745,23 @@ Expr = Sizzle.selectors = {
 					input[ 0 ] = elem;
 					matcher( input, null, xml, results );
 
-					// Don't keep the element (issue #299)
+					// Don't keep the element
+					// (see https://github.com/jquery/sizzle/issues/299)
 					input[ 0 ] = null;
 					return !results.pop();
 				};
 		} ),
 
-		"has": markFunction( function( selector ) {
+		has: markFunction( function( selector ) {
 			return function( elem ) {
-				return Sizzle( selector, elem ).length > 0;
+				return find( selector, elem ).length > 0;
 			};
 		} ),
 
-		"contains": markFunction( function( text ) {
-			text = text.replace( runescape, funescape );
+		contains: markFunction( function( text ) {
+			text = unescapeSelector( text );
 			return function( elem ) {
-				return ( elem.textContent || getText( elem ) ).indexOf( text ) > -1;
+				return ( elem.textContent || jQuery.text( elem ) ).indexOf( text ) > -1;
 			};
 		} ),
 
@@ -2300,14 +1771,14 @@ Expr = Sizzle.selectors = {
 		// or beginning with the identifier C immediately followed by "-".
 		// The matching of C against the element's language value is performed case-insensitively.
 		// The identifier C does not have to be a valid language name."
-		// http://www.w3.org/TR/selectors/#lang-pseudo
-		"lang": markFunction( function( lang ) {
+		// https://www.w3.org/TR/selectors/#lang-pseudo
+		lang: markFunction( function( lang ) {
 
 			// lang value must be a valid identifier
 			if ( !ridentifier.test( lang || "" ) ) {
-				Sizzle.error( "unsupported lang: " + lang );
+				selectorError( "unsupported lang: " + lang );
 			}
-			lang = lang.replace( runescape, funescape ).toLowerCase();
+			lang = unescapeSelector( lang ).toLowerCase();
 			return function( elem ) {
 				var elemLang;
 				do {
@@ -2324,39 +1795,40 @@ Expr = Sizzle.selectors = {
 		} ),
 
 		// Miscellaneous
-		"target": function( elem ) {
+		target: function( elem ) {
 			var hash = window.location && window.location.hash;
 			return hash && hash.slice( 1 ) === elem.id;
 		},
 
-		"root": function( elem ) {
-			return elem === docElem;
+		root: function( elem ) {
+			return elem === documentElement;
 		},
 
-		"focus": function( elem ) {
+		focus: function( elem ) {
 			return elem === document.activeElement &&
-				( !document.hasFocus || document.hasFocus() ) &&
+				document.hasFocus() &&
 				!!( elem.type || elem.href || ~elem.tabIndex );
 		},
 
 		// Boolean properties
-		"enabled": createDisabledPseudo( false ),
-		"disabled": createDisabledPseudo( true ),
+		enabled: createDisabledPseudo( false ),
+		disabled: createDisabledPseudo( true ),
 
-		"checked": function( elem ) {
+		checked: function( elem ) {
 
 			// In CSS3, :checked should return both checked and selected elements
-			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
-			var nodeName = elem.nodeName.toLowerCase();
-			return ( nodeName === "input" && !!elem.checked ) ||
-				( nodeName === "option" && !!elem.selected );
+			// https://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
+			return ( nodeName( elem, "input" ) && !!elem.checked ) ||
+				( nodeName( elem, "option" ) && !!elem.selected );
 		},
 
-		"selected": function( elem ) {
+		selected: function( elem ) {
 
-			// Accessing this property makes selected-by-default
-			// options in Safari work properly
-			if ( elem.parentNode ) {
+			// Support: IE <=11+
+			// Accessing the selectedIndex property
+			// forces the browser to treat the default option as
+			// selected when in an optgroup.
+			if ( isIE && elem.parentNode ) {
 				// eslint-disable-next-line no-unused-expressions
 				elem.parentNode.selectedIndex;
 			}
@@ -2365,9 +1837,9 @@ Expr = Sizzle.selectors = {
 		},
 
 		// Contents
-		"empty": function( elem ) {
+		empty: function( elem ) {
 
-			// http://www.w3.org/TR/selectors/#empty-pseudo
+			// https://www.w3.org/TR/selectors/#empty-pseudo
 			// :empty is negated by element (1) or content nodes (text: 3; cdata: 4; entity ref: 5),
 			//   but not by others (comment: 8; processing instruction: 7; etc.)
 			// nodeType < 6 works because attributes (2) do not appear as children
@@ -2379,49 +1851,42 @@ Expr = Sizzle.selectors = {
 			return true;
 		},
 
-		"parent": function( elem ) {
-			return !Expr.pseudos[ "empty" ]( elem );
+		parent: function( elem ) {
+			return !jQuery.expr.pseudos.empty( elem );
 		},
 
 		// Element/input types
-		"header": function( elem ) {
+		header: function( elem ) {
 			return rheader.test( elem.nodeName );
 		},
 
-		"input": function( elem ) {
+		input: function( elem ) {
 			return rinputs.test( elem.nodeName );
 		},
 
-		"button": function( elem ) {
-			var name = elem.nodeName.toLowerCase();
-			return name === "input" && elem.type === "button" || name === "button";
+		button: function( elem ) {
+			return nodeName( elem, "input" ) && elem.type === "button" ||
+				nodeName( elem, "button" );
 		},
 
-		"text": function( elem ) {
-			var attr;
-			return elem.nodeName.toLowerCase() === "input" &&
-				elem.type === "text" &&
-
-				// Support: IE<8
-				// New HTML5 attribute values (e.g., "search") appear with elem.type === "text"
-				( ( attr = elem.getAttribute( "type" ) ) == null ||
-					attr.toLowerCase() === "text" );
+		text: function( elem ) {
+			return nodeName( elem, "input" ) && elem.type === "text";
 		},
 
 		// Position-in-collection
-		"first": createPositionalPseudo( function() {
+		first: createPositionalPseudo( function() {
 			return [ 0 ];
 		} ),
 
-		"last": createPositionalPseudo( function( _matchIndexes, length ) {
+		last: createPositionalPseudo( function( _matchIndexes, length ) {
 			return [ length - 1 ];
 		} ),
 
-		"eq": createPositionalPseudo( function( _matchIndexes, length, argument ) {
+		eq: createPositionalPseudo( function( _matchIndexes, length, argument ) {
 			return [ argument < 0 ? argument + length : argument ];
 		} ),
 
-		"even": createPositionalPseudo( function( matchIndexes, length ) {
+		even: createPositionalPseudo( function( matchIndexes, length ) {
 			var i = 0;
 			for ( ; i < length; i += 2 ) {
 				matchIndexes.push( i );
@@ -2429,7 +1894,7 @@ Expr = Sizzle.selectors = {
 			return matchIndexes;
 		} ),
 
-		"odd": createPositionalPseudo( function( matchIndexes, length ) {
+		odd: createPositionalPseudo( function( matchIndexes, length ) {
 			var i = 1;
 			for ( ; i < length; i += 2 ) {
 				matchIndexes.push( i );
@@ -2437,19 +1902,24 @@ Expr = Sizzle.selectors = {
 			return matchIndexes;
 		} ),
 
-		"lt": createPositionalPseudo( function( matchIndexes, length, argument ) {
-			var i = argument < 0 ?
-				argument + length :
-				argument > length ?
-					length :
-					argument;
+		lt: createPositionalPseudo( function( matchIndexes, length, argument ) {
+			var i;
+
+			if ( argument < 0 ) {
+				i = argument + length;
+			} else if ( argument > length ) {
+				i = length;
+			} else {
+				i = argument;
+			}
+
 			for ( ; --i >= 0; ) {
 				matchIndexes.push( i );
 			}
 			return matchIndexes;
 		} ),
 
-		"gt": createPositionalPseudo( function( matchIndexes, length, argument ) {
+		gt: createPositionalPseudo( function( matchIndexes, length, argument ) {
 			var i = argument < 0 ? argument + length : argument;
 			for ( ; ++i < length; ) {
 				matchIndexes.push( i );
@@ -2459,100 +1929,20 @@ Expr = Sizzle.selectors = {
 	}
 };
 
-Expr.pseudos[ "nth" ] = Expr.pseudos[ "eq" ];
+jQuery.expr.pseudos.nth = jQuery.expr.pseudos.eq;
 
 // Add button/input type pseudos
 for ( i in { radio: true, checkbox: true, file: true, password: true, image: true } ) {
-	Expr.pseudos[ i ] = createInputPseudo( i );
+	jQuery.expr.pseudos[ i ] = createInputPseudo( i );
 }
 for ( i in { submit: true, reset: true } ) {
-	Expr.pseudos[ i ] = createButtonPseudo( i );
+	jQuery.expr.pseudos[ i ] = createButtonPseudo( i );
 }
 
 // Easy API for creating new setFilters
 function setFilters() {}
-setFilters.prototype = Expr.filters = Expr.pseudos;
-Expr.setFilters = new setFilters();
-
-tokenize = Sizzle.tokenize = function( selector, parseOnly ) {
-	var matched, match, tokens, type,
-		soFar, groups, preFilters,
-		cached = tokenCache[ selector + " " ];
-
-	if ( cached ) {
-		return parseOnly ? 0 : cached.slice( 0 );
-	}
-
-	soFar = selector;
-	groups = [];
-	preFilters = Expr.preFilter;
-
-	while ( soFar ) {
-
-		// Comma and first run
-		if ( !matched || ( match = rcomma.exec( soFar ) ) ) {
-			if ( match ) {
-
-				// Don't consume trailing commas as valid
-				soFar = soFar.slice( match[ 0 ].length ) || soFar;
-			}
-			groups.push( ( tokens = [] ) );
-		}
-
-		matched = false;
-
-		// Combinators
-		if ( ( match = rcombinators.exec( soFar ) ) ) {
-			matched = match.shift();
-			tokens.push( {
-				value: matched,
-
-				// Cast descendant combinators to space
-				type: match[ 0 ].replace( rtrim, " " )
-			} );
-			soFar = soFar.slice( matched.length );
-		}
-
-		// Filters
-		for ( type in Expr.filter ) {
-			if ( ( match = matchExpr[ type ].exec( soFar ) ) && ( !preFilters[ type ] ||
-				( match = preFilters[ type ]( match ) ) ) ) {
-				matched = match.shift();
-				tokens.push( {
-					value: matched,
-					type: type,
-					matches: match
-				} );
-				soFar = soFar.slice( matched.length );
-			}
-		}
-
-		if ( !matched ) {
-			break;
-		}
-	}
-
-	// Return the length of the invalid excess
-	// if we're just parsing
-	// Otherwise, throw an error or return tokens
-	return parseOnly ?
-		soFar.length :
-		soFar ?
-			Sizzle.error( selector ) :
-
-			// Cache the tokens
-			tokenCache( selector, groups ).slice( 0 );
-};
-
-function toSelector( tokens ) {
-	var i = 0,
-		len = tokens.length,
-		selector = "";
-	for ( ; i < len; i++ ) {
-		selector += tokens[ i ].value;
-	}
-	return selector;
-}
+setFilters.prototype = jQuery.expr.pseudos;
+jQuery.expr.setFilters = new setFilters();
 
 function addCombinator( matcher, combinator, base ) {
 	var dir = combinator.dir,
@@ -2575,7 +1965,7 @@ function addCombinator( matcher, combinator, base ) {
 
 		// Check against all ancestor/preceding elements
 		function( elem, context, xml ) {
-			var oldCache, uniqueCache, outerCache,
+			var oldCache, outerCache,
 				newCache = [ dirruns, doneName ];
 
 			// We can't set arbitrary data on XML nodes, so they don't benefit from combinator caching
@@ -2590,16 +1980,11 @@ function addCombinator( matcher, combinator, base ) {
 			} else {
 				while ( ( elem = elem[ dir ] ) ) {
 					if ( elem.nodeType === 1 || checkNonElements ) {
-						outerCache = elem[ expando ] || ( elem[ expando ] = {} );
+						outerCache = elem[ jQuery.expando ] || ( elem[ jQuery.expando ] = {} );
 
-						// Support: IE <9 only
-						// Defend against cloned attroperties (jQuery gh-1709)
-						uniqueCache = outerCache[ elem.uniqueID ] ||
-							( outerCache[ elem.uniqueID ] = {} );
-
-						if ( skip && skip === elem.nodeName.toLowerCase() ) {
+						if ( skip && nodeName( elem, skip ) ) {
 							elem = elem[ dir ] || elem;
-						} else if ( ( oldCache = uniqueCache[ key ] ) &&
+						} else if ( ( oldCache = outerCache[ key ] ) &&
 							oldCache[ 0 ] === dirruns && oldCache[ 1 ] === doneName ) {
 
 							// Assign to newCache so results back-propagate to previous elements
@@ -2607,7 +1992,7 @@ function addCombinator( matcher, combinator, base ) {
 						} else {
 
 							// Reuse newcache so results back-propagate to previous elements
-							uniqueCache[ key ] = newCache;
+							outerCache[ key ] = newCache;
 
 							// A match means we're done; a fail means we have to keep checking
 							if ( ( newCache[ 2 ] = matcher( elem, context, xml ) ) ) {
@@ -2639,7 +2024,7 @@ function multipleContexts( selector, contexts, results ) {
 	var i = 0,
 		len = contexts.length;
 	for ( ; i < len; i++ ) {
-		Sizzle( selector, contexts[ i ], results );
+		find( selector, contexts[ i ], results );
 	}
 	return results;
 }
@@ -2666,45 +2051,44 @@ function condense( unmatched, map, filter, context, xml ) {
 }
 
 function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postSelector ) {
-	if ( postFilter && !postFilter[ expando ] ) {
+	if ( postFilter && !postFilter[ jQuery.expando ] ) {
 		postFilter = setMatcher( postFilter );
 	}
-	if ( postFinder && !postFinder[ expando ] ) {
+	if ( postFinder && !postFinder[ jQuery.expando ] ) {
 		postFinder = setMatcher( postFinder, postSelector );
 	}
 	return markFunction( function( seed, results, context, xml ) {
-		var temp, i, elem,
+		var temp, i, elem, matcherOut,
 			preMap = [],
 			postMap = [],
 			preexisting = results.length,
 
 			// Get initial elements from seed or context
-			elems = seed || multipleContexts(
-				selector || "*",
-				context.nodeType ? [ context ] : context,
-				[]
-			),
+			elems = seed ||
+				multipleContexts( selector || "*",
+					context.nodeType ? [ context ] : context, [] ),
 
 			// Prefilter to get matcher input, preserving a map for seed-results synchronization
 			matcherIn = preFilter && ( seed || !selector ) ?
 				condense( elems, preMap, preFilter, context, xml ) :
-				elems,
+				elems;
 
-			matcherOut = matcher ?
-
-				// If we have a postFinder, or filtered seed, or non-seed postFilter or preexisting results,
-				postFinder || ( seed ? preFilter : preexisting || postFilter ) ?
-
-					// ...intermediate processing is necessary
-					[] :
-
-					// ...otherwise use results directly
-					results :
-				matcherIn;
-
-		// Find primary matches
 		if ( matcher ) {
+
+			// If we have a postFinder, or filtered seed, or non-seed postFilter
+			// or preexisting results,
+			matcherOut = postFinder || ( seed ? preFilter : preexisting || postFilter ) ?
+
+				// ...intermediate processing is necessary
+				[] :
+
+				// ...otherwise use results directly
+				results;
+
+			// Find primary matches
 			matcher( matcherIn, matcherOut, context, xml );
+		} else {
+			matcherOut = matcherIn;
 		}
 
 		// Apply postFilter
@@ -2742,7 +2126,7 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 				i = matcherOut.length;
 				while ( i-- ) {
 					if ( ( elem = matcherOut[ i ] ) &&
-						( temp = postFinder ? indexOf( seed, elem ) : preMap[ i ] ) > -1 ) {
+						( temp = postFinder ? indexOf.call( seed, elem ) : preMap[ i ] ) > -1 ) {
 
 						seed[ temp ] = !( results[ temp ] = elem );
 					}
@@ -2768,8 +2152,8 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 function matcherFromTokens( tokens ) {
 	var checkContext, matcher, j,
 		len = tokens.length,
-		leadingRelative = Expr.relative[ tokens[ 0 ].type ],
-		implicitRelative = leadingRelative || Expr.relative[ " " ],
+		leadingRelative = jQuery.expr.relative[ tokens[ 0 ].type ],
+		implicitRelative = leadingRelative || jQuery.expr.relative[ " " ],
 		i = leadingRelative ? 1 : 0,
 
 		// The foundational matcher ensures that elements are reachable from top-level context(s)
@@ -2777,32 +2161,38 @@ function matcherFromTokens( tokens ) {
 			return elem === checkContext;
 		}, implicitRelative, true ),
 		matchAnyContext = addCombinator( function( elem ) {
-			return indexOf( checkContext, elem ) > -1;
+			return indexOf.call( checkContext, elem ) > -1;
 		}, implicitRelative, true ),
 		matchers = [ function( elem, context, xml ) {
-			var ret = ( !leadingRelative && ( xml || context !== outermostContext ) ) || (
+
+			// Support: IE 11+
+			// IE sometimes throws a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			// eslint-disable-next-line eqeqeq
+			var ret = ( !leadingRelative && ( xml || context != outermostContext ) ) || (
 				( checkContext = context ).nodeType ?
 					matchContext( elem, context, xml ) :
 					matchAnyContext( elem, context, xml ) );
 
-			// Avoid hanging onto element (issue #299)
+			// Avoid hanging onto element
+			// (see https://github.com/jquery/sizzle/issues/299)
 			checkContext = null;
 			return ret;
 		} ];
 
 	for ( ; i < len; i++ ) {
-		if ( ( matcher = Expr.relative[ tokens[ i ].type ] ) ) {
+		if ( ( matcher = jQuery.expr.relative[ tokens[ i ].type ] ) ) {
 			matchers = [ addCombinator( elementMatcher( matchers ), matcher ) ];
 		} else {
-			matcher = Expr.filter[ tokens[ i ].type ].apply( null, tokens[ i ].matches );
+			matcher = jQuery.expr.filter[ tokens[ i ].type ].apply( null, tokens[ i ].matches );
 
 			// Return special upon seeing a positional matcher
-			if ( matcher[ expando ] ) {
+			if ( matcher[ jQuery.expando ] ) {
 
 				// Find the next relative operator (if any) for proper handling
 				j = ++i;
 				for ( ; j < len; j++ ) {
-					if ( Expr.relative[ tokens[ j ].type ] ) {
+					if ( jQuery.expr.relative[ tokens[ j ].type ] ) {
 						break;
 					}
 				}
@@ -2810,11 +2200,10 @@ function matcherFromTokens( tokens ) {
 					i > 1 && elementMatcher( matchers ),
 					i > 1 && toSelector(
 
-					// If the preceding token was a descendant combinator, insert an implicit any-element `*`
-					tokens
-						.slice( 0, i - 1 )
-						.concat( { value: tokens[ i - 2 ].type === " " ? "*" : "" } )
-					).replace( rtrim, "$1" ),
+						// If the preceding token was a descendant combinator, insert an implicit any-element `*`
+						tokens.slice( 0, i - 1 )
+							.concat( { value: tokens[ i - 2 ].type === " " ? "*" : "" } )
+					).replace( rtrimCSS, "$1" ),
 					matcher,
 					i < j && matcherFromTokens( tokens.slice( i, j ) ),
 					j < len && matcherFromTokens( ( tokens = tokens.slice( j ) ) ),
@@ -2840,30 +2229,27 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 				contextBackup = outermostContext,
 
 				// We must always have either seed elements or outermost context
-				elems = seed || byElement && Expr.find[ "TAG" ]( "*", outermost ),
+				elems = seed || byElement && jQuery.expr.find.TAG( "*", outermost ),
 
 				// Use integer dirruns iff this is the outermost matcher
-				dirrunsUnique = ( dirruns += contextBackup == null ? 1 : Math.random() || 0.1 ),
-				len = elems.length;
+				dirrunsUnique = ( dirruns += contextBackup == null ? 1 : Math.random() || 0.1 );
 
 			if ( outermost ) {
 
-				// Support: IE 11+, Edge 17 - 18+
-				// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+				// Support: IE 11+
+				// IE sometimes throws a "Permission denied" error when strict-comparing
 				// two documents; shallow comparisons work.
 				// eslint-disable-next-line eqeqeq
 				outermostContext = context == document || context || outermost;
 			}
 
 			// Add elements passing elementMatchers directly to results
-			// Support: IE<9, Safari
-			// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching elements by id
-			for ( ; i !== len && ( elem = elems[ i ] ) != null; i++ ) {
+			for ( ; ( elem = elems[ i ] ) != null; i++ ) {
 				if ( byElement && elem ) {
 					j = 0;
 
-					// Support: IE 11+, Edge 17 - 18+
-					// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+					// Support: IE 11+
+					// IE sometimes throws a "Permission denied" error when strict-comparing
 					// two documents; shallow comparisons work.
 					// eslint-disable-next-line eqeqeq
 					if ( !context && elem.ownerDocument != document ) {
@@ -2872,7 +2258,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 					}
 					while ( ( matcher = elementMatchers[ j++ ] ) ) {
 						if ( matcher( elem, context || document, xml ) ) {
-							results.push( elem );
+							push.call( results, elem );
 							break;
 						}
 					}
@@ -2935,7 +2321,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 				if ( outermost && !seed && setMatched.length > 0 &&
 					( matchedCount + setMatchers.length ) > 1 ) {
 
-					Sizzle.uniqueSort( results );
+					jQuery.uniqueSort( results );
 				}
 			}
 
@@ -2953,7 +2339,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 		superMatcher;
 }
 
-compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
+function compile( selector, match /* Internal Use Only */ ) {
 	var i,
 		setMatchers = [],
 		elementMatchers = [],
@@ -2968,7 +2354,7 @@ compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
 		i = match.length;
 		while ( i-- ) {
 			cached = matcherFromTokens( match[ i ] );
-			if ( cached[ expando ] ) {
+			if ( cached[ jQuery.expando ] ) {
 				setMatchers.push( cached );
 			} else {
 				elementMatchers.push( cached );
@@ -2976,27 +2362,25 @@ compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
 		}
 
 		// Cache the compiled function
-		cached = compilerCache(
-			selector,
-			matcherFromGroupMatchers( elementMatchers, setMatchers )
-		);
+		cached = compilerCache( selector,
+			matcherFromGroupMatchers( elementMatchers, setMatchers ) );
 
 		// Save selector and tokenization
 		cached.selector = selector;
 	}
 	return cached;
-};
+}
 
 /**
- * A low-level selection function that works with Sizzle's compiled
+ * A low-level selection function that works with jQuery's compiled
  *  selector functions
  * @param {String|Function} selector A selector or a pre-compiled
- *  selector function built with Sizzle.compile
+ *  selector function built with jQuery selector compile
  * @param {Element} context
  * @param {Array} [results]
  * @param {Array} [seed] A set of elements to match against
  */
-select = Sizzle.select = function( selector, context, results, seed ) {
+function select( selector, context, results, seed ) {
 	var i, tokens, token, type, find,
 		compiled = typeof selector === "function" && selector,
 		match = !seed && tokenize( ( selector = compiled.selector || selector ) );
@@ -3010,10 +2394,13 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 		// Reduce context if the leading compound selector is an ID
 		tokens = match[ 0 ] = match[ 0 ].slice( 0 );
 		if ( tokens.length > 2 && ( token = tokens[ 0 ] ).type === "ID" &&
-			context.nodeType === 9 && documentIsHTML && Expr.relative[ tokens[ 1 ].type ] ) {
+				context.nodeType === 9 && documentIsHTML &&
+				jQuery.expr.relative[ tokens[ 1 ].type ] ) {
 
-			context = ( Expr.find[ "ID" ]( token.matches[ 0 ]
-				.replace( runescape, funescape ), context ) || [] )[ 0 ];
+			context = ( jQuery.expr.find.ID(
+				unescapeSelector( token.matches[ 0 ] ),
+				context
+			) || [] )[ 0 ];
 			if ( !context ) {
 				return results;
 
@@ -3026,21 +2413,21 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 		}
 
 		// Fetch a seed set for right-to-left matching
-		i = matchExpr[ "needsContext" ].test( selector ) ? 0 : tokens.length;
+		i = matchExpr.needsContext.test( selector ) ? 0 : tokens.length;
 		while ( i-- ) {
 			token = tokens[ i ];
 
 			// Abort if we hit a combinator
-			if ( Expr.relative[ ( type = token.type ) ] ) {
+			if ( jQuery.expr.relative[ ( type = token.type ) ] ) {
 				break;
 			}
-			if ( ( find = Expr.find[ type ] ) ) {
+			if ( ( find = jQuery.expr.find[ type ] ) ) {
 
 				// Search, expanding context for leading sibling combinators
 				if ( ( seed = find(
-					token.matches[ 0 ].replace( runescape, funescape ),
-					rsibling.test( tokens[ 0 ].type ) && testContext( context.parentNode ) ||
-						context
+					unescapeSelector( token.matches[ 0 ] ),
+					rsibling.test( tokens[ 0 ].type ) &&
+						testContext( context.parentNode ) || context
 				) ) ) {
 
 					// If seed is empty or no tokens remain, we can return early
@@ -3067,93 +2454,21 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 		!context || rsibling.test( selector ) && testContext( context.parentNode ) || context
 	);
 	return results;
-};
-
-// One-time assignments
-
-// Sort stability
-support.sortStable = expando.split( "" ).sort( sortOrder ).join( "" ) === expando;
-
-// Support: Chrome 14-35+
-// Always assume duplicates if they aren't passed to the comparison function
-support.detectDuplicates = !!hasDuplicate;
+}
 
 // Initialize against the default document
 setDocument();
 
-// Support: Webkit<537.32 - Safari 6.0.3/Chrome 25 (fixed in Chrome 27)
-// Detached nodes confoundingly follow *each other*
-support.sortDetached = assert( function( el ) {
+jQuery.find = find;
 
-	// Should return 1, but returns 4 (following)
-	return el.compareDocumentPosition( document.createElement( "fieldset" ) ) & 1;
-} );
+// These have always been private, but they used to be documented as part of
+// Sizzle so let's maintain them for now for backwards compatibility purposes.
+find.compile = compile;
+find.select = select;
+find.setDocument = setDocument;
+find.tokenize = tokenize;
 
-// Support: IE<8
-// Prevent attribute/property "interpolation"
-// https://msdn.microsoft.com/en-us/library/ms536429%28VS.85%29.aspx
-if ( !assert( function( el ) {
-	el.innerHTML = "<a href='#'></a>";
-	return el.firstChild.getAttribute( "href" ) === "#";
-} ) ) {
-	addHandle( "type|href|height|width", function( elem, name, isXML ) {
-		if ( !isXML ) {
-			return elem.getAttribute( name, name.toLowerCase() === "type" ? 1 : 2 );
-		}
-	} );
-}
-
-// Support: IE<9
-// Use defaultValue in place of getAttribute("value")
-if ( !support.attributes || !assert( function( el ) {
-	el.innerHTML = "<input/>";
-	el.firstChild.setAttribute( "value", "" );
-	return el.firstChild.getAttribute( "value" ) === "";
-} ) ) {
-	addHandle( "value", function( elem, _name, isXML ) {
-		if ( !isXML && elem.nodeName.toLowerCase() === "input" ) {
-			return elem.defaultValue;
-		}
-	} );
-}
-
-// Support: IE<9
-// Use getAttributeNode to fetch booleans when getAttribute lies
-if ( !assert( function( el ) {
-	return el.getAttribute( "disabled" ) == null;
-} ) ) {
-	addHandle( booleans, function( elem, name, isXML ) {
-		var val;
-		if ( !isXML ) {
-			return elem[ name ] === true ? name.toLowerCase() :
-				( val = elem.getAttributeNode( name ) ) && val.specified ?
-					val.value :
-					null;
-		}
-	} );
-}
-
-return Sizzle;
-
-} )( window );
-
-
-
-jQuery.find = Sizzle;
-jQuery.expr = Sizzle.selectors;
-
-// Deprecated
-jQuery.expr[ ":" ] = jQuery.expr.pseudos;
-jQuery.uniqueSort = jQuery.unique = Sizzle.uniqueSort;
-jQuery.text = Sizzle.getText;
-jQuery.isXMLDoc = Sizzle.isXML;
-jQuery.contains = Sizzle.contains;
-jQuery.escapeSelector = Sizzle.escape;
-
-
-
-
-var dir = function( elem, dir, until ) {
+function dir( elem, dir, until ) {
 	var matched = [],
 		truncate = until !== undefined;
 
@@ -3166,10 +2481,9 @@ var dir = function( elem, dir, until ) {
 		}
 	}
 	return matched;
-};
+}
 
-
-var siblings = function( n, elem ) {
+function siblings( n, elem ) {
 	var matched = [];
 
 	for ( ; n; n = n.nextSibling ) {
@@ -3179,25 +2493,23 @@ var siblings = function( n, elem ) {
 	}
 
 	return matched;
-};
-
+}
 
 var rneedsContext = jQuery.expr.match.needsContext;
 
+// rsingleTag matches a string consisting of a single HTML element with no attributes
+// and captures the element's name
+var rsingleTag = /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i;
 
-
-function nodeName( elem, name ) {
-
-  return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
-
-};
-var rsingleTag = ( /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i );
-
-
+function isObviousHtml( input ) {
+	return input[ 0 ] === "<" &&
+		input[ input.length - 1 ] === ">" &&
+		input.length >= 3;
+}
 
 // Implement the identical functionality for filter and not
 function winnow( elements, qualifier, not ) {
-	if ( isFunction( qualifier ) ) {
+	if ( typeof qualifier === "function" ) {
 		return jQuery.grep( elements, function( elem, i ) {
 			return !!qualifier.call( elem, i, elem ) !== not;
 		} );
@@ -3281,20 +2593,18 @@ jQuery.fn.extend( {
 	}
 } );
 
-
 // Initialize a jQuery object
-
 
 // A central reference to the root jQuery(document)
 var rootjQuery,
 
 	// A simple way to check for HTML strings
-	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
-	// Strict HTML recognition (#11290: must start with <)
+	// Prioritize #id over <tag> to avoid XSS via location.hash (trac-9521)
+	// Strict HTML recognition (trac-11290: must start with <)
 	// Shortcut simple #id case for speed
 	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/,
 
-	init = jQuery.fn.init = function( selector, context, root ) {
+	init = jQuery.fn.init = function( selector, context ) {
 		var match, elem;
 
 		// HANDLE: $(""), $(null), $(undefined), $(false)
@@ -3302,24 +2612,41 @@ var rootjQuery,
 			return this;
 		}
 
-		// Method init() accepts an alternate rootjQuery
-		// so migrate can support jQuery.sub (gh-2101)
-		root = root || rootjQuery;
+		// HANDLE: $(DOMElement)
+		if ( selector.nodeType ) {
+			this[ 0 ] = selector;
+			this.length = 1;
+			return this;
 
-		// Handle HTML strings
-		if ( typeof selector === "string" ) {
-			if ( selector[ 0 ] === "<" &&
-				selector[ selector.length - 1 ] === ">" &&
-				selector.length >= 3 ) {
+		// HANDLE: $(function)
+		// Shortcut for document ready
+		} else if ( typeof selector === "function" ) {
+			return rootjQuery.ready !== undefined ?
+				rootjQuery.ready( selector ) :
 
-				// Assume that strings that start and end with <> are HTML and skip the regex check
+				// Execute immediately if ready is not present
+				selector( jQuery );
+
+		} else {
+
+			// Handle obvious HTML strings
+			match = selector + "";
+			if ( isObviousHtml( match ) ) {
+
+				// Assume that strings that start and end with <> are HTML and skip
+				// the regex check. This also handles browser-supported HTML wrappers
+				// like TrustedHTML.
 				match = [ null, selector, null ];
 
-			} else {
+			// Handle HTML strings or selectors
+			} else if ( typeof selector === "string" ) {
 				match = rquickExpr.exec( selector );
+			} else {
+				return jQuery.makeArray( selector, this );
 			}
 
 			// Match html or make sure no context is specified for #id
+			// Note: match[1] may be a string or a TrustedHTML wrapper
 			if ( match && ( match[ 1 ] || !context ) ) {
 
 				// HANDLE: $(html) -> $(array)
@@ -3330,7 +2657,7 @@ var rootjQuery,
 					// Intentionally let the error be thrown if parseHTML is not present
 					jQuery.merge( this, jQuery.parseHTML(
 						match[ 1 ],
-						context && context.nodeType ? context.ownerDocument || context : document,
+						context && context.nodeType ? context.ownerDocument || context : document$1,
 						true
 					) );
 
@@ -3339,7 +2666,7 @@ var rootjQuery,
 						for ( match in context ) {
 
 							// Properties of context are called as methods if possible
-							if ( isFunction( this[ match ] ) ) {
+							if ( typeof this[ match ] === "function" ) {
 								this[ match ]( context[ match ] );
 
 							// ...and otherwise set as attributes
@@ -3353,7 +2680,7 @@ var rootjQuery,
 
 				// HANDLE: $(#id)
 				} else {
-					elem = document.getElementById( match[ 2 ] );
+					elem = document$1.getElementById( match[ 2 ] );
 
 					if ( elem ) {
 
@@ -3364,41 +2691,24 @@ var rootjQuery,
 					return this;
 				}
 
-			// HANDLE: $(expr, $(...))
+			// HANDLE: $(expr) & $(expr, $(...))
 			} else if ( !context || context.jquery ) {
-				return ( context || root ).find( selector );
+				return ( context || rootjQuery ).find( selector );
 
 			// HANDLE: $(expr, context)
 			// (which is just equivalent to: $(context).find(expr)
 			} else {
 				return this.constructor( context ).find( selector );
 			}
-
-		// HANDLE: $(DOMElement)
-		} else if ( selector.nodeType ) {
-			this[ 0 ] = selector;
-			this.length = 1;
-			return this;
-
-		// HANDLE: $(function)
-		// Shortcut for document ready
-		} else if ( isFunction( selector ) ) {
-			return root.ready !== undefined ?
-				root.ready( selector ) :
-
-				// Execute immediately if ready is not present
-				selector( jQuery );
 		}
 
-		return jQuery.makeArray( selector, this );
 	};
 
 // Give the init function the jQuery prototype for later instantiation
 init.prototype = jQuery.fn;
 
 // Initialize central reference
-rootjQuery = jQuery( document );
-
+rootjQuery = jQuery( document$1 );
 
 var rparentsprev = /^(?:parents|prev(?:Until|All))/,
 
@@ -3441,7 +2751,7 @@ jQuery.fn.extend( {
 					if ( cur.nodeType < 11 && ( targets ?
 						targets.index( cur ) > -1 :
 
-						// Don't pass non-elements to Sizzle
+						// Don't pass non-elements to jQuery#find
 						cur.nodeType === 1 &&
 							jQuery.find.matchesSelector( cur, selectors ) ) ) {
 
@@ -3542,7 +2852,7 @@ jQuery.each( {
 			return elem.contentDocument;
 		}
 
-		// Support: IE 9 - 11 only, iOS 7 only, Android Browser <=4.3 only
+		// Support: IE 9 - 11+
 		// Treat the template element as a regular one in browsers that
 		// don't support it.
 		if ( nodeName( elem, "template" ) ) {
@@ -3579,9 +2889,6 @@ jQuery.each( {
 		return this.pushStack( matched );
 	};
 } );
-var rnothtmlwhite = ( /[^\x20\t\r\n\f]+/g );
-
-
 
 // Convert String-formatted options into Object-formatted ones
 function createOptions( options ) {
@@ -3703,7 +3010,7 @@ jQuery.Callbacks = function( options ) {
 
 					( function add( args ) {
 						jQuery.each( args, function( _, arg ) {
-							if ( isFunction( arg ) ) {
+							if ( typeof arg === "function" ) {
 								if ( !options.unique || !self.has( arg ) ) {
 									list.push( arg );
 								}
@@ -3808,7 +3115,6 @@ jQuery.Callbacks = function( options ) {
 	return self;
 };
 
-
 function Identity( v ) {
 	return v;
 }
@@ -3822,11 +3128,11 @@ function adoptValue( value, resolve, reject, noValue ) {
 	try {
 
 		// Check for promise aspect first to privilege synchronous behavior
-		if ( value && isFunction( ( method = value.promise ) ) ) {
+		if ( value && typeof( method = value.promise ) === "function" ) {
 			method.call( value ).done( resolve ).fail( reject );
 
 		// Other thenables
-		} else if ( value && isFunction( ( method = value.then ) ) ) {
+		} else if ( value && typeof( method = value.then ) === "function" ) {
 			method.call( value, resolve, reject );
 
 		// Other non-thenables
@@ -3842,10 +3148,7 @@ function adoptValue( value, resolve, reject, noValue ) {
 	// Since jQuery.when doesn't unwrap thenables, we can skip the extra checks appearing in
 	// Deferred#then to conditionally suppress rejection.
 	} catch ( value ) {
-
-		// Support: Android 4.0 only
-		// Strict mode functions invoked without .call/.apply get global-object context
-		reject.apply( undefined, [ value ] );
+		reject( value );
 	}
 }
 
@@ -3872,7 +3175,7 @@ jQuery.extend( {
 					deferred.done( arguments ).fail( arguments );
 					return this;
 				},
-				"catch": function( fn ) {
+				catch: function( fn ) {
 					return promise.then( null, fn );
 				},
 
@@ -3884,14 +3187,15 @@ jQuery.extend( {
 						jQuery.each( tuples, function( _i, tuple ) {
 
 							// Map tuples (progress, done, fail) to arguments (done, fail, progress)
-							var fn = isFunction( fns[ tuple[ 4 ] ] ) && fns[ tuple[ 4 ] ];
+							var fn = typeof fns[ tuple[ 4 ] ] === "function" &&
+								fns[ tuple[ 4 ] ];
 
 							// deferred.progress(function() { bind to newDefer or newDefer.notify })
 							// deferred.done(function() { bind to newDefer or newDefer.resolve })
 							// deferred.fail(function() { bind to newDefer or newDefer.reject })
 							deferred[ tuple[ 1 ] ]( function() {
 								var returned = fn && fn.apply( this, arguments );
-								if ( returned && isFunction( returned.promise ) ) {
+								if ( returned && typeof returned.promise === "function" ) {
 									returned.promise()
 										.progress( newDefer.notify )
 										.done( newDefer.resolve )
@@ -3945,7 +3249,7 @@ jQuery.extend( {
 										returned.then;
 
 									// Handle a returned thenable
-									if ( isFunction( then ) ) {
+									if ( typeof then === "function" ) {
 
 										// Special processors (notify) just wait for resolution
 										if ( special ) {
@@ -3996,7 +3300,7 @@ jQuery.extend( {
 
 											if ( jQuery.Deferred.exceptionHook ) {
 												jQuery.Deferred.exceptionHook( e,
-													process.stackTrace );
+													process.error );
 											}
 
 											// Support: Promises/A+ section 2.3.3.3.4.1
@@ -4024,10 +3328,10 @@ jQuery.extend( {
 								process();
 							} else {
 
-								// Call an optional hook to record the stack, in case of exception
+								// Call an optional hook to record the error, in case of exception
 								// since it's otherwise lost when execution goes async
-								if ( jQuery.Deferred.getStackHook ) {
-									process.stackTrace = jQuery.Deferred.getStackHook();
+								if ( jQuery.Deferred.getErrorHook ) {
+									process.error = jQuery.Deferred.getErrorHook();
 								}
 								window.setTimeout( process );
 							}
@@ -4041,7 +3345,7 @@ jQuery.extend( {
 							resolve(
 								0,
 								newDefer,
-								isFunction( onProgress ) ?
+								typeof onProgress === "function" ?
 									onProgress :
 									Identity,
 								newDefer.notifyWith
@@ -4053,7 +3357,7 @@ jQuery.extend( {
 							resolve(
 								0,
 								newDefer,
-								isFunction( onFulfilled ) ?
+								typeof onFulfilled === "function" ?
 									onFulfilled :
 									Identity
 							)
@@ -4064,7 +3368,7 @@ jQuery.extend( {
 							resolve(
 								0,
 								newDefer,
-								isFunction( onRejected ) ?
+								typeof onRejected === "function" ?
 									onRejected :
 									Thrower
 							)
@@ -4161,8 +3465,8 @@ jQuery.extend( {
 			resolveContexts = Array( i ),
 			resolveValues = slice.call( arguments ),
 
-			// the master Deferred
-			master = jQuery.Deferred(),
+			// the primary Deferred
+			primary = jQuery.Deferred(),
 
 			// subordinate callback factory
 			updateFunc = function( i ) {
@@ -4170,58 +3474,56 @@ jQuery.extend( {
 					resolveContexts[ i ] = this;
 					resolveValues[ i ] = arguments.length > 1 ? slice.call( arguments ) : value;
 					if ( !( --remaining ) ) {
-						master.resolveWith( resolveContexts, resolveValues );
+						primary.resolveWith( resolveContexts, resolveValues );
 					}
 				};
 			};
 
 		// Single- and empty arguments are adopted like Promise.resolve
 		if ( remaining <= 1 ) {
-			adoptValue( singleValue, master.done( updateFunc( i ) ).resolve, master.reject,
+			adoptValue( singleValue, primary.done( updateFunc( i ) ).resolve, primary.reject,
 				!remaining );
 
 			// Use .then() to unwrap secondary thenables (cf. gh-3000)
-			if ( master.state() === "pending" ||
-				isFunction( resolveValues[ i ] && resolveValues[ i ].then ) ) {
+			if ( primary.state() === "pending" ||
+				typeof( resolveValues[ i ] && resolveValues[ i ].then ) === "function" ) {
 
-				return master.then();
+				return primary.then();
 			}
 		}
 
 		// Multiple arguments are aggregated like Promise.all array elements
 		while ( i-- ) {
-			adoptValue( resolveValues[ i ], updateFunc( i ), master.reject );
+			adoptValue( resolveValues[ i ], updateFunc( i ), primary.reject );
 		}
 
-		return master.promise();
+		return primary.promise();
 	}
 } );
-
 
 // These usually indicate a programmer mistake during development,
 // warn about them ASAP rather than swallowing them by default.
 var rerrorNames = /^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;
 
-jQuery.Deferred.exceptionHook = function( error, stack ) {
+// If `jQuery.Deferred.getErrorHook` is defined, `asyncError` is an error
+// captured before the async barrier to get the original error cause
+// which may otherwise be hidden.
+jQuery.Deferred.exceptionHook = function( error, asyncError ) {
 
-	// Support: IE 8 - 9 only
-	// Console exists when dev tools are open, which can happen at any time
-	if ( window.console && window.console.warn && error && rerrorNames.test( error.name ) ) {
-		window.console.warn( "jQuery.Deferred exception: " + error.message, error.stack, stack );
+	if ( error && rerrorNames.test( error.name ) ) {
+		window.console.warn(
+			"jQuery.Deferred exception",
+			error,
+			asyncError
+		);
 	}
 };
-
-
-
 
 jQuery.readyException = function( error ) {
 	window.setTimeout( function() {
 		throw error;
 	} );
 };
-
-
-
 
 // The deferred used on DOM ready
 var readyList = jQuery.Deferred();
@@ -4247,7 +3549,7 @@ jQuery.extend( {
 	isReady: false,
 
 	// A counter to track how many items to wait for before
-	// the ready event fires. See #6781
+	// the ready event fires. See trac-6781
 	readyWait: 1,
 
 	// Handle when the DOM is ready
@@ -4267,7 +3569,7 @@ jQuery.extend( {
 		}
 
 		// If there are functions bound, to execute
-		readyList.resolveWith( document, [ jQuery ] );
+		readyList.resolveWith( document$1, [ jQuery ] );
 	}
 } );
 
@@ -4275,17 +3577,14 @@ jQuery.ready.then = readyList.then;
 
 // The ready event handler and self cleanup method
 function completed() {
-	document.removeEventListener( "DOMContentLoaded", completed );
+	document$1.removeEventListener( "DOMContentLoaded", completed );
 	window.removeEventListener( "load", completed );
 	jQuery.ready();
 }
 
 // Catch cases where $(document).ready() is called
 // after the browser event has already occurred.
-// Support: IE <=9 - 10 only
-// Older IE sometimes signals "interactive" too soon
-if ( document.readyState === "complete" ||
-	( document.readyState !== "loading" && !document.documentElement.doScroll ) ) {
+if ( document$1.readyState !== "loading" ) {
 
 	// Handle it asynchronously to allow scripts the opportunity to delay ready
 	window.setTimeout( jQuery.ready );
@@ -4293,93 +3592,29 @@ if ( document.readyState === "complete" ||
 } else {
 
 	// Use the handy event callback
-	document.addEventListener( "DOMContentLoaded", completed );
+	document$1.addEventListener( "DOMContentLoaded", completed );
 
 	// A fallback to window.onload, that will always work
 	window.addEventListener( "load", completed );
 }
 
-
-
-
-// Multifunctional method to get and set values of a collection
-// The value/s can optionally be executed if it's a function
-var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
-	var i = 0,
-		len = elems.length,
-		bulk = key == null;
-
-	// Sets many values
-	if ( toType( key ) === "object" ) {
-		chainable = true;
-		for ( i in key ) {
-			access( elems, fn, i, key[ i ], true, emptyGet, raw );
-		}
-
-	// Sets one value
-	} else if ( value !== undefined ) {
-		chainable = true;
-
-		if ( !isFunction( value ) ) {
-			raw = true;
-		}
-
-		if ( bulk ) {
-
-			// Bulk operations run against the entire set
-			if ( raw ) {
-				fn.call( elems, value );
-				fn = null;
-
-			// ...except when executing function values
-			} else {
-				bulk = fn;
-				fn = function( elem, _key, value ) {
-					return bulk.call( jQuery( elem ), value );
-				};
-			}
-		}
-
-		if ( fn ) {
-			for ( ; i < len; i++ ) {
-				fn(
-					elems[ i ], key, raw ?
-					value :
-					value.call( elems[ i ], i, fn( elems[ i ], key ) )
-				);
-			}
-		}
-	}
-
-	if ( chainable ) {
-		return elems;
-	}
-
-	// Gets
-	if ( bulk ) {
-		return fn.call( elems );
-	}
-
-	return len ? fn( elems[ 0 ], key ) : emptyGet;
-};
-
-
 // Matches dashed string for camelizing
-var rmsPrefix = /^-ms-/,
-	rdashAlpha = /-([a-z])/g;
+var rdashAlpha = /-([a-z])/g;
 
 // Used by camelCase as callback to replace()
 function fcamelCase( _all, letter ) {
 	return letter.toUpperCase();
 }
 
-// Convert dashed to camelCase; used by the css and data modules
-// Support: IE <=9 - 11, Edge 12 - 15
-// Microsoft forgot to hump their vendor prefix (#9572)
+// Convert dashed to camelCase
 function camelCase( string ) {
-	return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
+	return string.replace( rdashAlpha, fcamelCase );
 }
-var acceptData = function( owner ) {
+
+/**
+ * Determines whether an object can have data
+ */
+function acceptData( owner ) {
 
 	// Accepts only:
 	//  - Node
@@ -4388,10 +3623,7 @@ var acceptData = function( owner ) {
 	//  - Object
 	//    - Any
 	return owner.nodeType === 1 || owner.nodeType === 9 || !( +owner.nodeType );
-};
-
-
-
+}
 
 function Data() {
 	this.expando = jQuery.expando + Data.uid++;
@@ -4411,7 +3643,7 @@ Data.prototype = {
 			value = Object.create( null );
 
 			// We can accept data for non-element nodes in modern browsers,
-			// but we should not, see #8335.
+			// but we should not, see trac-8335.
 			// Always return an empty object.
 			if ( acceptData( owner ) ) {
 
@@ -4451,7 +3683,7 @@ Data.prototype = {
 				cache[ camelCase( prop ) ] = data[ prop ];
 			}
 		}
-		return cache;
+		return value;
 	},
 	get: function( owner, key ) {
 		return key === undefined ?
@@ -4527,7 +3759,7 @@ Data.prototype = {
 		// Remove the expando if there's no more data
 		if ( key === undefined || jQuery.isEmptyObject( cache ) ) {
 
-			// Support: Chrome <=35 - 45
+			// Support: Chrome <=35 - 45+
 			// Webkit & Blink performance suffers when deleting properties
 			// from DOM nodes, so set to undefined instead
 			// https://bugs.chromium.org/p/chromium/issues/detail?id=378607 (bug restricted)
@@ -4543,11 +3775,10 @@ Data.prototype = {
 		return cache !== undefined && !jQuery.isEmptyObject( cache );
 	}
 };
+
 var dataPriv = new Data();
 
 var dataUser = new Data();
-
-
 
 //	Implementation Summary
 //
@@ -4649,8 +3880,8 @@ jQuery.fn.extend( {
 					i = attrs.length;
 					while ( i-- ) {
 
-						// Support: IE 11 only
-						// The attrs elements can be null (#14894)
+						// Support: IE 11+
+						// The attrs elements can be null (trac-14894)
 						if ( attrs[ i ] ) {
 							name = attrs[ i ].name;
 							if ( name.indexOf( "data-" ) === 0 ) {
@@ -4717,7 +3948,6 @@ jQuery.fn.extend( {
 	}
 } );
 
-
 jQuery.extend( {
 	queue: function( elem, type, data ) {
 		var queue;
@@ -4729,7 +3959,7 @@ jQuery.extend( {
 			// Speed up dequeue by getting out quickly if this is just a lookup
 			if ( data ) {
 				if ( !queue || Array.isArray( data ) ) {
-					queue = dataPriv.access( elem, type, jQuery.makeArray( data ) );
+					queue = dataPriv.set( elem, type, jQuery.makeArray( data ) );
 				} else {
 					queue.push( data );
 				}
@@ -4776,7 +4006,7 @@ jQuery.extend( {
 	// Not public - generate a queueHooks object, or return the current one
 	_queueHooks: function( elem, type ) {
 		var key = type + "queueHooks";
-		return dataPriv.get( elem, key ) || dataPriv.access( elem, key, {
+		return dataPriv.get( elem, key ) || dataPriv.set( elem, key, {
 			empty: jQuery.Callbacks( "once memory" ).add( function() {
 				dataPriv.remove( elem, [ type + "queue", key ] );
 			} )
@@ -4851,53 +4081,65 @@ jQuery.fn.extend( {
 		return defer.promise( obj );
 	}
 } );
-var pnum = ( /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/ ).source;
+
+var pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source;
 
 var rcssNum = new RegExp( "^(?:([+-])=|)(" + pnum + ")([a-z%]*)$", "i" );
 
-
 var cssExpand = [ "Top", "Right", "Bottom", "Left" ];
 
-var documentElement = document.documentElement;
+// isHiddenWithinTree reports if an element has a non-"none" display style (inline and/or
+// through the CSS cascade), which is useful in deciding whether or not to make it visible.
+// It differs from the :hidden selector (jQuery.expr.pseudos.hidden) in two important ways:
+// * A hidden ancestor does not force an element to be classified as hidden.
+// * Being disconnected from the document does not force an element to be classified as hidden.
+// These differences improve the behavior of .toggle() et al. when applied to elements that are
+// detached or contained within hidden ancestors (gh-2404, gh-2863).
+function isHiddenWithinTree( elem, el ) {
 
+	// isHiddenWithinTree might be called from jQuery#filter function;
+	// in that case, element will be second argument
+	elem = el || elem;
 
+	// Inline style trumps all
+	return elem.style.display === "none" ||
+		elem.style.display === "" &&
+		jQuery.css( elem, "display" ) === "none";
+}
 
-	var isAttached = function( elem ) {
-			return jQuery.contains( elem.ownerDocument, elem );
-		},
-		composed = { composed: true };
+var ralphaStart = /^[a-z]/,
 
-	// Support: IE 9 - 11+, Edge 12 - 18+, iOS 10.0 - 10.2 only
-	// Check attachment across shadow DOM boundaries when possible (gh-3504)
-	// Support: iOS 10.0-10.2 only
-	// Early iOS 10 versions support `attachShadow` but not `getRootNode`,
-	// leading to errors. We need to check for `getRootNode`.
-	if ( documentElement.getRootNode ) {
-		isAttached = function( elem ) {
-			return jQuery.contains( elem.ownerDocument, elem ) ||
-				elem.getRootNode( composed ) === elem.ownerDocument;
-		};
-	}
-var isHiddenWithinTree = function( elem, el ) {
+	// The regex visualized:
+	//
+	//                         /----------\
+	//                        |            |    /-------\
+	//                        |  / Top  \  |   |         |
+	//         /--- Border ---+-| Right  |-+---+- Width -+---\
+	//        |                 | Bottom |                    |
+	//        |                  \ Left /                     |
+	//        |                                               |
+	//        |                              /----------\     |
+	//        |          /-------------\    |            |    |- END
+	//        |         |               |   |  / Top  \  |    |
+	//        |         |  / Margin  \  |   | | Right  | |    |
+	//        |---------+-|           |-+---+-| Bottom |-+----|
+	//        |            \ Padding /         \ Left /       |
+	// BEGIN -|                                               |
+	//        |                /---------\                    |
+	//        |               |           |                   |
+	//        |               |  / Min \  |    / Width  \     |
+	//         \--------------+-|       |-+---|          |---/
+	//                           \ Max /       \ Height /
+	rautoPx = /^(?:Border(?:Top|Right|Bottom|Left)?(?:Width|)|(?:Margin|Padding)?(?:Top|Right|Bottom|Left)?|(?:Min|Max)?(?:Width|Height))$/;
 
-		// isHiddenWithinTree might be called from jQuery#filter function;
-		// in that case, element will be second argument
-		elem = el || elem;
+function isAutoPx( prop ) {
 
-		// Inline style trumps all
-		return elem.style.display === "none" ||
-			elem.style.display === "" &&
-
-			// Otherwise, check computed style
-			// Support: Firefox <=43 - 45
-			// Disconnected elements can have computed display: none, so first confirm that elem is
-			// in the document.
-			isAttached( elem ) &&
-
-			jQuery.css( elem, "display" ) === "none";
-	};
-
-
+	// The first test is used to ensure that:
+	// 1. The prop starts with a lowercase letter (as we uppercase it for the second regex).
+	// 2. The prop is not empty.
+	return ralphaStart.test( prop ) &&
+		rautoPx.test( prop[ 0 ].toUpperCase() + prop.slice( 1 ) );
+}
 
 function adjustCSS( elem, prop, valueParts, tween ) {
 	var adjusted, scale,
@@ -4910,16 +4152,16 @@ function adjustCSS( elem, prop, valueParts, tween ) {
 				return jQuery.css( elem, prop, "" );
 			},
 		initial = currentValue(),
-		unit = valueParts && valueParts[ 3 ] || ( jQuery.cssNumber[ prop ] ? "" : "px" ),
+		unit = valueParts && valueParts[ 3 ] || ( isAutoPx( prop ) ? "px" : "" ),
 
 		// Starting value computation is required for potential unit mismatches
 		initialInUnit = elem.nodeType &&
-			( jQuery.cssNumber[ prop ] || unit !== "px" && +initial ) &&
+			( !isAutoPx( prop ) || unit !== "px" && +initial ) &&
 			rcssNum.exec( jQuery.css( elem, prop ) );
 
 	if ( initialInUnit && initialInUnit[ 3 ] !== unit ) {
 
-		// Support: Firefox <=54
+		// Support: Firefox <=54 - 66+
 		// Halve the iteration target value to prevent interference from CSS upper bounds (gh-2144)
 		initial = initial / 2;
 
@@ -4964,6 +4206,16 @@ function adjustCSS( elem, prop, valueParts, tween ) {
 	return adjusted;
 }
 
+// Matches dashed string for camelizing
+var rmsPrefix = /^-ms-/;
+
+// Convert dashed to camelCase, handle vendor prefixes.
+// Used by the css & effects modules.
+// Support: IE <=9 - 11+
+// Microsoft forgot to hump their vendor prefix (trac-9572)
+function cssCamelCase( string ) {
+	return camelCase( string.replace( rmsPrefix, "ms-" ) );
+}
 
 var defaultDisplayMap = {};
 
@@ -5059,77 +4311,53 @@ jQuery.fn.extend( {
 		} );
 	}
 } );
-var rcheckableType = ( /^(?:checkbox|radio)$/i );
 
-var rtagName = ( /<([a-z][^\/\0>\x20\t\r\n\f]*)/i );
+var isAttached = function( elem ) {
+		return jQuery.contains( elem.ownerDocument, elem ) ||
+			elem.getRootNode( composed ) === elem.ownerDocument;
+	},
+	composed = { composed: true };
 
-var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
+// Support: IE 9 - 11+
+// Check attachment across shadow DOM boundaries when possible (gh-3504).
+// Provide a fallback for browsers without Shadow DOM v1 support.
+if ( !documentElement$1.getRootNode ) {
+	isAttached = function( elem ) {
+		return jQuery.contains( elem.ownerDocument, elem );
+	};
+}
 
+// rtagName captures the name from the first start tag in a string of HTML
+// https://html.spec.whatwg.org/multipage/syntax.html#tag-open-state
+// https://html.spec.whatwg.org/multipage/syntax.html#tag-name-state
+var rtagName = /<([a-z][^\/\0>\x20\t\r\n\f]*)/i;
 
-
-( function() {
-	var fragment = document.createDocumentFragment(),
-		div = fragment.appendChild( document.createElement( "div" ) ),
-		input = document.createElement( "input" );
-
-	// Support: Android 4.0 - 4.3 only
-	// Check state lost if the name is set (#11217)
-	// Support: Windows Web Apps (WWA)
-	// `name` and `type` must use .setAttribute for WWA (#14901)
-	input.setAttribute( "type", "radio" );
-	input.setAttribute( "checked", "checked" );
-	input.setAttribute( "name", "t" );
-
-	div.appendChild( input );
-
-	// Support: Android <=4.1 only
-	// Older WebKit doesn't clone checked state correctly in fragments
-	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
-
-	// Support: IE <=11 only
-	// Make sure textarea (and checkbox) defaultValue is properly cloned
-	div.innerHTML = "<textarea>x</textarea>";
-	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
-
-	// Support: IE <=9 only
-	// IE <=9 replaces <option> tags with their contents when inserted outside of
-	// the select element.
-	div.innerHTML = "<option></option>";
-	support.option = !!div.lastChild;
-} )();
-
-
-// We have to close these tags to support XHTML (#13200)
 var wrapMap = {
 
+	// Table parts need to be wrapped with `<table>` or they're
+	// stripped to their contents when put in a div.
 	// XHTML parsers do not magically insert elements in the
-	// same way that tag soup parsers do. So we cannot shorten
+	// same way that tag soup parsers do, so we cannot shorten
 	// this by omitting <tbody> or other required elements.
-	thead: [ 1, "<table>", "</table>" ],
-	col: [ 2, "<table><colgroup>", "</colgroup></table>" ],
-	tr: [ 2, "<table><tbody>", "</tbody></table>" ],
-	td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
-
-	_default: [ 0, "", "" ]
+	thead: [ "table" ],
+	col: [ "colgroup", "table" ],
+	tr: [ "tbody", "table" ],
+	td: [ "tr", "tbody", "table" ]
 };
 
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
 
-// Support: IE <=9 only
-if ( !support.option ) {
-	wrapMap.optgroup = wrapMap.option = [ 1, "<select multiple='multiple'>", "</select>" ];
-}
-
-
 function getAll( context, tag ) {
 
-	// Support: IE <=9 - 11 only
-	// Use typeof to avoid zero-argument method invocation on host objects (#15151)
+	// Support: IE <=9 - 11+
+	// Use typeof to avoid zero-argument method invocation on host objects (trac-15151)
 	var ret;
 
 	if ( typeof context.getElementsByTagName !== "undefined" ) {
-		ret = context.getElementsByTagName( tag || "*" );
+
+		// Use slice to snapshot the live collection from gEBTN
+		ret = arr.slice.call( context.getElementsByTagName( tag || "*" ) );
 
 	} else if ( typeof context.querySelectorAll !== "undefined" ) {
 		ret = context.querySelectorAll( tag || "*" );
@@ -5145,6 +4373,7 @@ function getAll( context, tag ) {
 	return ret;
 }
 
+var rscriptType = /^$|^module$|\/(?:java|ecma)script/i;
 
 // Mark scripts as having already been evaluated
 function setGlobalEval( elems, refElements ) {
@@ -5159,7 +4388,6 @@ function setGlobalEval( elems, refElements ) {
 		);
 	}
 }
-
 
 var rhtml = /<|&#?\w+;/;
 
@@ -5176,10 +4404,7 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 		if ( elem || elem === 0 ) {
 
 			// Add nodes directly
-			if ( toType( elem ) === "object" ) {
-
-				// Support: Android <=4.0 only, PhantomJS 1 only
-				// push.apply(_, arraylike) throws on ancient WebKit
+			if ( toType( elem ) === "object" && ( elem.nodeType || isArrayLike( elem ) ) ) {
 				jQuery.merge( nodes, elem.nodeType ? [ elem ] : elem );
 
 			// Convert non-html into a text node
@@ -5192,23 +4417,22 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 
 				// Deserialize a standard representation
 				tag = ( rtagName.exec( elem ) || [ "", "" ] )[ 1 ].toLowerCase();
-				wrap = wrapMap[ tag ] || wrapMap._default;
-				tmp.innerHTML = wrap[ 1 ] + jQuery.htmlPrefilter( elem ) + wrap[ 2 ];
+				wrap = wrapMap[ tag ] || arr;
 
-				// Descend through wrappers to the right content
-				j = wrap[ 0 ];
-				while ( j-- ) {
-					tmp = tmp.lastChild;
+				// Create wrappers & descend into them.
+				j = wrap.length;
+				while ( --j > -1 ) {
+					tmp = tmp.appendChild( context.createElement( wrap[ j ] ) );
 				}
 
-				// Support: Android <=4.0 only, PhantomJS 1 only
-				// push.apply(_, arraylike) throws on ancient WebKit
+				tmp.innerHTML = jQuery.htmlPrefilter( elem );
+
 				jQuery.merge( nodes, tmp.childNodes );
 
 				// Remember the top-level container
 				tmp = fragment.firstChild;
 
-				// Ensure the created nodes are orphaned (#12392)
+				// Ensure the created nodes are orphaned (trac-12392)
 				tmp.textContent = "";
 			}
 		}
@@ -5252,11 +4476,109 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 	return fragment;
 }
 
+// Replace/restore the type attribute of script elements for safe DOM manipulation
+function disableScript( elem ) {
+	elem.type = ( elem.getAttribute( "type" ) !== null ) + "/" + elem.type;
+	return elem;
+}
+function restoreScript( elem ) {
+	if ( ( elem.type || "" ).slice( 0, 5 ) === "true/" ) {
+		elem.type = elem.type.slice( 5 );
+	} else {
+		elem.removeAttribute( "type" );
+	}
 
-var
-	rkeyEvent = /^key/,
-	rmouseEvent = /^(?:mouse|pointer|contextmenu|drag|drop)|click/,
-	rtypenamespace = /^([^.]*)(?:\.(.+)|)/;
+	return elem;
+}
+
+function domManip( collection, args, callback, ignored ) {
+
+	// Flatten any nested arrays
+	args = flat( args );
+
+	var fragment, first, scripts, hasScripts, node, doc,
+		i = 0,
+		l = collection.length,
+		iNoClone = l - 1,
+		value = args[ 0 ],
+		valueIsFunction = typeof value === "function";
+
+	if ( valueIsFunction ) {
+		return collection.each( function( index ) {
+			var self = collection.eq( index );
+			args[ 0 ] = value.call( this, index, self.html() );
+			domManip( self, args, callback, ignored );
+		} );
+	}
+
+	if ( l ) {
+		fragment = buildFragment( args, collection[ 0 ].ownerDocument, false, collection, ignored );
+		first = fragment.firstChild;
+
+		if ( fragment.childNodes.length === 1 ) {
+			fragment = first;
+		}
+
+		// Require either new content or an interest in ignored elements to invoke the callback
+		if ( first || ignored ) {
+			scripts = jQuery.map( getAll( fragment, "script" ), disableScript );
+			hasScripts = scripts.length;
+
+			// Use the original fragment for the last item
+			// instead of the first because it can end up
+			// being emptied incorrectly in certain situations (trac-8070).
+			for ( ; i < l; i++ ) {
+				node = fragment;
+
+				if ( i !== iNoClone ) {
+					node = jQuery.clone( node, true, true );
+
+					// Keep references to cloned scripts for later restoration
+					if ( hasScripts ) {
+						jQuery.merge( scripts, getAll( node, "script" ) );
+					}
+				}
+
+				callback.call( collection[ i ], node, i );
+			}
+
+			if ( hasScripts ) {
+				doc = scripts[ scripts.length - 1 ].ownerDocument;
+
+				// Re-enable scripts
+				jQuery.map( scripts, restoreScript );
+
+				// Evaluate executable scripts on first document insertion
+				for ( i = 0; i < hasScripts; i++ ) {
+					node = scripts[ i ];
+					if ( rscriptType.test( node.type || "" ) &&
+						!dataPriv.get( node, "globalEval" ) &&
+						jQuery.contains( doc, node ) ) {
+
+						if ( node.src && ( node.type || "" ).toLowerCase()  !== "module" ) {
+
+							// Optional AJAX dependency, but won't run scripts if not present
+							if ( jQuery._evalUrl && !node.noModule ) {
+								jQuery._evalUrl( node.src, {
+									nonce: node.nonce,
+									crossOrigin: node.crossOrigin
+								}, doc );
+							}
+						} else {
+							DOMEval( node.textContent, node, doc );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return collection;
+}
+
+var rcheckableType = /^(?:checkbox|radio)$/i;
+
+var rtypenamespace = /^([^.]*)(?:\.(.+)|)/;
 
 function returnTrue() {
 	return true;
@@ -5264,25 +4586,6 @@ function returnTrue() {
 
 function returnFalse() {
 	return false;
-}
-
-// Support: IE <=9 - 11+
-// focus() and blur() are asynchronous, except when they are no-op.
-// So expect focus to be synchronous when the element is already active,
-// and blur to be synchronous when the element is not already active.
-// (focus and blur are always synchronous in other supported browsers,
-// this just defines when we can count on it).
-function expectSync( elem, type ) {
-	return ( elem === safeActiveElement() ) === ( type === "focus" );
-}
-
-// Support: IE <=9 only
-// Accessing document.activeElement can throw unexpectedly
-// https://bugs.jquery.com/ticket/13393
-function safeActiveElement() {
-	try {
-		return document.activeElement;
-	} catch ( err ) { }
 }
 
 function on( elem, types, selector, data, fn, one ) {
@@ -5352,8 +4655,6 @@ function on( elem, types, selector, data, fn, one ) {
  */
 jQuery.event = {
 
-	global: {},
-
 	add: function( elem, types, handler, data, selector ) {
 
 		var handleObjIn, eventHandle, tmp,
@@ -5376,7 +4677,7 @@ jQuery.event = {
 		// Ensure that invalid selectors throw exceptions at attach time
 		// Evaluate against documentElement in case elem is a non-element node (e.g., document)
 		if ( selector ) {
-			jQuery.find.matchesSelector( documentElement, selector );
+			jQuery.find.matchesSelector( documentElement$1, selector );
 		}
 
 		// Make sure that the handler has a unique ID, used to find/remove it later
@@ -5461,9 +4762,6 @@ jQuery.event = {
 			} else {
 				handlers.push( handleObj );
 			}
-
-			// Keep track of which events have ever been used, for event optimization
-			jQuery.event.global[ type ] = true;
 		}
 
 	},
@@ -5551,8 +4849,8 @@ jQuery.event = {
 			event = jQuery.event.fix( nativeEvent ),
 
 			handlers = (
-					dataPriv.get( this, "events" ) || Object.create( null )
-				)[ event.type ] || [],
+				dataPriv.get( this, "events" ) || Object.create( null )
+			)[ event.type ] || [],
 			special = jQuery.event.special[ event.type ] || {};
 
 		// Use the fix-ed jQuery.Event rather than the (read-only) native event
@@ -5619,28 +4917,24 @@ jQuery.event = {
 		// Find delegate handlers
 		if ( delegateCount &&
 
-			// Support: IE <=9
-			// Black-hole SVG <use> instance trees (trac-13180)
-			cur.nodeType &&
-
-			// Support: Firefox <=42
+			// Support: Firefox <=42 - 66+
 			// Suppress spec-violating clicks indicating a non-primary pointer button (trac-3861)
 			// https://www.w3.org/TR/DOM-Level-3-Events/#event-type-click
-			// Support: IE 11 only
+			// Support: IE 11+
 			// ...but not arrow key "clicks" of radio inputs, which can have `button` -1 (gh-2343)
 			!( event.type === "click" && event.button >= 1 ) ) {
 
 			for ( ; cur !== this; cur = cur.parentNode || this ) {
 
-				// Don't check non-elements (#13208)
-				// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
+				// Don't check non-elements (trac-13208)
+				// Don't process clicks on disabled elements (trac-6911, trac-8165, trac-11382, trac-11764)
 				if ( cur.nodeType === 1 && !( event.type === "click" && cur.disabled === true ) ) {
 					matchedHandlers = [];
 					matchedSelectors = {};
 					for ( i = 0; i < delegateCount; i++ ) {
 						handleObj = handlers[ i ];
 
-						// Don't conflict with Object.prototype properties (#13203)
+						// Don't conflict with Object.prototype properties (trac-13203)
 						sel = handleObj.selector + " ";
 
 						if ( matchedSelectors[ sel ] === undefined ) {
@@ -5673,15 +4967,15 @@ jQuery.event = {
 			enumerable: true,
 			configurable: true,
 
-			get: isFunction( hook ) ?
+			get: typeof hook === "function" ?
 				function() {
 					if ( this.originalEvent ) {
-							return hook( this.originalEvent );
+						return hook( this.originalEvent );
 					}
 				} :
 				function() {
 					if ( this.originalEvent ) {
-							return this.originalEvent[ name ];
+						return this.originalEvent[ name ];
 					}
 				},
 
@@ -5702,7 +4996,7 @@ jQuery.event = {
 			new jQuery.Event( originalEvent );
 	},
 
-	special: {
+	special: jQuery.extend( Object.create( null ), {
 		load: {
 
 			// Prevent triggered image.load events from bubbling to window.load
@@ -5722,7 +5016,7 @@ jQuery.event = {
 					el.click && nodeName( el, "input" ) ) {
 
 					// dataPriv.set( el, "click", ... )
-					leverageNative( el, "click", returnTrue );
+					leverageNative( el, "click", true );
 				}
 
 				// Return false to allow normal processing in the caller
@@ -5758,25 +5052,31 @@ jQuery.event = {
 
 		beforeunload: {
 			postDispatch: function( event ) {
+				if ( event.result !== undefined ) {
 
-				// Support: Firefox 20+
-				// Firefox doesn't alert if the returnValue field is not set.
-				if ( event.result !== undefined && event.originalEvent ) {
-					event.originalEvent.returnValue = event.result;
+					// Setting `event.originalEvent.returnValue` in modern
+					// browsers does the same as just calling `preventDefault()`,
+					// the browsers ignore the value anyway.
+					// Incidentally, IE 11 is the only browser from our supported
+					// ones which respects the value returned from a `beforeunload`
+					// handler attached by `addEventListener`; other browsers do
+					// so only for inline handlers, so not setting the value
+					// directly shouldn't reduce any functionality.
+					event.preventDefault();
 				}
 			}
 		}
-	}
+	} )
 };
 
 // Ensure the presence of an event listener that handles manually-triggered
 // synthetic events by interrupting progress until reinvoked in response to
 // *native* events that it fires directly, ensuring that state changes have
 // already occurred before other listeners are invoked.
-function leverageNative( el, type, expectSync ) {
+function leverageNative( el, type, isSetup ) {
 
-	// Missing expectSync indicates a trigger call, which must force setup through jQuery.event.add
-	if ( !expectSync ) {
+	// Missing `isSetup` indicates a trigger call, which must force setup through jQuery.event.add
+	if ( !isSetup ) {
 		if ( dataPriv.get( el, type ) === undefined ) {
 			jQuery.event.add( el, type, returnTrue );
 		}
@@ -5788,69 +5088,86 @@ function leverageNative( el, type, expectSync ) {
 	jQuery.event.add( el, type, {
 		namespace: false,
 		handler: function( event ) {
-			var notAsync, result,
+			var result,
 				saved = dataPriv.get( this, type );
 
+			// This controller function is invoked under multiple circumstances,
+			// differentiated by the stored value in `saved`:
+			// 1. For an outer synthetic `.trigger()`ed event (detected by
+			//    `event.isTrigger & 1` and non-array `saved`), it records arguments
+			//    as an array and fires an [inner] native event to prompt state
+			//    changes that should be observed by registered listeners (such as
+			//    checkbox toggling and focus updating), then clears the stored value.
+			// 2. For an [inner] native event (detected by `saved` being
+			//    an array), it triggers an inner synthetic event, records the
+			//    result, and preempts propagation to further jQuery listeners.
+			// 3. For an inner synthetic event (detected by `event.isTrigger & 1` and
+			//    array `saved`), it prevents double-propagation of surrogate events
+			//    but otherwise allows everything to proceed (particularly including
+			//    further listeners).
+			// Possible `saved` data shapes: `[...], `{ value }`, `false`.
 			if ( ( event.isTrigger & 1 ) && this[ type ] ) {
 
 				// Interrupt processing of the outer synthetic .trigger()ed event
-				// Saved data should be false in such cases, but might be a leftover capture object
-				// from an async native handler (gh-4350)
 				if ( !saved.length ) {
 
 					// Store arguments for use when handling the inner native event
-					// There will always be at least one argument (an event object), so this array
-					// will not be confused with a leftover capture object.
+					// There will always be at least one argument (an event object),
+					// so this array will not be confused with a leftover capture object.
 					saved = slice.call( arguments );
 					dataPriv.set( this, type, saved );
 
 					// Trigger the native event and capture its result
-					// Support: IE <=9 - 11+
-					// focus() and blur() are asynchronous
-					notAsync = expectSync( this, type );
 					this[ type ]();
 					result = dataPriv.get( this, type );
-					if ( saved !== result || notAsync ) {
-						dataPriv.set( this, type, false );
-					} else {
-						result = {};
-					}
+					dataPriv.set( this, type, false );
+
 					if ( saved !== result ) {
 
 						// Cancel the outer synthetic event
 						event.stopImmediatePropagation();
 						event.preventDefault();
-						return result.value;
+
+						// Support: Chrome 86+
+						// In Chrome, if an element having a focusout handler is
+						// blurred by clicking outside of it, it invokes the handler
+						// synchronously. If that handler calls `.remove()` on
+						// the element, the data is cleared, leaving `result`
+						// undefined. We need to guard against this.
+						return result && result.value;
 					}
 
-				// If this is an inner synthetic event for an event with a bubbling surrogate
-				// (focus or blur), assume that the surrogate already propagated from triggering the
-				// native event and prevent that from happening again here.
-				// This technically gets the ordering wrong w.r.t. to `.trigger()` (in which the
-				// bubbling surrogate propagates *after* the non-bubbling base), but that seems
-				// less bad than duplication.
+				// If this is an inner synthetic event for an event with a bubbling
+				// surrogate (focus or blur), assume that the surrogate already
+				// propagated from triggering the native event and prevent that
+				// from happening again here.
 				} else if ( ( jQuery.event.special[ type ] || {} ).delegateType ) {
 					event.stopPropagation();
 				}
 
-			// If this is a native event triggered above, everything is now in order
-			// Fire an inner synthetic event with the original arguments
+			// If this is a native event triggered above, everything is now in order.
+			// Fire an inner synthetic event with the original arguments.
 			} else if ( saved.length ) {
 
 				// ...and capture the result
 				dataPriv.set( this, type, {
 					value: jQuery.event.trigger(
-
-						// Support: IE <=9 - 11+
-						// Extend with the prototype to reset the above stopImmediatePropagation()
-						jQuery.extend( saved[ 0 ], jQuery.Event.prototype ),
+						saved[ 0 ],
 						saved.slice( 1 ),
 						this
 					)
 				} );
 
-				// Abort handling of the native event
-				event.stopImmediatePropagation();
+				// Abort handling of the native event by all jQuery handlers while allowing
+				// native handlers on the same element to run. On target, this is achieved
+				// by stopping immediate propagation just on the jQuery event. However,
+				// the native event is re-wrapped by a jQuery one on each level of the
+				// propagation so the only way to stop it for jQuery is to stop it for
+				// everyone via native `stopPropagation()`. This is not a problem for
+				// focus/blur which don't bubble, but it does also stop click on checkboxes
+				// and radios. We accept this limitation.
+				event.stopPropagation();
+				event.isImmediatePropagationStopped = returnTrue;
 			}
 		}
 	} );
@@ -5878,21 +5195,12 @@ jQuery.Event = function( src, props ) {
 
 		// Events bubbling up the document may have been marked as prevented
 		// by a handler lower down the tree; reflect the correct value.
-		this.isDefaultPrevented = src.defaultPrevented ||
-				src.defaultPrevented === undefined &&
-
-				// Support: Android <=2.3 only
-				src.returnValue === false ?
+		this.isDefaultPrevented = src.defaultPrevented ?
 			returnTrue :
 			returnFalse;
 
 		// Create target properties
-		// Support: Safari <=6 - 7 only
-		// Target should not be a text node (#504, #13143)
-		this.target = ( src.target && src.target.nodeType === 3 ) ?
-			src.target.parentNode :
-			src.target;
-
+		this.target = src.target;
 		this.currentTarget = src.currentTarget;
 		this.relatedTarget = src.relatedTarget;
 
@@ -5985,37 +5293,33 @@ jQuery.each( {
 	targetTouches: true,
 	toElement: true,
 	touches: true,
-
-	which: function( event ) {
-		var button = event.button;
-
-		// Add which for key events
-		if ( event.which == null && rkeyEvent.test( event.type ) ) {
-			return event.charCode != null ? event.charCode : event.keyCode;
-		}
-
-		// Add which for click: 1 === left; 2 === middle; 3 === right
-		if ( !event.which && button !== undefined && rmouseEvent.test( event.type ) ) {
-			if ( button & 1 ) {
-				return 1;
-			}
-
-			if ( button & 2 ) {
-				return 3;
-			}
-
-			if ( button & 4 ) {
-				return 2;
-			}
-
-			return 0;
-		}
-
-		return event.which;
-	}
+	which: true
 }, jQuery.event.addProp );
 
 jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateType ) {
+
+	// Support: IE 11+
+	// Attach a single focusin/focusout handler on the document while someone wants focus/blur.
+	// This is because the former are synchronous in IE while the latter are async. In other
+	// browsers, all those handlers are invoked synchronously.
+	function focusMappedHandler( nativeEvent ) {
+
+		// `eventHandle` would already wrap the event, but we need to change the `type` here.
+		var event = jQuery.event.fix( nativeEvent );
+		event.type = nativeEvent.type === "focusin" ? "focus" : "blur";
+		event.isSimulated = true;
+
+		// focus/blur don't bubble while focusin/focusout do; simulate the former by only
+		// invoking the handler at the lower level.
+		if ( event.target === event.currentTarget ) {
+
+			// The setup part calls `leverageNative`, which, in turn, calls
+			// `jQuery.event.add`, so event handle will already have been set
+			// by this point.
+			dataPriv.get( this, "handle" )( event );
+		}
+	}
+
 	jQuery.event.special[ type ] = {
 
 		// Utilize native event if possible so blur/focus sequence is correct
@@ -6024,10 +5328,15 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 			// Claim the first handler
 			// dataPriv.set( this, "focus", ... )
 			// dataPriv.set( this, "blur", ... )
-			leverageNative( this, type, expectSync );
+			leverageNative( this, type, true );
 
-			// Return false to allow normal processing in the caller
-			return false;
+			if ( isIE ) {
+				this.addEventListener( delegateType, focusMappedHandler );
+			} else {
+
+				// Return false to allow normal processing in the caller
+				return false;
+			}
 		},
 		trigger: function() {
 
@@ -6038,6 +5347,22 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 			return true;
 		},
 
+		teardown: function() {
+			if ( isIE ) {
+				this.removeEventListener( delegateType, focusMappedHandler );
+			} else {
+
+				// Return false to indicate standard teardown should be applied
+				return false;
+			}
+		},
+
+		// Suppress native focus or blur if we're currently inside
+		// a leveraged native-event stack
+		_default: function( event ) {
+			return dataPriv.get( event.target, type );
+		},
+
 		delegateType: delegateType
 	};
 } );
@@ -6045,11 +5370,6 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 // Create mouseenter/leave events using mouseover/out and event-time checks
 // so that event delegation works in jQuery.
 // Do the same for pointerenter/pointerleave and pointerover/pointerout
-//
-// Support: Safari 7 only
-// Safari sends mouseenter too often; see:
-// https://bugs.chromium.org/p/chromium/issues/detail?id=470258
-// for the description of the bug (it existed in older Chrome versions as well).
 jQuery.each( {
 	mouseenter: "mouseover",
 	mouseleave: "mouseout",
@@ -6124,17 +5444,11 @@ jQuery.fn.extend( {
 	}
 } );
 
-
 var
 
-	// Support: IE <=10 - 11, Edge 12 - 13 only
-	// In IE/Edge using regex groups here causes severe slowdowns.
-	// See https://connect.microsoft.com/IE/feedback/details/1736512/
-	rnoInnerhtml = /<script|<style|<link/i,
-
-	// checked="checked" or checked
-	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,
-	rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
+	// Support: IE <=10 - 11+
+	// In IE using regex groups here causes severe slowdowns.
+	rnoInnerhtml = /<script|<style|<link/i;
 
 // Prefer a tbody over its parent table for containing new rows
 function manipulationTarget( elem, content ) {
@@ -6147,157 +5461,28 @@ function manipulationTarget( elem, content ) {
 	return elem;
 }
 
-// Replace/restore the type attribute of script elements for safe DOM manipulation
-function disableScript( elem ) {
-	elem.type = ( elem.getAttribute( "type" ) !== null ) + "/" + elem.type;
-	return elem;
-}
-function restoreScript( elem ) {
-	if ( ( elem.type || "" ).slice( 0, 5 ) === "true/" ) {
-		elem.type = elem.type.slice( 5 );
-	} else {
-		elem.removeAttribute( "type" );
-	}
-
-	return elem;
-}
-
 function cloneCopyEvent( src, dest ) {
-	var i, l, type, pdataOld, udataOld, udataCur, events;
+	var type, i, l,
+		events = dataPriv.get( src, "events" );
 
 	if ( dest.nodeType !== 1 ) {
 		return;
 	}
 
 	// 1. Copy private data: events, handlers, etc.
-	if ( dataPriv.hasData( src ) ) {
-		pdataOld = dataPriv.get( src );
-		events = pdataOld.events;
-
-		if ( events ) {
-			dataPriv.remove( dest, "handle events" );
-
-			for ( type in events ) {
-				for ( i = 0, l = events[ type ].length; i < l; i++ ) {
-					jQuery.event.add( dest, type, events[ type ][ i ] );
-				}
+	if ( events ) {
+		dataPriv.remove( dest, "handle events" );
+		for ( type in events ) {
+			for ( i = 0, l = events[ type ].length; i < l; i++ ) {
+				jQuery.event.add( dest, type, events[ type ][ i ] );
 			}
 		}
 	}
 
 	// 2. Copy user data
 	if ( dataUser.hasData( src ) ) {
-		udataOld = dataUser.access( src );
-		udataCur = jQuery.extend( {}, udataOld );
-
-		dataUser.set( dest, udataCur );
+		dataUser.set( dest, jQuery.extend( {}, dataUser.get( src ) ) );
 	}
-}
-
-// Fix IE bugs, see support tests
-function fixInput( src, dest ) {
-	var nodeName = dest.nodeName.toLowerCase();
-
-	// Fails to persist the checked state of a cloned checkbox or radio button.
-	if ( nodeName === "input" && rcheckableType.test( src.type ) ) {
-		dest.checked = src.checked;
-
-	// Fails to return the selected option to the default selected state when cloning options
-	} else if ( nodeName === "input" || nodeName === "textarea" ) {
-		dest.defaultValue = src.defaultValue;
-	}
-}
-
-function domManip( collection, args, callback, ignored ) {
-
-	// Flatten any nested arrays
-	args = flat( args );
-
-	var fragment, first, scripts, hasScripts, node, doc,
-		i = 0,
-		l = collection.length,
-		iNoClone = l - 1,
-		value = args[ 0 ],
-		valueIsFunction = isFunction( value );
-
-	// We can't cloneNode fragments that contain checked, in WebKit
-	if ( valueIsFunction ||
-			( l > 1 && typeof value === "string" &&
-				!support.checkClone && rchecked.test( value ) ) ) {
-		return collection.each( function( index ) {
-			var self = collection.eq( index );
-			if ( valueIsFunction ) {
-				args[ 0 ] = value.call( this, index, self.html() );
-			}
-			domManip( self, args, callback, ignored );
-		} );
-	}
-
-	if ( l ) {
-		fragment = buildFragment( args, collection[ 0 ].ownerDocument, false, collection, ignored );
-		first = fragment.firstChild;
-
-		if ( fragment.childNodes.length === 1 ) {
-			fragment = first;
-		}
-
-		// Require either new content or an interest in ignored elements to invoke the callback
-		if ( first || ignored ) {
-			scripts = jQuery.map( getAll( fragment, "script" ), disableScript );
-			hasScripts = scripts.length;
-
-			// Use the original fragment for the last item
-			// instead of the first because it can end up
-			// being emptied incorrectly in certain situations (#8070).
-			for ( ; i < l; i++ ) {
-				node = fragment;
-
-				if ( i !== iNoClone ) {
-					node = jQuery.clone( node, true, true );
-
-					// Keep references to cloned scripts for later restoration
-					if ( hasScripts ) {
-
-						// Support: Android <=4.0 only, PhantomJS 1 only
-						// push.apply(_, arraylike) throws on ancient WebKit
-						jQuery.merge( scripts, getAll( node, "script" ) );
-					}
-				}
-
-				callback.call( collection[ i ], node, i );
-			}
-
-			if ( hasScripts ) {
-				doc = scripts[ scripts.length - 1 ].ownerDocument;
-
-				// Reenable scripts
-				jQuery.map( scripts, restoreScript );
-
-				// Evaluate executable scripts on first document insertion
-				for ( i = 0; i < hasScripts; i++ ) {
-					node = scripts[ i ];
-					if ( rscriptType.test( node.type || "" ) &&
-						!dataPriv.access( node, "globalEval" ) &&
-						jQuery.contains( doc, node ) ) {
-
-						if ( node.src && ( node.type || "" ).toLowerCase()  !== "module" ) {
-
-							// Optional AJAX dependency, but won't run scripts if not present
-							if ( jQuery._evalUrl && !node.noModule ) {
-								jQuery._evalUrl( node.src, {
-									nonce: node.nonce || node.getAttribute( "nonce" )
-								}, doc );
-							}
-						} else {
-							DOMEval( node.textContent.replace( rcleanScript, "" ), node, doc );
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return collection;
 }
 
 function remove( elem, selector, keepData ) {
@@ -6332,15 +5517,22 @@ jQuery.extend( {
 			inPage = isAttached( elem );
 
 		// Fix IE cloning issues
-		if ( !support.noCloneChecked && ( elem.nodeType === 1 || elem.nodeType === 11 ) &&
+		if ( isIE && ( elem.nodeType === 1 || elem.nodeType === 11 ) &&
 				!jQuery.isXMLDoc( elem ) ) {
 
-			// We eschew Sizzle here for performance reasons: https://jsperf.com/getall-vs-sizzle/2
+			// We eschew jQuery#find here for performance reasons:
+			// https://jsperf.com/getall-vs-sizzle/2
 			destElements = getAll( clone );
 			srcElements = getAll( elem );
 
 			for ( i = 0, l = srcElements.length; i < l; i++ ) {
-				fixInput( srcElements[ i ], destElements[ i ] );
+
+				// Support: IE <=11+
+				// IE fails to set the defaultValue to the correct value when
+				// cloning textareas.
+				if ( nodeName( destElements[ i ], "textarea" ) ) {
+					destElements[ i ].defaultValue = srcElements[ i ].defaultValue;
+				}
 			}
 		}
 
@@ -6560,32 +5752,35 @@ jQuery.each( {
 		for ( ; i <= last; i++ ) {
 			elems = i === last ? this : this.clone( true );
 			jQuery( insert[ i ] )[ original ]( elems );
-
-			// Support: Android <=4.0 only, PhantomJS 1 only
-			// .get() because push.apply(_, arraylike) throws on ancient WebKit
-			push.apply( ret, elems.get() );
+			push.apply( ret, elems );
 		}
 
 		return this.pushStack( ret );
 	};
 } );
+
 var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
 
-var getStyles = function( elem ) {
+var rcustomProp = /^--/;
 
-		// Support: IE <=11 only, Firefox <=30 (#15098, #14150)
-		// IE throws on elements created in popups
-		// FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
-		var view = elem.ownerDocument.defaultView;
+function getStyles( elem ) {
 
-		if ( !view || !view.opener ) {
-			view = window;
-		}
+	// Support: IE <=11+ (trac-14150)
+	// In IE popup's `window` is the opener window which makes `window.getComputedStyle( elem )`
+	// break. Using `elem.ownerDocument.defaultView` avoids the issue.
+	var view = elem.ownerDocument.defaultView;
 
-		return view.getComputedStyle( elem );
-	};
+	// `document.implementation.createHTMLDocument( "" )` has a `null` `defaultView`
+	// property; check `defaultView` truthiness to fallback to window in such a case.
+	if ( !view ) {
+		view = window;
+	}
 
-var swap = function( elem, options, callback ) {
+	return view.getComputedStyle( elem );
+}
+
+// A method for quickly swapping in/out CSS properties to get correct calculations.
+function swap( elem, options, callback ) {
 	var ret, name,
 		old = {};
 
@@ -6603,211 +5798,67 @@ var swap = function( elem, options, callback ) {
 	}
 
 	return ret;
-};
-
-
-var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
-
-
-
-( function() {
-
-	// Executing both pixelPosition & boxSizingReliable tests require only one layout
-	// so they're executed at the same time to save the second computation.
-	function computeStyleTests() {
-
-		// This is a singleton, we need to execute it only once
-		if ( !div ) {
-			return;
-		}
-
-		container.style.cssText = "position:absolute;left:-11111px;width:60px;" +
-			"margin-top:1px;padding:0;border:0";
-		div.style.cssText =
-			"position:relative;display:block;box-sizing:border-box;overflow:scroll;" +
-			"margin:auto;border:1px;padding:1px;" +
-			"width:60%;top:1%";
-		documentElement.appendChild( container ).appendChild( div );
-
-		var divStyle = window.getComputedStyle( div );
-		pixelPositionVal = divStyle.top !== "1%";
-
-		// Support: Android 4.0 - 4.3 only, Firefox <=3 - 44
-		reliableMarginLeftVal = roundPixelMeasures( divStyle.marginLeft ) === 12;
-
-		// Support: Android 4.0 - 4.3 only, Safari <=9.1 - 10.1, iOS <=7.0 - 9.3
-		// Some styles come back with percentage values, even though they shouldn't
-		div.style.right = "60%";
-		pixelBoxStylesVal = roundPixelMeasures( divStyle.right ) === 36;
-
-		// Support: IE 9 - 11 only
-		// Detect misreporting of content dimensions for box-sizing:border-box elements
-		boxSizingReliableVal = roundPixelMeasures( divStyle.width ) === 36;
-
-		// Support: IE 9 only
-		// Detect overflow:scroll screwiness (gh-3699)
-		// Support: Chrome <=64
-		// Don't get tricked when zoom affects offsetWidth (gh-4029)
-		div.style.position = "absolute";
-		scrollboxSizeVal = roundPixelMeasures( div.offsetWidth / 3 ) === 12;
-
-		documentElement.removeChild( container );
-
-		// Nullify the div so it wouldn't be stored in the memory and
-		// it will also be a sign that checks already performed
-		div = null;
-	}
-
-	function roundPixelMeasures( measure ) {
-		return Math.round( parseFloat( measure ) );
-	}
-
-	var pixelPositionVal, boxSizingReliableVal, scrollboxSizeVal, pixelBoxStylesVal,
-		reliableTrDimensionsVal, reliableMarginLeftVal,
-		container = document.createElement( "div" ),
-		div = document.createElement( "div" );
-
-	// Finish early in limited (non-browser) environments
-	if ( !div.style ) {
-		return;
-	}
-
-	// Support: IE <=9 - 11 only
-	// Style of cloned element affects source element cloned (#8908)
-	div.style.backgroundClip = "content-box";
-	div.cloneNode( true ).style.backgroundClip = "";
-	support.clearCloneStyle = div.style.backgroundClip === "content-box";
-
-	jQuery.extend( support, {
-		boxSizingReliable: function() {
-			computeStyleTests();
-			return boxSizingReliableVal;
-		},
-		pixelBoxStyles: function() {
-			computeStyleTests();
-			return pixelBoxStylesVal;
-		},
-		pixelPosition: function() {
-			computeStyleTests();
-			return pixelPositionVal;
-		},
-		reliableMarginLeft: function() {
-			computeStyleTests();
-			return reliableMarginLeftVal;
-		},
-		scrollboxSize: function() {
-			computeStyleTests();
-			return scrollboxSizeVal;
-		},
-
-		// Support: IE 9 - 11+, Edge 15 - 18+
-		// IE/Edge misreport `getComputedStyle` of table rows with width/height
-		// set in CSS while `offset*` properties report correct values.
-		// Behavior in IE 9 is more subtle than in newer versions & it passes
-		// some versions of this test; make sure not to make it pass there!
-		reliableTrDimensions: function() {
-			var table, tr, trChild, trStyle;
-			if ( reliableTrDimensionsVal == null ) {
-				table = document.createElement( "table" );
-				tr = document.createElement( "tr" );
-				trChild = document.createElement( "div" );
-
-				table.style.cssText = "position:absolute;left:-11111px";
-				tr.style.height = "1px";
-				trChild.style.height = "9px";
-
-				documentElement
-					.appendChild( table )
-					.appendChild( tr )
-					.appendChild( trChild );
-
-				trStyle = window.getComputedStyle( tr );
-				reliableTrDimensionsVal = parseInt( trStyle.height ) > 3;
-
-				documentElement.removeChild( table );
-			}
-			return reliableTrDimensionsVal;
-		}
-	} );
-} )();
-
+}
 
 function curCSS( elem, name, computed ) {
-	var width, minWidth, maxWidth, ret,
-
-		// Support: Firefox 51+
-		// Retrieving style before computed somehow
-		// fixes an issue with getting wrong values
-		// on detached elements
-		style = elem.style;
+	var ret,
+		isCustomProp = rcustomProp.test( name );
 
 	computed = computed || getStyles( elem );
 
-	// getPropertyValue is needed for:
-	//   .css('filter') (IE 9 only, #12537)
-	//   .css('--customProperty) (#3144)
+	// getPropertyValue is needed for `.css('--customProperty')` (gh-3144)
 	if ( computed ) {
+
+		// A fallback to direct property access is needed as `computed`, being
+		// the output of `getComputedStyle`, contains camelCased keys and
+		// `getPropertyValue` requires kebab-case ones.
+		//
+		// Support: IE <=9 - 11+
+		// IE only supports `"float"` in `getPropertyValue`; in computed styles
+		// it's only available as `"cssFloat"`. We no longer modify properties
+		// sent to `.css()` apart from camelCasing, so we need to check both.
+		// Normally, this would create difference in behavior: if
+		// `getPropertyValue` returns an empty string, the value returned
+		// by `.css()` would be `undefined`. This is usually the case for
+		// disconnected elements. However, in IE even disconnected elements
+		// with no styles return `"none"` for `getPropertyValue( "float" )`
 		ret = computed.getPropertyValue( name ) || computed[ name ];
+
+		if ( isCustomProp && ret ) {
+
+			// Support: Firefox 105 - 135+
+			// Spec requires trimming whitespace for custom properties (gh-4926).
+			// Firefox only trims leading whitespace.
+			//
+			// Fall back to `undefined` if empty string returned.
+			// This collapses a missing definition with property defined
+			// and set to an empty string but there's no standard API
+			// allowing us to differentiate them without a performance penalty
+			// and returning `undefined` aligns with older jQuery.
+			//
+			// rtrimCSS treats U+000D CARRIAGE RETURN and U+000C FORM FEED
+			// as whitespace while CSS does not, but this is not a problem
+			// because CSS preprocessing replaces them with U+000A LINE FEED
+			// (which *is* CSS whitespace)
+			// https://www.w3.org/TR/css-syntax-3/#input-preprocessing
+			ret = ret.replace( rtrimCSS, "$1" ) || undefined;
+		}
 
 		if ( ret === "" && !isAttached( elem ) ) {
 			ret = jQuery.style( elem, name );
-		}
-
-		// A tribute to the "awesome hack by Dean Edwards"
-		// Android Browser returns percentage for some values,
-		// but width seems to be reliably pixels.
-		// This is against the CSSOM draft spec:
-		// https://drafts.csswg.org/cssom/#resolved-values
-		if ( !support.pixelBoxStyles() && rnumnonpx.test( ret ) && rboxStyle.test( name ) ) {
-
-			// Remember the original values
-			width = style.width;
-			minWidth = style.minWidth;
-			maxWidth = style.maxWidth;
-
-			// Put in the new values to get a computed value out
-			style.minWidth = style.maxWidth = style.width = ret;
-			ret = computed.width;
-
-			// Revert the changed values
-			style.width = width;
-			style.minWidth = minWidth;
-			style.maxWidth = maxWidth;
 		}
 	}
 
 	return ret !== undefined ?
 
-		// Support: IE <=9 - 11 only
+		// Support: IE <=9 - 11+
 		// IE returns zIndex value as an integer.
 		ret + "" :
 		ret;
 }
 
-
-function addGetHookIf( conditionFn, hookFn ) {
-
-	// Define the hook, we'll check on the first run if it's really needed.
-	return {
-		get: function() {
-			if ( conditionFn() ) {
-
-				// Hook not needed (or it's not possible to use it due
-				// to missing dependency), remove it.
-				delete this.get;
-				return;
-			}
-
-			// Hook needed; redefine it so that the support test is not executed again.
-			return ( this.get = hookFn ).apply( this, arguments );
-		}
-	};
-}
-
-
 var cssPrefixes = [ "Webkit", "Moz", "ms" ],
-	emptyStyle = document.createElement( "div" ).style,
-	vendorProps = {};
+	emptyStyle = document$1.createElement( "div" ).style;
 
 // Return a vendor-prefixed property or undefined
 function vendorPropName( name ) {
@@ -6824,28 +5875,104 @@ function vendorPropName( name ) {
 	}
 }
 
-// Return a potentially-mapped jQuery.cssProps or vendor prefixed property
+// Return a potentially-mapped vendor prefixed property
 function finalPropName( name ) {
-	var final = jQuery.cssProps[ name ] || vendorProps[ name ];
-
-	if ( final ) {
-		return final;
-	}
 	if ( name in emptyStyle ) {
 		return name;
 	}
-	return vendorProps[ name ] = vendorPropName( name ) || name;
+	return vendorPropName( name ) || name;
 }
 
+var reliableTrDimensionsVal, reliableColDimensionsVal,
+	table = document$1.createElement( "table" );
 
-var
+// Executing table tests requires only one layout, so they're executed
+// at the same time to save the second computation.
+function computeTableStyleTests() {
+	if (
 
-	// Swappable if display is none or starts with table
-	// except "table", "table-cell", or "table-caption"
-	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
-	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
-	rcustomProp = /^--/,
-	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
+		// This is a singleton, we need to execute it only once
+		!table ||
+
+		// Finish early in limited (non-browser) environments
+		!table.style
+	) {
+		return;
+	}
+
+	var trStyle,
+		col = document$1.createElement( "col" ),
+		tr = document$1.createElement( "tr" ),
+		td = document$1.createElement( "td" );
+
+	table.style.cssText = "position:absolute;left:-11111px;" +
+		"border-collapse:separate;border-spacing:0";
+	tr.style.cssText = "box-sizing:content-box;border:1px solid;height:1px";
+	td.style.cssText = "height:9px;width:9px;padding:0";
+
+	col.span = 2;
+
+	documentElement$1
+		.appendChild( table )
+		.appendChild( col )
+		.parentNode
+		.appendChild( tr )
+		.appendChild( td )
+		.parentNode
+		.appendChild( td.cloneNode( true ) );
+
+	// Don't run until window is visible
+	if ( table.offsetWidth === 0 ) {
+		documentElement$1.removeChild( table );
+		return;
+	}
+
+	trStyle = window.getComputedStyle( tr );
+
+	// Support: Firefox 135+
+	// Firefox always reports computed width as if `span` was 1.
+	// Support: Safari 18.3+
+	// In Safari, computed width for columns is always 0.
+	// In both these browsers, using `offsetWidth` solves the issue.
+	// Support: IE 11+
+	// In IE, `<col>` computed width is `"auto"` unless `width` is set
+	// explicitly via CSS so measurements there remain incorrect. Because of
+	// the lack of a proper workaround, we accept this limitation, treating
+	// IE as passing the test.
+	reliableColDimensionsVal = isIE || Math.round( parseFloat(
+		window.getComputedStyle( col ).width )
+	) === 18;
+
+	// Support: IE 10 - 11+
+	// IE misreports `getComputedStyle` of table rows with width/height
+	// set in CSS while `offset*` properties report correct values.
+	// Support: Firefox 70 - 135+
+	// Only Firefox includes border widths
+	// in computed dimensions for table rows. (gh-4529)
+	reliableTrDimensionsVal = Math.round( parseFloat( trStyle.height ) +
+		parseFloat( trStyle.borderTopWidth ) +
+		parseFloat( trStyle.borderBottomWidth ) ) === tr.offsetHeight;
+
+	documentElement$1.removeChild( table );
+
+	// Nullify the table so it wouldn't be stored in the memory;
+	// it will also be a sign that checks were already performed.
+	table = null;
+}
+
+jQuery.extend( support, {
+	reliableTrDimensions: function() {
+		computeTableStyleTests();
+		return reliableTrDimensionsVal;
+	},
+
+	reliableColDimensions: function() {
+		computeTableStyleTests();
+		return reliableColDimensionsVal;
+	}
+} );
+
+var cssShow = { position: "absolute", visibility: "hidden", display: "block" },
 	cssNormalTransform = {
 		letterSpacing: "0",
 		fontWeight: "400"
@@ -6866,7 +5993,8 @@ function setPositiveNumber( _elem, value, subtract ) {
 function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computedVal ) {
 	var i = dimension === "width" ? 1 : 0,
 		extra = 0,
-		delta = 0;
+		delta = 0,
+		marginDelta = 0;
 
 	// Adjustment may not be necessary
 	if ( box === ( isBorderBox ? "border" : "content" ) ) {
@@ -6876,8 +6004,10 @@ function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computed
 	for ( ; i < 4; i += 2 ) {
 
 		// Both box models exclude margin
+		// Count margin delta separately to only add it after scroll gutter adjustment.
+		// This is needed to make negative margins work with `outerHeight( true )` (gh-3982).
 		if ( box === "margin" ) {
-			delta += jQuery.css( elem, box + cssExpand[ i ], true, styles );
+			marginDelta += jQuery.css( elem, box + cssExpand[ i ], true, styles );
 		}
 
 		// If we get here with a content-box, we're seeking "padding" or "border" or "margin"
@@ -6928,7 +6058,7 @@ function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computed
 		) ) || 0;
 	}
 
-	return delta;
+	return delta + marginDelta;
 }
 
 function getWidthOrHeight( elem, dimension, extra ) {
@@ -6938,7 +6068,7 @@ function getWidthOrHeight( elem, dimension, extra ) {
 
 		// To avoid forcing a reflow, only fetch boxSizing if we need it (gh-4322).
 		// Fake content-box until we know it's needed to know the true value.
-		boxSizingNeeded = !support.boxSizingReliable() || extra,
+		boxSizingNeeded = isIE || extra,
 		isBorderBox = boxSizingNeeded &&
 			jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
 		valueIsBorderBox = isBorderBox,
@@ -6946,7 +6076,6 @@ function getWidthOrHeight( elem, dimension, extra ) {
 		val = curCSS( elem, dimension, styles ),
 		offsetProp = "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 );
 
-	// Support: Firefox <=54
 	// Return a confounding non-pixel value or feign ignorance, as appropriate.
 	if ( rnumnonpx.test( val ) ) {
 		if ( !extra ) {
@@ -6956,24 +6085,22 @@ function getWidthOrHeight( elem, dimension, extra ) {
 	}
 
 
-	// Support: IE 9 - 11 only
-	// Use offsetWidth/offsetHeight for when box sizing is unreliable.
-	// In those cases, the computed value can be trusted to be border-box.
-	if ( ( !support.boxSizingReliable() && isBorderBox ||
+	if (
+		(
 
-		// Support: IE 10 - 11+, Edge 15 - 18+
-		// IE/Edge misreport `getComputedStyle` of table rows with width/height
-		// set in CSS while `offset*` properties report correct values.
-		// Interestingly, in some cases IE 9 doesn't suffer from this issue.
-		!support.reliableTrDimensions() && nodeName( elem, "tr" ) ||
+			// Fall back to offsetWidth/offsetHeight when value is "auto"
+			// This happens for inline elements with no explicit setting (gh-3571)
+			val === "auto" ||
 
-		// Fall back to offsetWidth/offsetHeight when value is "auto"
-		// This happens for inline elements with no explicit setting (gh-3571)
-		val === "auto" ||
+			// Support: IE 9 - 11+
+			// Use offsetWidth/offsetHeight for when box sizing is unreliable.
+			// In those cases, the computed value can be trusted to be border-box.
+			( isIE && isBorderBox ) ||
 
-		// Support: Android <=4.1 - 4.3 only
-		// Also use offsetWidth/offsetHeight for misreported inline dimensions (gh-3602)
-		!parseFloat( val ) && jQuery.css( elem, "display", false, styles ) === "inline" ) &&
+			( !support.reliableColDimensions() && nodeName( elem, "col" ) ) ||
+
+			( !support.reliableTrDimensions() && nodeName( elem, "tr" ) )
+		) &&
 
 		// Make sure the element is visible & connected
 		elem.getClientRects().length ) {
@@ -7011,46 +6138,7 @@ jQuery.extend( {
 
 	// Add in style property hooks for overriding the default
 	// behavior of getting and setting a style property
-	cssHooks: {
-		opacity: {
-			get: function( elem, computed ) {
-				if ( computed ) {
-
-					// We should always get a number back from opacity
-					var ret = curCSS( elem, "opacity" );
-					return ret === "" ? "1" : ret;
-				}
-			}
-		}
-	},
-
-	// Don't automatically add "px" to these possibly-unitless properties
-	cssNumber: {
-		"animationIterationCount": true,
-		"columnCount": true,
-		"fillOpacity": true,
-		"flexGrow": true,
-		"flexShrink": true,
-		"fontWeight": true,
-		"gridArea": true,
-		"gridColumn": true,
-		"gridColumnEnd": true,
-		"gridColumnStart": true,
-		"gridRow": true,
-		"gridRowEnd": true,
-		"gridRowStart": true,
-		"lineHeight": true,
-		"opacity": true,
-		"order": true,
-		"orphans": true,
-		"widows": true,
-		"zIndex": true,
-		"zoom": true
-	},
-
-	// Add in properties whose names you wish to fix before
-	// setting or getting the value
-	cssProps: {},
+	cssHooks: {},
 
 	// Get and set the style property on a DOM Node
 	style: function( elem, name, value, extra ) {
@@ -7062,7 +6150,7 @@ jQuery.extend( {
 
 		// Make sure that we're working with the right name
 		var ret, type, hooks,
-			origName = camelCase( name ),
+			origName = cssCamelCase( name ),
 			isCustomProp = rcustomProp.test( name ),
 			style = elem.style;
 
@@ -7080,28 +6168,27 @@ jQuery.extend( {
 		if ( value !== undefined ) {
 			type = typeof value;
 
-			// Convert "+=" or "-=" to relative numbers (#7345)
+			// Convert "+=" or "-=" to relative numbers (trac-7345)
 			if ( type === "string" && ( ret = rcssNum.exec( value ) ) && ret[ 1 ] ) {
 				value = adjustCSS( elem, name, ret );
 
-				// Fixes bug #9237
+				// Fixes bug trac-9237
 				type = "number";
 			}
 
-			// Make sure that null and NaN values aren't set (#7116)
+			// Make sure that null and NaN values aren't set (trac-7116)
 			if ( value == null || value !== value ) {
 				return;
 			}
 
-			// If a number was passed in, add the unit (except for certain CSS properties)
-			// The isCustomProp check can be removed in jQuery 4.0 when we only auto-append
-			// "px" to a few hardcoded values.
-			if ( type === "number" && !isCustomProp ) {
-				value += ret && ret[ 3 ] || ( jQuery.cssNumber[ origName ] ? "" : "px" );
+			// If the value is a number, add `px` for certain CSS properties
+			if ( type === "number" ) {
+				value += ret && ret[ 3 ] || ( isAutoPx( origName ) ? "px" : "" );
 			}
 
-			// background-* props affect original clone's values
-			if ( !support.clearCloneStyle && value === "" && name.indexOf( "background" ) === 0 ) {
+			// Support: IE <=9 - 11+
+			// background-* props of a cloned element affect the source element (trac-8908)
+			if ( isIE && value === "" && name.indexOf( "background" ) === 0 ) {
 				style[ name ] = "inherit";
 			}
 
@@ -7132,7 +6219,7 @@ jQuery.extend( {
 
 	css: function( elem, name, extra, styles ) {
 		var val, num, hooks,
-			origName = camelCase( name ),
+			origName = cssCamelCase( name ),
 			isCustomProp = rcustomProp.test( name );
 
 		// Make sure that we're working with the right name. We don't
@@ -7175,21 +6262,13 @@ jQuery.each( [ "height", "width" ], function( _i, dimension ) {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
 
-				// Certain elements can have dimension info if we invisibly show them
-				// but it must have a current display style that would benefit
-				return rdisplayswap.test( jQuery.css( elem, "display" ) ) &&
-
-					// Support: Safari 8+
-					// Table columns in Safari have non-zero offsetWidth & zero
-					// getBoundingClientRect().width unless display is changed.
-					// Support: IE <=11 only
-					// Running getBoundingClientRect on a disconnected node
-					// in IE throws an error.
-					( !elem.getClientRects().length || !elem.getBoundingClientRect().width ) ?
-						swap( elem, cssShow, function() {
-							return getWidthOrHeight( elem, dimension, extra );
-						} ) :
-						getWidthOrHeight( elem, dimension, extra );
+				// Elements with `display: none` can have dimension info if
+				// we invisibly show them.
+				return jQuery.css( elem, "display" ) === "none" ?
+					swap( elem, cssShow, function() {
+						return getWidthOrHeight( elem, dimension, extra );
+					} ) :
+					getWidthOrHeight( elem, dimension, extra );
 			}
 		},
 
@@ -7197,14 +6276,8 @@ jQuery.each( [ "height", "width" ], function( _i, dimension ) {
 			var matches,
 				styles = getStyles( elem ),
 
-				// Only read styles.position if the test has a chance to fail
-				// to avoid forcing a reflow.
-				scrollboxSizeBuggy = !support.scrollboxSize() &&
-					styles.position === "absolute",
-
 				// To avoid forcing a reflow, only fetch boxSizing if we need it (gh-3991)
-				boxSizingNeeded = scrollboxSizeBuggy || extra,
-				isBorderBox = boxSizingNeeded &&
+				isBorderBox = extra &&
 					jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
 				subtract = extra ?
 					boxModelAdjustment(
@@ -7215,17 +6288,6 @@ jQuery.each( [ "height", "width" ], function( _i, dimension ) {
 						styles
 					) :
 					0;
-
-			// Account for unreliable border-box dimensions by comparing offset* to computed and
-			// faking a content-box to get border and padding (gh-3699)
-			if ( isBorderBox && scrollboxSizeBuggy ) {
-				subtract -= Math.ceil(
-					elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
-					parseFloat( styles[ dimension ] ) -
-					boxModelAdjustment( elem, dimension, "border", false, styles ) -
-					0.5
-				);
-			}
 
 			// Convert to pixels if value adjustment is needed
 			if ( subtract && ( matches = rcssNum.exec( value ) ) &&
@@ -7239,19 +6301,6 @@ jQuery.each( [ "height", "width" ], function( _i, dimension ) {
 		}
 	};
 } );
-
-jQuery.cssHooks.marginLeft = addGetHookIf( support.reliableMarginLeft,
-	function( elem, computed ) {
-		if ( computed ) {
-			return ( parseFloat( curCSS( elem, "marginLeft" ) ) ||
-				elem.getBoundingClientRect().left -
-					swap( elem, { marginLeft: 0 }, function() {
-						return elem.getBoundingClientRect().left;
-					} )
-				) + "px";
-		}
-	}
-);
 
 // These hooks are used by animate to expand properties
 jQuery.each( {
@@ -7306,7 +6355,6 @@ jQuery.fn.extend( {
 	}
 } );
 
-
 function Tween( elem, options, prop, end, easing ) {
 	return new Tween.prototype.init( elem, options, prop, end, easing );
 }
@@ -7321,7 +6369,7 @@ Tween.prototype = {
 		this.options = options;
 		this.start = this.now = this.cur();
 		this.end = end;
-		this.unit = unit || ( jQuery.cssNumber[ prop ] ? "" : "px" );
+		this.unit = unit || ( isAutoPx( prop ) ? "px" : "" );
 	},
 	cur: function() {
 		var hooks = Tween.propHooks[ this.prop ];
@@ -7387,22 +6435,12 @@ Tween.propHooks = {
 			if ( jQuery.fx.step[ tween.prop ] ) {
 				jQuery.fx.step[ tween.prop ]( tween );
 			} else if ( tween.elem.nodeType === 1 && (
-					jQuery.cssHooks[ tween.prop ] ||
+				jQuery.cssHooks[ tween.prop ] ||
 					tween.elem.style[ finalPropName( tween.prop ) ] != null ) ) {
 				jQuery.style( tween.elem, tween.prop, tween.now + tween.unit );
 			} else {
 				tween.elem[ tween.prop ] = tween.now;
 			}
-		}
-	}
-};
-
-// Support: IE <=9 only
-// Panic based approach to setting things on disconnected nodes
-Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
-	set: function( tween ) {
-		if ( tween.elem.nodeType && tween.elem.parentNode ) {
-			tween.elem[ tween.prop ] = tween.now;
 		}
 	}
 };
@@ -7422,9 +6460,6 @@ jQuery.fx = Tween.prototype.init;
 // Back compat <1.8 extension point
 jQuery.fx.step = {};
 
-
-
-
 var
 	fxNow, inProgress,
 	rfxtypes = /^(?:toggle|show|hide)$/,
@@ -7432,10 +6467,10 @@ var
 
 function schedule() {
 	if ( inProgress ) {
-		if ( document.hidden === false && window.requestAnimationFrame ) {
+		if ( document$1.hidden === false && window.requestAnimationFrame ) {
 			window.requestAnimationFrame( schedule );
 		} else {
-			window.setTimeout( schedule, jQuery.fx.interval );
+			window.setTimeout( schedule, 13 );
 		}
 
 		jQuery.fx.tick();
@@ -7551,10 +6586,9 @@ function defaultPrefilter( elem, props, opts ) {
 	// Restrict "overflow" and "display" styles during box animations
 	if ( isBox && elem.nodeType === 1 ) {
 
-		// Support: IE <=9 - 11, Edge 12 - 15
+		// Support: IE <=9 - 11+
 		// Record all 3 overflow attributes because IE does not infer the shorthand
-		// from identically-valued overflowX and overflowY and Edge just mirrors
-		// the overflowX value there.
+		// from identically-valued overflowX and overflowY.
 		opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
 
 		// Identify a display type, preferring old show/hide data over the CSS cascade
@@ -7615,7 +6649,7 @@ function defaultPrefilter( elem, props, opts ) {
 					hidden = dataShow.hidden;
 				}
 			} else {
-				dataShow = dataPriv.access( elem, "fxshow", { display: restoreDisplay } );
+				dataShow = dataPriv.set( elem, "fxshow", { display: restoreDisplay } );
 			}
 
 			// Store hidden/visible for toggle so `.stop().toggle()` "reverses"
@@ -7628,11 +6662,8 @@ function defaultPrefilter( elem, props, opts ) {
 				showHide( [ elem ], true );
 			}
 
-			/* eslint-disable no-loop-func */
-
+			// eslint-disable-next-line no-loop-func
 			anim.done( function() {
-
-			/* eslint-enable no-loop-func */
 
 				// The final step of a "hide" animation is actually hiding the element
 				if ( !hidden ) {
@@ -7662,7 +6693,7 @@ function propFilter( props, specialEasing ) {
 
 	// camelCase, specialEasing and expand cssHook pass
 	for ( index in props ) {
-		name = camelCase( index );
+		name = cssCamelCase( index );
 		easing = specialEasing[ name ];
 		value = props[ index ];
 		if ( Array.isArray( value ) ) {
@@ -7711,10 +6742,7 @@ function Animation( elem, properties, options ) {
 			var currentTime = fxNow || createFxNow(),
 				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
 
-				// Support: Android 2.3 only
-				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (#12497)
-				temp = remaining / animation.duration || 0,
-				percent = 1 - temp,
+				percent = 1 - ( remaining / animation.duration || 0 ),
 				index = 0,
 				length = animation.tweens.length;
 
@@ -7752,7 +6780,7 @@ function Animation( elem, properties, options ) {
 			tweens: [],
 			createTween: function( prop, end ) {
 				var tween = jQuery.Tween( elem, animation.opts, prop, end,
-						animation.opts.specialEasing[ prop ] || animation.opts.easing );
+					animation.opts.specialEasing[ prop ] || animation.opts.easing );
 				animation.tweens.push( tween );
 				return tween;
 			},
@@ -7787,7 +6815,7 @@ function Animation( elem, properties, options ) {
 	for ( ; index < length; index++ ) {
 		result = Animation.prefilters[ index ].call( animation, elem, props, animation.opts );
 		if ( result ) {
-			if ( isFunction( result.stop ) ) {
+			if ( typeof result.stop === "function" ) {
 				jQuery._queueHooks( animation.elem, animation.opts.queue ).stop =
 					result.stop.bind( result );
 			}
@@ -7797,7 +6825,7 @@ function Animation( elem, properties, options ) {
 
 	jQuery.map( props, createTween, animation );
 
-	if ( isFunction( animation.opts.start ) ) {
+	if ( typeof animation.opts.start === "function" ) {
 		animation.opts.start.call( elem, animation );
 	}
 
@@ -7830,7 +6858,7 @@ jQuery.Animation = jQuery.extend( Animation, {
 	},
 
 	tweener: function( props, callback ) {
-		if ( isFunction( props ) ) {
+		if ( typeof props === "function" ) {
 			callback = props;
 			props = [ "*" ];
 		} else {
@@ -7861,10 +6889,10 @@ jQuery.Animation = jQuery.extend( Animation, {
 
 jQuery.speed = function( speed, easing, fn ) {
 	var opt = speed && typeof speed === "object" ? jQuery.extend( {}, speed ) : {
-		complete: fn || !fn && easing ||
-			isFunction( speed ) && speed,
+		complete: fn || easing ||
+			typeof speed === "function" && speed,
 		duration: speed,
-		easing: fn && easing || easing && !isFunction( easing ) && easing
+		easing: fn && easing || easing && typeof easing !== "function" && easing
 	};
 
 	// Go to the end state if fx are off
@@ -7891,7 +6919,7 @@ jQuery.speed = function( speed, easing, fn ) {
 	opt.old = opt.complete;
 
 	opt.complete = function() {
-		if ( isFunction( opt.old ) ) {
+		if ( typeof opt.old === "function" ) {
 			opt.old.call( this );
 		}
 
@@ -7925,7 +6953,8 @@ jQuery.fn.extend( {
 					anim.stop( true );
 				}
 			};
-			doAnimation.finish = doAnimation;
+
+		doAnimation.finish = doAnimation;
 
 		return empty || optall.queue === false ?
 			this.each( doAnimation ) :
@@ -8077,7 +7106,6 @@ jQuery.fx.timer = function( timer ) {
 	jQuery.fx.start();
 };
 
-jQuery.fx.interval = 13;
 jQuery.fx.start = function() {
 	if ( inProgress ) {
 		return;
@@ -8099,9 +7127,7 @@ jQuery.fx.speeds = {
 	_default: 400
 };
 
-
 // Based off of the plugin by Clint Helfers, with permission.
-// https://web.archive.org/web/20100324014747/http://blindsignals.com/index.php/2009/07/jquery-delay/
 jQuery.fn.delay = function( time, type ) {
 	time = jQuery.fx ? jQuery.fx.speeds[ time ] || time : time;
 	type = type || "fx";
@@ -8113,163 +7139,6 @@ jQuery.fn.delay = function( time, type ) {
 		};
 	} );
 };
-
-
-( function() {
-	var input = document.createElement( "input" ),
-		select = document.createElement( "select" ),
-		opt = select.appendChild( document.createElement( "option" ) );
-
-	input.type = "checkbox";
-
-	// Support: Android <=4.3 only
-	// Default value for a checkbox should be "on"
-	support.checkOn = input.value !== "";
-
-	// Support: IE <=11 only
-	// Must access selectedIndex to make default options select
-	support.optSelected = opt.selected;
-
-	// Support: IE <=11 only
-	// An input loses its value after becoming a radio
-	input = document.createElement( "input" );
-	input.value = "t";
-	input.type = "radio";
-	support.radioValue = input.value === "t";
-} )();
-
-
-var boolHook,
-	attrHandle = jQuery.expr.attrHandle;
-
-jQuery.fn.extend( {
-	attr: function( name, value ) {
-		return access( this, jQuery.attr, name, value, arguments.length > 1 );
-	},
-
-	removeAttr: function( name ) {
-		return this.each( function() {
-			jQuery.removeAttr( this, name );
-		} );
-	}
-} );
-
-jQuery.extend( {
-	attr: function( elem, name, value ) {
-		var ret, hooks,
-			nType = elem.nodeType;
-
-		// Don't get/set attributes on text, comment and attribute nodes
-		if ( nType === 3 || nType === 8 || nType === 2 ) {
-			return;
-		}
-
-		// Fallback to prop when attributes are not supported
-		if ( typeof elem.getAttribute === "undefined" ) {
-			return jQuery.prop( elem, name, value );
-		}
-
-		// Attribute hooks are determined by the lowercase version
-		// Grab necessary hook if one is defined
-		if ( nType !== 1 || !jQuery.isXMLDoc( elem ) ) {
-			hooks = jQuery.attrHooks[ name.toLowerCase() ] ||
-				( jQuery.expr.match.bool.test( name ) ? boolHook : undefined );
-		}
-
-		if ( value !== undefined ) {
-			if ( value === null ) {
-				jQuery.removeAttr( elem, name );
-				return;
-			}
-
-			if ( hooks && "set" in hooks &&
-				( ret = hooks.set( elem, value, name ) ) !== undefined ) {
-				return ret;
-			}
-
-			elem.setAttribute( name, value + "" );
-			return value;
-		}
-
-		if ( hooks && "get" in hooks && ( ret = hooks.get( elem, name ) ) !== null ) {
-			return ret;
-		}
-
-		ret = jQuery.find.attr( elem, name );
-
-		// Non-existent attributes return null, we normalize to undefined
-		return ret == null ? undefined : ret;
-	},
-
-	attrHooks: {
-		type: {
-			set: function( elem, value ) {
-				if ( !support.radioValue && value === "radio" &&
-					nodeName( elem, "input" ) ) {
-					var val = elem.value;
-					elem.setAttribute( "type", value );
-					if ( val ) {
-						elem.value = val;
-					}
-					return value;
-				}
-			}
-		}
-	},
-
-	removeAttr: function( elem, value ) {
-		var name,
-			i = 0,
-
-			// Attribute names can contain non-HTML whitespace characters
-			// https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
-			attrNames = value && value.match( rnothtmlwhite );
-
-		if ( attrNames && elem.nodeType === 1 ) {
-			while ( ( name = attrNames[ i++ ] ) ) {
-				elem.removeAttribute( name );
-			}
-		}
-	}
-} );
-
-// Hooks for boolean attributes
-boolHook = {
-	set: function( elem, value, name ) {
-		if ( value === false ) {
-
-			// Remove boolean attributes when set to false
-			jQuery.removeAttr( elem, name );
-		} else {
-			elem.setAttribute( name, name );
-		}
-		return name;
-	}
-};
-
-jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( _i, name ) {
-	var getter = attrHandle[ name ] || jQuery.find.attr;
-
-	attrHandle[ name ] = function( elem, name, isXML ) {
-		var ret, handle,
-			lowercaseName = name.toLowerCase();
-
-		if ( !isXML ) {
-
-			// Avoid an infinite loop by temporarily removing this function from the getter
-			handle = attrHandle[ lowercaseName ];
-			attrHandle[ lowercaseName ] = ret;
-			ret = getter( elem, name, isXML ) != null ?
-				lowercaseName :
-				null;
-			attrHandle[ lowercaseName ] = handle;
-		}
-		return ret;
-	};
-} );
-
-
-
 
 var rfocusable = /^(?:input|select|textarea|button)$/i,
 	rclickable = /^(?:a|area)$/i;
@@ -8323,12 +7192,11 @@ jQuery.extend( {
 		tabIndex: {
 			get: function( elem ) {
 
-				// Support: IE <=9 - 11 only
+				// Support: IE <=9 - 11+
 				// elem.tabIndex doesn't always return the
 				// correct value when it hasn't been explicitly set
-				// https://web.archive.org/web/20141116233347/http://fluidproject.org/blog/2008/01/09/getting-setting-and-removing-tabindex-values-with-javascript/
-				// Use proper attribute retrieval(#12072)
-				var tabindex = jQuery.find.attr( elem, "tabindex" );
+				// Use proper attribute retrieval (trac-12072)
+				var tabindex = elem.getAttribute( "tabindex" );
 
 				if ( tabindex ) {
 					return parseInt( tabindex, 10 );
@@ -8336,8 +7204,10 @@ jQuery.extend( {
 
 				if (
 					rfocusable.test( elem.nodeName ) ||
-					rclickable.test( elem.nodeName ) &&
-					elem.href
+
+					// href-less anchor's `tabIndex` property value is `0` and
+					// the `tabindex` attribute value: `null`. We want `-1`.
+					rclickable.test( elem.nodeName ) && elem.href
 				) {
 					return 0;
 				}
@@ -8353,35 +7223,32 @@ jQuery.extend( {
 	}
 } );
 
-// Support: IE <=11 only
-// Accessing the selectedIndex property
-// forces the browser to respect setting selected
-// on the option
-// The getter ensures a default option is selected
-// when in an optgroup
-// eslint rule "no-unused-expressions" is disabled for this code
-// since it considers such accessions noop
-if ( !support.optSelected ) {
+// Support: IE <=11+
+// Accessing the selectedIndex property forces the browser to respect
+// setting selected on the option. The getter ensures a default option
+// is selected when in an optgroup. ESLint rule "no-unused-expressions"
+// is disabled for this code since it considers such accessions noop.
+if ( isIE ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
 
-			/* eslint no-unused-expressions: "off" */
-
 			var parent = elem.parentNode;
 			if ( parent && parent.parentNode ) {
+				// eslint-disable-next-line no-unused-expressions
 				parent.parentNode.selectedIndex;
 			}
 			return null;
 		},
 		set: function( elem ) {
 
-			/* eslint no-unused-expressions: "off" */
 
 			var parent = elem.parentNode;
 			if ( parent ) {
+				// eslint-disable-next-line no-unused-expressions
 				parent.selectedIndex;
 
 				if ( parent.parentNode ) {
+					// eslint-disable-next-line no-unused-expressions
 					parent.parentNode.selectedIndex;
 				}
 			}
@@ -8404,16 +7271,12 @@ jQuery.each( [
 	jQuery.propFix[ this.toLowerCase() ] = this;
 } );
 
-
-
-
-	// Strip and collapse whitespace according to HTML spec
-	// https://infra.spec.whatwg.org/#strip-and-collapse-ascii-whitespace
-	function stripAndCollapse( value ) {
-		var tokens = value.match( rnothtmlwhite ) || [];
-		return tokens.join( " " );
-	}
-
+// Strip and collapse whitespace according to HTML spec
+// https://infra.spec.whatwg.org/#strip-and-collapse-ascii-whitespace
+function stripAndCollapse( value ) {
+	var tokens = value.match( rnothtmlwhite ) || [];
+	return tokens.join( " " );
+}
 
 function getClass( elem ) {
 	return elem.getAttribute && elem.getAttribute( "class" ) || "";
@@ -8431,47 +7294,45 @@ function classesToArray( value ) {
 
 jQuery.fn.extend( {
 	addClass: function( value ) {
-		var classes, elem, cur, curValue, clazz, j, finalValue,
-			i = 0;
+		var classNames, cur, curValue, className, i, finalValue;
 
-		if ( isFunction( value ) ) {
+		if ( typeof value === "function" ) {
 			return this.each( function( j ) {
 				jQuery( this ).addClass( value.call( this, j, getClass( this ) ) );
 			} );
 		}
 
-		classes = classesToArray( value );
+		classNames = classesToArray( value );
 
-		if ( classes.length ) {
-			while ( ( elem = this[ i++ ] ) ) {
-				curValue = getClass( elem );
-				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
+		if ( classNames.length ) {
+			return this.each( function() {
+				curValue = getClass( this );
+				cur = this.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
-					j = 0;
-					while ( ( clazz = classes[ j++ ] ) ) {
-						if ( cur.indexOf( " " + clazz + " " ) < 0 ) {
-							cur += clazz + " ";
+					for ( i = 0; i < classNames.length; i++ ) {
+						className = classNames[ i ];
+						if ( cur.indexOf( " " + className + " " ) < 0 ) {
+							cur += className + " ";
 						}
 					}
 
 					// Only assign if different to avoid unneeded rendering.
 					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
-						elem.setAttribute( "class", finalValue );
+						this.setAttribute( "class", finalValue );
 					}
 				}
-			}
+			} );
 		}
 
 		return this;
 	},
 
 	removeClass: function( value ) {
-		var classes, elem, cur, curValue, clazz, j, finalValue,
-			i = 0;
+		var classNames, cur, curValue, className, i, finalValue;
 
-		if ( isFunction( value ) ) {
+		if ( typeof value === "function" ) {
 			return this.each( function( j ) {
 				jQuery( this ).removeClass( value.call( this, j, getClass( this ) ) );
 			} );
@@ -8481,46 +7342,41 @@ jQuery.fn.extend( {
 			return this.attr( "class", "" );
 		}
 
-		classes = classesToArray( value );
+		classNames = classesToArray( value );
 
-		if ( classes.length ) {
-			while ( ( elem = this[ i++ ] ) ) {
-				curValue = getClass( elem );
+		if ( classNames.length ) {
+			return this.each( function() {
+				curValue = getClass( this );
 
 				// This expression is here for better compressibility (see addClass)
-				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
+				cur = this.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
-					j = 0;
-					while ( ( clazz = classes[ j++ ] ) ) {
+					for ( i = 0; i < classNames.length; i++ ) {
+						className = classNames[ i ];
 
 						// Remove *all* instances
-						while ( cur.indexOf( " " + clazz + " " ) > -1 ) {
-							cur = cur.replace( " " + clazz + " ", " " );
+						while ( cur.indexOf( " " + className + " " ) > -1 ) {
+							cur = cur.replace( " " + className + " ", " " );
 						}
 					}
 
 					// Only assign if different to avoid unneeded rendering.
 					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
-						elem.setAttribute( "class", finalValue );
+						this.setAttribute( "class", finalValue );
 					}
 				}
-			}
+			} );
 		}
 
 		return this;
 	},
 
 	toggleClass: function( value, stateVal ) {
-		var type = typeof value,
-			isValidValue = type === "string" || Array.isArray( value );
+		var classNames, className, i, self;
 
-		if ( typeof stateVal === "boolean" && isValidValue ) {
-			return stateVal ? this.addClass( value ) : this.removeClass( value );
-		}
-
-		if ( isFunction( value ) ) {
+		if ( typeof value === "function" ) {
 			return this.each( function( i ) {
 				jQuery( this ).toggleClass(
 					value.call( this, i, getClass( this ), stateVal ),
@@ -8529,17 +7385,20 @@ jQuery.fn.extend( {
 			} );
 		}
 
-		return this.each( function() {
-			var className, i, self, classNames;
+		if ( typeof stateVal === "boolean" ) {
+			return stateVal ? this.addClass( value ) : this.removeClass( value );
+		}
 
-			if ( isValidValue ) {
+		classNames = classesToArray( value );
+
+		if ( classNames.length ) {
+			return this.each( function() {
 
 				// Toggle individual class names
-				i = 0;
 				self = jQuery( this );
-				classNames = classesToArray( value );
 
-				while ( ( className = classNames[ i++ ] ) ) {
+				for ( i = 0; i < classNames.length; i++ ) {
+					className = classNames[ i ];
 
 					// Check each className given, space separated list
 					if ( self.hasClass( className ) ) {
@@ -8548,29 +7407,10 @@ jQuery.fn.extend( {
 						self.addClass( className );
 					}
 				}
+			} );
+		}
 
-			// Toggle whole class name
-			} else if ( value === undefined || type === "boolean" ) {
-				className = getClass( this );
-				if ( className ) {
-
-					// Store className if set
-					dataPriv.set( this, "__className__", className );
-				}
-
-				// If the element has a class name or if we're passed `false`,
-				// then remove the whole classname (if there was one, the above saved it).
-				// Otherwise bring back whatever was previously saved (if anything),
-				// falling back to the empty string if nothing was stored.
-				if ( this.setAttribute ) {
-					this.setAttribute( "class",
-						className || value === false ?
-						"" :
-						dataPriv.get( this, "__className__" ) || ""
-					);
-				}
-			}
-		} );
+		return this;
 	},
 
 	hasClass: function( selector ) {
@@ -8581,18 +7421,13 @@ jQuery.fn.extend( {
 		while ( ( elem = this[ i++ ] ) ) {
 			if ( elem.nodeType === 1 &&
 				( " " + stripAndCollapse( getClass( elem ) ) + " " ).indexOf( className ) > -1 ) {
-					return true;
+				return true;
 			}
 		}
 
 		return false;
 	}
 } );
-
-
-
-
-var rreturn = /\r/g;
 
 jQuery.fn.extend( {
 	val: function( value ) {
@@ -8613,11 +7448,6 @@ jQuery.fn.extend( {
 
 				ret = elem.value;
 
-				// Handle most common string cases
-				if ( typeof ret === "string" ) {
-					return ret.replace( rreturn, "" );
-				}
-
 				// Handle cases where value is null/undef or number
 				return ret == null ? "" : ret;
 			}
@@ -8625,7 +7455,7 @@ jQuery.fn.extend( {
 			return;
 		}
 
-		valueIsFunction = isFunction( value );
+		valueIsFunction = typeof value === "function";
 
 		return this.each( function( i ) {
 			var val;
@@ -8665,20 +7495,6 @@ jQuery.fn.extend( {
 
 jQuery.extend( {
 	valHooks: {
-		option: {
-			get: function( elem ) {
-
-				var val = jQuery.find.attr( elem, "value" );
-				return val != null ?
-					val :
-
-					// Support: IE <=10 - 11 only
-					// option.text throws exceptions (#14686, #14858)
-					// Strip and collapse whitespace
-					// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
-					stripAndCollapse( jQuery.text( elem ) );
-			}
-		},
 		select: {
 			get: function( elem ) {
 				var value, option, i,
@@ -8699,9 +7515,7 @@ jQuery.extend( {
 				for ( ; i < max; i++ ) {
 					option = options[ i ];
 
-					// Support: IE <=9 only
-					// IE8-9 doesn't update selected after form reset (#2551)
-					if ( ( option.selected || i === index ) &&
+					if ( option.selected &&
 
 							// Don't return options that are disabled or in a disabled optgroup
 							!option.disabled &&
@@ -8733,15 +7547,11 @@ jQuery.extend( {
 				while ( i-- ) {
 					option = options[ i ];
 
-					/* eslint-disable no-cond-assign */
-
-					if ( option.selected =
-						jQuery.inArray( jQuery.valHooks.option.get( option ), values ) > -1
-					) {
+					if ( ( option.selected =
+						jQuery.inArray( jQuery( option ).val(), values ) > -1
+					) ) {
 						optionSet = true;
 					}
-
-					/* eslint-enable no-cond-assign */
 				}
 
 				// Force browsers to behave consistently when non-matching value is set
@@ -8754,6 +7564,23 @@ jQuery.extend( {
 	}
 } );
 
+if ( isIE ) {
+	jQuery.valHooks.option = {
+		get: function( elem ) {
+
+			var val = elem.getAttribute( "value" );
+			return val != null ?
+				val :
+
+				// Support: IE <=10 - 11+
+				// option.text throws exceptions (trac-14686, trac-14858)
+				// Strip and collapse whitespace
+				// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
+				stripAndCollapse( jQuery.text( elem ) );
+		}
+	};
+}
+
 // Radios and checkboxes getter/setter
 jQuery.each( [ "radio", "checkbox" ], function() {
 	jQuery.valHooks[ this ] = {
@@ -8763,21 +7590,7 @@ jQuery.each( [ "radio", "checkbox" ], function() {
 			}
 		}
 	};
-	if ( !support.checkOn ) {
-		jQuery.valHooks[ this ].get = function( elem ) {
-			return elem.getAttribute( "value" ) === null ? "on" : elem.value;
-		};
-	}
 } );
-
-
-
-
-// Return jQuery for attributes-only inclusion
-
-
-support.focusin = "onfocusin" in window;
-
 
 var rfocusMorph = /^(?:focusinfocus|focusoutblur)$/,
 	stopPropagationCallback = function( e ) {
@@ -8789,11 +7602,11 @@ jQuery.extend( jQuery.event, {
 	trigger: function( event, data, elem, onlyHandlers ) {
 
 		var i, cur, tmp, bubbleType, ontype, handle, special, lastElement,
-			eventPath = [ elem || document ],
+			eventPath = [ elem || document$1 ],
 			type = hasOwn.call( event, "type" ) ? event.type : event,
 			namespaces = hasOwn.call( event, "namespace" ) ? event.namespace.split( "." ) : [];
 
-		cur = lastElement = tmp = elem = elem || document;
+		cur = lastElement = tmp = elem = elem || document$1;
 
 		// Don't do events on text and comment nodes
 		if ( elem.nodeType === 3 || elem.nodeType === 8 ) {
@@ -8843,8 +7656,8 @@ jQuery.extend( jQuery.event, {
 			return;
 		}
 
-		// Determine event propagation path in advance, per W3C events spec (#9951)
-		// Bubble up to document, then to window; watch for a global ownerDocument var (#9724)
+		// Determine event propagation path in advance, per W3C events spec (trac-9951)
+		// Bubble up to document, then to window; watch for a global ownerDocument var (trac-9724)
 		if ( !onlyHandlers && !special.noBubble && !isWindow( elem ) ) {
 
 			bubbleType = special.delegateType || type;
@@ -8857,7 +7670,7 @@ jQuery.extend( jQuery.event, {
 			}
 
 			// Only add window if we got to document (e.g., not plain obj or detached DOM)
-			if ( tmp === ( elem.ownerDocument || document ) ) {
+			if ( tmp === ( elem.ownerDocument || document$1 ) ) {
 				eventPath.push( tmp.defaultView || tmp.parentWindow || window );
 			}
 		}
@@ -8871,9 +7684,7 @@ jQuery.extend( jQuery.event, {
 				special.bindType || type;
 
 			// jQuery handler
-			handle = (
-					dataPriv.get( cur, "events" ) || Object.create( null )
-				)[ event.type ] &&
+			handle = ( dataPriv.get( cur, "events" ) || Object.create( null ) )[ event.type ] &&
 				dataPriv.get( cur, "handle" );
 			if ( handle ) {
 				handle.apply( cur, data );
@@ -8898,8 +7709,8 @@ jQuery.extend( jQuery.event, {
 				acceptData( elem ) ) {
 
 				// Call a native DOM method on the target with the same name as the event.
-				// Don't do default actions on window, that's where global variables be (#6170)
-				if ( ontype && isFunction( elem[ type ] ) && !isWindow( elem ) ) {
+				// Don't do default actions on window, that's where global variables be (trac-6170)
+				if ( ontype && typeof elem[ type ] === "function" && !isWindow( elem ) ) {
 
 					// Don't re-trigger an onFOO event when we call its FOO() method
 					tmp = elem[ ontype ];
@@ -8965,80 +7776,37 @@ jQuery.fn.extend( {
 	}
 } );
 
-
-// Support: Firefox <=44
-// Firefox doesn't have focus(in | out) events
-// Related ticket - https://bugzilla.mozilla.org/show_bug.cgi?id=687787
-//
-// Support: Chrome <=48 - 49, Safari <=9.0 - 9.1
-// focus(in | out) events fire after focus & blur events,
-// which is spec violation - http://www.w3.org/TR/DOM-Level-3-Events/#events-focusevent-event-order
-// Related ticket - https://bugs.chromium.org/p/chromium/issues/detail?id=449857
-if ( !support.focusin ) {
-	jQuery.each( { focus: "focusin", blur: "focusout" }, function( orig, fix ) {
-
-		// Attach a single capturing handler on the document while someone wants focusin/focusout
-		var handler = function( event ) {
-			jQuery.event.simulate( fix, event.target, jQuery.event.fix( event ) );
-		};
-
-		jQuery.event.special[ fix ] = {
-			setup: function() {
-
-				// Handle: regular nodes (via `this.ownerDocument`), window
-				// (via `this.document`) & document (via `this`).
-				var doc = this.ownerDocument || this.document || this,
-					attaches = dataPriv.access( doc, fix );
-
-				if ( !attaches ) {
-					doc.addEventListener( orig, handler, true );
-				}
-				dataPriv.access( doc, fix, ( attaches || 0 ) + 1 );
-			},
-			teardown: function() {
-				var doc = this.ownerDocument || this.document || this,
-					attaches = dataPriv.access( doc, fix ) - 1;
-
-				if ( !attaches ) {
-					doc.removeEventListener( orig, handler, true );
-					dataPriv.remove( doc, fix );
-
-				} else {
-					dataPriv.access( doc, fix, attaches );
-				}
-			}
-		};
-	} );
-}
 var location = window.location;
 
 var nonce = { guid: Date.now() };
 
-var rquery = ( /\?/ );
-
-
+var rquery = /\?/;
 
 // Cross-browser xml parsing
 jQuery.parseXML = function( data ) {
-	var xml;
+	var xml, parserErrorElem;
 	if ( !data || typeof data !== "string" ) {
 		return null;
 	}
 
-	// Support: IE 9 - 11 only
+	// Support: IE 9 - 11+
 	// IE throws on parseFromString with invalid input.
 	try {
 		xml = ( new window.DOMParser() ).parseFromString( data, "text/xml" );
-	} catch ( e ) {
-		xml = undefined;
-	}
+	} catch ( e ) {}
 
-	if ( !xml || xml.getElementsByTagName( "parsererror" ).length ) {
-		jQuery.error( "Invalid XML: " + data );
+	parserErrorElem = xml && xml.getElementsByTagName( "parsererror" )[ 0 ];
+	if ( !xml || parserErrorElem ) {
+		jQuery.error( "Invalid XML: " + (
+			parserErrorElem ?
+				jQuery.map( parserErrorElem.childNodes, function( el ) {
+					return el.textContent;
+				} ).join( "\n" ) :
+				data
+		) );
 	}
 	return xml;
 };
-
 
 var
 	rbracket = /\[\]$/,
@@ -9092,7 +7860,7 @@ jQuery.param = function( a, traditional ) {
 		add = function( key, valueOrFunction ) {
 
 			// If value is a function, invoke it and use its return value
-			var value = isFunction( valueOrFunction ) ?
+			var value = typeof valueOrFunction === "function" ?
 				valueOrFunction() :
 				valueOrFunction;
 
@@ -9135,16 +7903,14 @@ jQuery.fn.extend( {
 			// Can add propHook for "elements" to filter or add form elements
 			var elements = jQuery.prop( this, "elements" );
 			return elements ? jQuery.makeArray( elements ) : this;
-		} )
-		.filter( function() {
+		} ).filter( function() {
 			var type = this.type;
 
 			// Use .is( ":disabled" ) so that fieldset[disabled] works
 			return this.name && !jQuery( this ).is( ":disabled" ) &&
 				rsubmittable.test( this.nodeName ) && !rsubmitterTypes.test( type ) &&
 				( this.checked || !rcheckableType.test( type ) );
-		} )
-		.map( function( _i, elem ) {
+		} ).map( function( _i, elem ) {
 			var val = jQuery( this ).val();
 
 			if ( val == null ) {
@@ -9162,14 +7928,13 @@ jQuery.fn.extend( {
 	}
 } );
 
-
 var
 	r20 = /%20/g,
 	rhash = /#.*$/,
 	rantiCache = /([?&])_=[^&]*/,
 	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
 
-	// #7653, #8125, #8152: local protocol detection
+	// trac-7653, trac-8125, trac-8152: local protocol detection
 	rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/,
 	rnoContent = /^(?:GET|HEAD)$/,
 	rprotocol = /^\/\//,
@@ -9192,12 +7957,13 @@ var
 	 */
 	transports = {},
 
-	// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
+	// Avoid comment-prolog char sequence (trac-10098); must appease lint and evade compression
 	allTypes = "*/".concat( "*" ),
 
 	// Anchor tag for parsing the document origin
-	originAnchor = document.createElement( "a" );
-	originAnchor.href = location.href;
+	originAnchor = document$1.createElement( "a" );
+
+originAnchor.href = location.href;
 
 // Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
 function addToPrefiltersOrTransports( structure ) {
@@ -9214,7 +7980,7 @@ function addToPrefiltersOrTransports( structure ) {
 			i = 0,
 			dataTypes = dataTypeExpression.toLowerCase().match( rnothtmlwhite ) || [];
 
-		if ( isFunction( func ) ) {
+		if ( typeof func === "function" ) {
 
 			// For each dataType in the dataTypeExpression
 			while ( ( dataType = dataTypes[ i++ ] ) ) {
@@ -9262,7 +8028,7 @@ function inspectPrefiltersOrTransports( structure, options, originalOptions, jqX
 
 // A special extend for ajax options
 // that takes "flat" options (not to be deep extended)
-// Fixes #9887
+// Fixes trac-9887
 function ajaxExtend( target, src ) {
 	var key, deep,
 		flatOptions = jQuery.ajaxSettings.flatOptions || {};
@@ -9578,8 +8344,8 @@ jQuery.extend( {
 			// Context for global events is callbackContext if it is a DOM node or jQuery collection
 			globalEventContext = s.context &&
 				( callbackContext.nodeType || callbackContext.jquery ) ?
-					jQuery( callbackContext ) :
-					jQuery.event,
+				jQuery( callbackContext ) :
+				jQuery.event,
 
 			// Deferreds
 			deferred = jQuery.Deferred(),
@@ -9606,6 +8372,12 @@ jQuery.extend( {
 						if ( !responseHeaders ) {
 							responseHeaders = {};
 							while ( ( match = rheaders.exec( responseHeadersString ) ) ) {
+
+								// Support: IE 11+
+								// `getResponseHeader( key )` in IE doesn't combine all header
+								// values for the provided key into a single result with values
+								// joined by commas as other browsers do. Instead, it returns
+								// them on separate lines.
 								responseHeaders[ match[ 1 ].toLowerCase() + " " ] =
 									( responseHeaders[ match[ 1 ].toLowerCase() + " " ] || [] )
 										.concat( match[ 2 ] );
@@ -9673,12 +8445,12 @@ jQuery.extend( {
 		deferred.promise( jqXHR );
 
 		// Add protocol if not provided (prefilters might expect it)
-		// Handle falsy url in the settings object (#10093: consistency with old signature)
+		// Handle falsy url in the settings object (trac-10093: consistency with old signature)
 		// We also use the url parameter if available
 		s.url = ( ( url || s.url || location.href ) + "" )
 			.replace( rprotocol, location.protocol + "//" );
 
-		// Alias method option to type as per ticket #12004
+		// Alias method option to type as per ticket trac-12004
 		s.type = options.method || options.type || s.method || s.type;
 
 		// Extract dataTypes list
@@ -9686,15 +8458,15 @@ jQuery.extend( {
 
 		// A cross-domain request is in order when the origin doesn't match the current origin.
 		if ( s.crossDomain == null ) {
-			urlAnchor = document.createElement( "a" );
+			urlAnchor = document$1.createElement( "a" );
 
-			// Support: IE <=8 - 11, Edge 12 - 15
+			// Support: IE <=8 - 11+
 			// IE throws exception on accessing the href property if url is malformed,
 			// e.g. http://example.com:80x/
 			try {
 				urlAnchor.href = s.url;
 
-				// Support: IE <=8 - 11 only
+				// Support: IE <=8 - 11+
 				// Anchor's host property isn't correctly set when s.url is relative
 				urlAnchor.href = urlAnchor.href;
 				s.crossDomain = originAnchor.protocol + "//" + originAnchor.host !==
@@ -9707,13 +8479,13 @@ jQuery.extend( {
 			}
 		}
 
+		// Apply prefilters
+		inspectPrefiltersOrTransports( prefilters, s, options, jqXHR );
+
 		// Convert data if not already a string
 		if ( s.data && s.processData && typeof s.data !== "string" ) {
 			s.data = jQuery.param( s.data, s.traditional );
 		}
-
-		// Apply prefilters
-		inspectPrefiltersOrTransports( prefilters, s, options, jqXHR );
 
 		// If request was aborted inside a prefilter, stop there
 		if ( completed ) {
@@ -9721,7 +8493,7 @@ jQuery.extend( {
 		}
 
 		// We can fire global events as of now if asked to
-		// Don't fire events if jQuery.event is undefined in an AMD-usage scenario (#15118)
+		// Don't fire events if jQuery.event is undefined in an ESM-usage scenario (trac-15118)
 		fireGlobals = jQuery.event && s.global;
 
 		// Watch for a new set of requests
@@ -9750,15 +8522,15 @@ jQuery.extend( {
 			if ( s.data && ( s.processData || typeof s.data === "string" ) ) {
 				cacheURL += ( rquery.test( cacheURL ) ? "&" : "?" ) + s.data;
 
-				// #9682: remove data so that it's not used in an eventual retry
+				// trac-9682: remove data so that it's not used in an eventual retry
 				delete s.data;
 			}
 
 			// Add or update anti-cache param if needed
 			if ( s.cache === false ) {
 				cacheURL = cacheURL.replace( rantiCache, "$1" );
-				uncached = ( rquery.test( cacheURL ) ? "&" : "?" ) + "_=" + ( nonce.guid++ ) +
-					uncached;
+				uncached = ( rquery.test( cacheURL ) ? "&" : "?" ) + "_=" +
+					( nonce.guid++ ) + uncached;
 			}
 
 			// Put hash and anti-cache on the URL that will be requested (gh-1732)
@@ -9891,8 +8663,10 @@ jQuery.extend( {
 				response = ajaxHandleResponses( s, jqXHR, responses );
 			}
 
-			// Use a noop converter for missing script
-			if ( !isSuccess && jQuery.inArray( "script", s.dataTypes ) > -1 ) {
+			// Use a noop converter for missing script but not if jsonp
+			if ( !isSuccess &&
+				jQuery.inArray( "script", s.dataTypes ) > -1 &&
+				jQuery.inArray( "json", s.dataTypes ) < 0 ) {
 				s.converters[ "text script" ] = function() {};
 			}
 
@@ -9989,8 +8763,9 @@ jQuery.extend( {
 jQuery.each( [ "get", "post" ], function( _i, method ) {
 	jQuery[ method ] = function( url, data, callback, type ) {
 
-		// Shift arguments if data argument was omitted
-		if ( isFunction( data ) ) {
+		// Shift arguments if data argument was omitted.
+		// Handle the null callback placeholder.
+		if ( typeof data === "function" || data === null ) {
 			type = type || callback;
 			callback = data;
 			data = undefined;
@@ -10016,17 +8791,17 @@ jQuery.ajaxPrefilter( function( s ) {
 	}
 } );
 
-
 jQuery._evalUrl = function( url, options, doc ) {
 	return jQuery.ajax( {
 		url: url,
 
-		// Make this explicit, since user can override this through ajaxSetup (#11264)
+		// Make this explicit, since user can override this through ajaxSetup (trac-11264)
 		type: "GET",
 		dataType: "script",
 		cache: true,
 		async: false,
 		global: false,
+		scriptAttrs: options.crossOrigin ? { "crossOrigin": options.crossOrigin } : undefined,
 
 		// Only evaluate the response if it is successful (gh-4126)
 		// dataFilter is not invoked for failure responses, so using it instead
@@ -10040,13 +8815,12 @@ jQuery._evalUrl = function( url, options, doc ) {
 	} );
 };
 
-
 jQuery.fn.extend( {
 	wrapAll: function( html ) {
 		var wrap;
 
 		if ( this[ 0 ] ) {
-			if ( isFunction( html ) ) {
+			if ( typeof html === "function" ) {
 				html = html.call( this[ 0 ] );
 			}
 
@@ -10072,7 +8846,7 @@ jQuery.fn.extend( {
 	},
 
 	wrapInner: function( html ) {
-		if ( isFunction( html ) ) {
+		if ( typeof html === "function" ) {
 			return this.each( function( i ) {
 				jQuery( this ).wrapInner( html.call( this, i ) );
 			} );
@@ -10092,7 +8866,7 @@ jQuery.fn.extend( {
 	},
 
 	wrap: function( html ) {
-		var htmlIsFunction = isFunction( html );
+		var htmlIsFunction = typeof html === "function";
 
 		return this.each( function( i ) {
 			jQuery( this ).wrapAll( htmlIsFunction ? html.call( this, i ) : html );
@@ -10107,7 +8881,6 @@ jQuery.fn.extend( {
 	}
 } );
 
-
 jQuery.expr.pseudos.hidden = function( elem ) {
 	return !jQuery.expr.pseudos.visible( elem );
 };
@@ -10115,188 +8888,147 @@ jQuery.expr.pseudos.visible = function( elem ) {
 	return !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
 };
 
-
-
-
 jQuery.ajaxSettings.xhr = function() {
-	try {
-		return new window.XMLHttpRequest();
-	} catch ( e ) {}
+	return new window.XMLHttpRequest();
 };
 
 var xhrSuccessStatus = {
 
-		// File protocol always yields status code 0, assume 200
-		0: 200,
-
-		// Support: IE <=9 only
-		// #1450: sometimes IE returns 1223 when it should be 204
-		1223: 204
-	},
-	xhrSupported = jQuery.ajaxSettings.xhr();
-
-support.cors = !!xhrSupported && ( "withCredentials" in xhrSupported );
-support.ajax = xhrSupported = !!xhrSupported;
+	// File protocol always yields status code 0, assume 200
+	0: 200
+};
 
 jQuery.ajaxTransport( function( options ) {
-	var callback, errorCallback;
+	var callback;
 
-	// Cross domain only allowed if supported through XMLHttpRequest
-	if ( support.cors || xhrSupported && !options.crossDomain ) {
-		return {
-			send: function( headers, complete ) {
-				var i,
-					xhr = options.xhr();
+	return {
+		send: function( headers, complete ) {
+			var i,
+				xhr = options.xhr();
 
-				xhr.open(
-					options.type,
-					options.url,
-					options.async,
-					options.username,
-					options.password
-				);
+			xhr.open(
+				options.type,
+				options.url,
+				options.async,
+				options.username,
+				options.password
+			);
 
-				// Apply custom fields if provided
-				if ( options.xhrFields ) {
-					for ( i in options.xhrFields ) {
-						xhr[ i ] = options.xhrFields[ i ];
-					}
-				}
-
-				// Override mime type if needed
-				if ( options.mimeType && xhr.overrideMimeType ) {
-					xhr.overrideMimeType( options.mimeType );
-				}
-
-				// X-Requested-With header
-				// For cross-domain requests, seeing as conditions for a preflight are
-				// akin to a jigsaw puzzle, we simply never set it to be sure.
-				// (it can always be set on a per-request basis or even using ajaxSetup)
-				// For same-domain requests, won't change header if already provided.
-				if ( !options.crossDomain && !headers[ "X-Requested-With" ] ) {
-					headers[ "X-Requested-With" ] = "XMLHttpRequest";
-				}
-
-				// Set headers
-				for ( i in headers ) {
-					xhr.setRequestHeader( i, headers[ i ] );
-				}
-
-				// Callback
-				callback = function( type ) {
-					return function() {
-						if ( callback ) {
-							callback = errorCallback = xhr.onload =
-								xhr.onerror = xhr.onabort = xhr.ontimeout =
-									xhr.onreadystatechange = null;
-
-							if ( type === "abort" ) {
-								xhr.abort();
-							} else if ( type === "error" ) {
-
-								// Support: IE <=9 only
-								// On a manual native abort, IE9 throws
-								// errors on any property access that is not readyState
-								if ( typeof xhr.status !== "number" ) {
-									complete( 0, "error" );
-								} else {
-									complete(
-
-										// File: protocol always yields status 0; see #8605, #14207
-										xhr.status,
-										xhr.statusText
-									);
-								}
-							} else {
-								complete(
-									xhrSuccessStatus[ xhr.status ] || xhr.status,
-									xhr.statusText,
-
-									// Support: IE <=9 only
-									// IE9 has no XHR2 but throws on binary (trac-11426)
-									// For XHR2 non-text, let the caller handle it (gh-2498)
-									( xhr.responseType || "text" ) !== "text"  ||
-									typeof xhr.responseText !== "string" ?
-										{ binary: xhr.response } :
-										{ text: xhr.responseText },
-									xhr.getAllResponseHeaders()
-								);
-							}
-						}
-					};
-				};
-
-				// Listen to events
-				xhr.onload = callback();
-				errorCallback = xhr.onerror = xhr.ontimeout = callback( "error" );
-
-				// Support: IE 9 only
-				// Use onreadystatechange to replace onabort
-				// to handle uncaught aborts
-				if ( xhr.onabort !== undefined ) {
-					xhr.onabort = errorCallback;
-				} else {
-					xhr.onreadystatechange = function() {
-
-						// Check readyState before timeout as it changes
-						if ( xhr.readyState === 4 ) {
-
-							// Allow onerror to be called first,
-							// but that will not handle a native abort
-							// Also, save errorCallback to a variable
-							// as xhr.onerror cannot be accessed
-							window.setTimeout( function() {
-								if ( callback ) {
-									errorCallback();
-								}
-							} );
-						}
-					};
-				}
-
-				// Create the abort callback
-				callback = callback( "abort" );
-
-				try {
-
-					// Do send the request (this may raise an exception)
-					xhr.send( options.hasContent && options.data || null );
-				} catch ( e ) {
-
-					// #14683: Only rethrow if this hasn't been notified as an error yet
-					if ( callback ) {
-						throw e;
-					}
-				}
-			},
-
-			abort: function() {
-				if ( callback ) {
-					callback();
+			// Apply custom fields if provided
+			if ( options.xhrFields ) {
+				for ( i in options.xhrFields ) {
+					xhr[ i ] = options.xhrFields[ i ];
 				}
 			}
-		};
-	}
+
+			// Override mime type if needed
+			if ( options.mimeType && xhr.overrideMimeType ) {
+				xhr.overrideMimeType( options.mimeType );
+			}
+
+			// X-Requested-With header
+			// For cross-domain requests, seeing as conditions for a preflight are
+			// akin to a jigsaw puzzle, we simply never set it to be sure.
+			// (it can always be set on a per-request basis or even using ajaxSetup)
+			// For same-domain requests, won't change header if already provided.
+			if ( !options.crossDomain && !headers[ "X-Requested-With" ] ) {
+				headers[ "X-Requested-With" ] = "XMLHttpRequest";
+			}
+
+			// Set headers
+			for ( i in headers ) {
+				xhr.setRequestHeader( i, headers[ i ] );
+			}
+
+			// Callback
+			callback = function( type ) {
+				return function() {
+					if ( callback ) {
+						callback = xhr.onload = xhr.onerror = xhr.onabort = xhr.ontimeout = null;
+
+						if ( type === "abort" ) {
+							xhr.abort();
+						} else if ( type === "error" ) {
+							complete(
+
+								// File: protocol always yields status 0; see trac-8605, trac-14207
+								xhr.status,
+								xhr.statusText
+							);
+						} else {
+							complete(
+								xhrSuccessStatus[ xhr.status ] || xhr.status,
+								xhr.statusText,
+
+								// For XHR2 non-text, let the caller handle it (gh-2498)
+								( xhr.responseType || "text" ) === "text" ?
+									{ text: xhr.responseText } :
+									{ binary: xhr.response },
+								xhr.getAllResponseHeaders()
+							);
+						}
+					}
+				};
+			};
+
+			// Listen to events
+			xhr.onload = callback();
+			xhr.onabort = xhr.onerror = xhr.ontimeout = callback( "error" );
+
+			// Create the abort callback
+			callback = callback( "abort" );
+
+			try {
+
+				// Do send the request (this may raise an exception)
+				xhr.send( options.hasContent && options.data || null );
+			} catch ( e ) {
+
+				// trac-14683: Only rethrow if this hasn't been notified as an error yet
+				if ( callback ) {
+					throw e;
+				}
+			}
+		},
+
+		abort: function() {
+			if ( callback ) {
+				callback();
+			}
+		}
+	};
 } );
 
+function canUseScriptTag( s ) {
 
+	// A script tag can only be used for async, cross domain or forced-by-attrs requests.
+	// Requests with headers cannot use a script tag. However, when both `scriptAttrs` &
+	// `headers` options are specified, both are impossible to satisfy together; we
+	// prefer `scriptAttrs` then.
+	// Sync requests remain handled differently to preserve strict script ordering.
+	return s.scriptAttrs || (
+		!s.headers &&
+		(
+			s.crossDomain ||
 
+			// When dealing with JSONP (`s.dataTypes` include "json" then)
+			// don't use a script tag so that error responses still may have
+			// `responseJSON` set. Continue using a script tag for JSONP requests that:
+			//   * are cross-domain as AJAX requests won't work without a CORS setup
+			//   * have `scriptAttrs` set as that's a script-only functionality
+			// Note that this means JSONP requests violate strict CSP script-src settings.
+			// A proper solution is to migrate from using JSONP to a CORS setup.
+			( s.async && jQuery.inArray( "json", s.dataTypes ) < 0 )
+		)
+	);
+}
 
-// Prevent auto-execution of scripts when no explicit dataType was provided (See gh-2432)
-jQuery.ajaxPrefilter( function( s ) {
-	if ( s.crossDomain ) {
-		s.contents.script = false;
-	}
-} );
-
-// Install script dataType
+// Install script dataType. Don't specify `contents.script` so that an explicit
+// `dataType: "script"` is required (see gh-2432, gh-4822)
 jQuery.ajaxSetup( {
 	accepts: {
 		script: "text/javascript, application/javascript, " +
 			"application/ecmascript, application/x-ecmascript"
-	},
-	contents: {
-		script: /\b(?:java|ecma)script\b/
 	},
 	converters: {
 		"text script": function( text ) {
@@ -10311,16 +9043,17 @@ jQuery.ajaxPrefilter( "script", function( s ) {
 	if ( s.cache === undefined ) {
 		s.cache = false;
 	}
-	if ( s.crossDomain ) {
+
+	// These types of requests are handled via a script tag
+	// so force their methods to GET.
+	if ( canUseScriptTag( s ) ) {
 		s.type = "GET";
 	}
 } );
 
 // Bind script tag hack transport
 jQuery.ajaxTransport( "script", function( s ) {
-
-	// This transport only deals with cross domain or forced-by-attrs requests
-	if ( s.crossDomain || s.scriptAttrs ) {
+	if ( canUseScriptTag( s ) ) {
 		var script, callback;
 		return {
 			send: function( _, complete ) {
@@ -10336,7 +9069,7 @@ jQuery.ajaxTransport( "script", function( s ) {
 					} );
 
 				// Use native DOM manipulation to avoid our domManip AJAX trickery
-				document.head.appendChild( script[ 0 ] );
+				document$1.head.appendChild( script[ 0 ] );
 			},
 			abort: function() {
 				if ( callback ) {
@@ -10346,9 +9079,6 @@ jQuery.ajaxTransport( "script", function( s ) {
 		};
 	}
 } );
-
-
-
 
 var oldCallbacks = [],
 	rjsonp = /(=)\?(?=&|$)|\?\?/;
@@ -10364,7 +9094,7 @@ jQuery.ajaxSetup( {
 } );
 
 // Detect, normalize options and install callbacks for jsonp requests
-jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
+jQuery.ajaxPrefilter( "jsonp", function( s, originalSettings, jqXHR ) {
 
 	var callbackName, overwritten, responseContainer,
 		jsonProp = s.jsonp !== false && ( rjsonp.test( s.url ) ?
@@ -10375,94 +9105,93 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 				rjsonp.test( s.data ) && "data"
 		);
 
-	// Handle iff the expected data type is "jsonp" or we have a parameter to set
-	if ( jsonProp || s.dataTypes[ 0 ] === "jsonp" ) {
+	// Get callback name, remembering preexisting value associated with it
+	callbackName = s.jsonpCallback = typeof s.jsonpCallback === "function" ?
+		s.jsonpCallback() :
+		s.jsonpCallback;
 
-		// Get callback name, remembering preexisting value associated with it
-		callbackName = s.jsonpCallback = isFunction( s.jsonpCallback ) ?
-			s.jsonpCallback() :
-			s.jsonpCallback;
+	// Insert callback into url or form data
+	if ( jsonProp ) {
+		s[ jsonProp ] = s[ jsonProp ].replace( rjsonp, "$1" + callbackName );
+	} else if ( s.jsonp !== false ) {
+		s.url += ( rquery.test( s.url ) ? "&" : "?" ) + s.jsonp + "=" + callbackName;
+	}
 
-		// Insert callback into url or form data
-		if ( jsonProp ) {
-			s[ jsonProp ] = s[ jsonProp ].replace( rjsonp, "$1" + callbackName );
-		} else if ( s.jsonp !== false ) {
-			s.url += ( rquery.test( s.url ) ? "&" : "?" ) + s.jsonp + "=" + callbackName;
+	// Use data converter to retrieve json after script execution
+	s.converters[ "script json" ] = function() {
+		if ( !responseContainer ) {
+			jQuery.error( callbackName + " was not called" );
+		}
+		return responseContainer[ 0 ];
+	};
+
+	// Force json dataType
+	s.dataTypes[ 0 ] = "json";
+
+	// Install callback
+	overwritten = window[ callbackName ];
+	window[ callbackName ] = function() {
+		responseContainer = arguments;
+	};
+
+	// Clean-up function (fires after converters)
+	jqXHR.always( function() {
+
+		// If previous value didn't exist - remove it
+		if ( overwritten === undefined ) {
+			jQuery( window ).removeProp( callbackName );
+
+		// Otherwise restore preexisting value
+		} else {
+			window[ callbackName ] = overwritten;
 		}
 
-		// Use data converter to retrieve json after script execution
-		s.converters[ "script json" ] = function() {
-			if ( !responseContainer ) {
-				jQuery.error( callbackName + " was not called" );
-			}
-			return responseContainer[ 0 ];
-		};
+		// Save back as free
+		if ( s[ callbackName ] ) {
 
-		// Force json dataType
-		s.dataTypes[ 0 ] = "json";
+			// Make sure that re-using the options doesn't screw things around
+			s.jsonpCallback = originalSettings.jsonpCallback;
 
-		// Install callback
-		overwritten = window[ callbackName ];
-		window[ callbackName ] = function() {
-			responseContainer = arguments;
-		};
+			// Save the callback name for future use
+			oldCallbacks.push( callbackName );
+		}
 
-		// Clean-up function (fires after converters)
-		jqXHR.always( function() {
+		// Call if it was a function and we have a response
+		if ( responseContainer && typeof overwritten === "function" ) {
+			overwritten( responseContainer[ 0 ] );
+		}
 
-			// If previous value didn't exist - remove it
-			if ( overwritten === undefined ) {
-				jQuery( window ).removeProp( callbackName );
+		responseContainer = overwritten = undefined;
+	} );
 
-			// Otherwise restore preexisting value
-			} else {
-				window[ callbackName ] = overwritten;
-			}
+	// Delegate to script
+	return "script";
+} );
 
-			// Save back as free
-			if ( s[ callbackName ] ) {
+jQuery.ajaxPrefilter( function( s, origOptions ) {
 
-				// Make sure that re-using the options doesn't screw things around
-				s.jsonpCallback = originalSettings.jsonpCallback;
+	// Binary data needs to be passed to XHR as-is without stringification.
+	if ( typeof s.data !== "string" && !jQuery.isPlainObject( s.data ) &&
+			!Array.isArray( s.data ) &&
 
-				// Save the callback name for future use
-				oldCallbacks.push( callbackName );
-			}
+			// Don't disable data processing if explicitly set by the user.
+			!( "processData" in origOptions ) ) {
+		s.processData = false;
+	}
 
-			// Call if it was a function and we have a response
-			if ( responseContainer && isFunction( overwritten ) ) {
-				overwritten( responseContainer[ 0 ] );
-			}
-
-			responseContainer = overwritten = undefined;
-		} );
-
-		// Delegate to script
-		return "script";
+	// `Content-Type` for requests with `FormData` bodies needs to be set
+	// by the browser as it needs to append the `boundary` it generated.
+	if ( s.data instanceof window.FormData ) {
+		s.contentType = false;
 	}
 } );
 
-
-
-
-// Support: Safari 8 only
-// In Safari 8 documents created via document.implementation.createHTMLDocument
-// collapse sibling forms: the second one becomes a child of the first one.
-// Because of that, this security measure has to be disabled in Safari 8.
-// https://bugs.webkit.org/show_bug.cgi?id=137337
-support.createHTMLDocument = ( function() {
-	var body = document.implementation.createHTMLDocument( "" ).body;
-	body.innerHTML = "<form></form><form></form>";
-	return body.childNodes.length === 2;
-} )();
-
-
-// Argument "data" should be string of html
+// Argument "data" should be string of html or a TrustedHTML wrapper of obvious HTML
 // context (optional): If specified, the fragment will be created in this context,
 // defaults to document
 // keepScripts (optional): If true, will include scripts passed in the html string
 jQuery.parseHTML = function( data, context, keepScripts ) {
-	if ( typeof data !== "string" ) {
+	if ( typeof data !== "string" && !isObviousHtml( data + "" ) ) {
 		return [];
 	}
 	if ( typeof context === "boolean" ) {
@@ -10470,24 +9199,14 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		context = false;
 	}
 
-	var base, parsed, scripts;
+	var parsed, scripts;
 
 	if ( !context ) {
 
 		// Stop scripts or inline event handlers from being executed immediately
-		// by using document.implementation
-		if ( support.createHTMLDocument ) {
-			context = document.implementation.createHTMLDocument( "" );
-
-			// Set the base href for the created document
-			// so any parsed elements with URLs
-			// are based on the document's URL (gh-2965)
-			base = context.createElement( "base" );
-			base.href = document.location.href;
-			context.head.appendChild( base );
-		} else {
-			context = document;
-		}
+		// by using DOMParser
+		context = ( new window.DOMParser() )
+			.parseFromString( "", "text/html" );
 	}
 
 	parsed = rsingleTag.exec( data );
@@ -10507,7 +9226,6 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 	return jQuery.merge( [], parsed.childNodes );
 };
 
-
 /**
  * Load a url into a page
  */
@@ -10522,7 +9240,7 @@ jQuery.fn.load = function( url, params, callback ) {
 	}
 
 	// If it's a function
-	if ( isFunction( params ) ) {
+	if ( typeof params === "function" ) {
 
 		// We assume that it's the callback
 		callback = params;
@@ -10571,17 +9289,11 @@ jQuery.fn.load = function( url, params, callback ) {
 	return this;
 };
 
-
-
-
 jQuery.expr.pseudos.animated = function( elem ) {
 	return jQuery.grep( jQuery.timers, function( fn ) {
 		return elem === fn.elem;
 	} ).length;
 };
-
-
-
 
 jQuery.offset = {
 	setOffset: function( elem, options, i ) {
@@ -10613,7 +9325,7 @@ jQuery.offset = {
 			curLeft = parseFloat( curCSSLeft ) || 0;
 		}
 
-		if ( isFunction( options ) ) {
+		if ( typeof options === "function" ) {
 
 			// Use jQuery.extend here to allow modification of coordinates argument (gh-1848)
 			options = options.call( elem, i, jQuery.extend( {}, curOffset ) );
@@ -10630,12 +9342,6 @@ jQuery.offset = {
 			options.using.call( elem, props );
 
 		} else {
-			if ( typeof props.top === "number" ) {
-				props.top += "px";
-			}
-			if ( typeof props.left === "number" ) {
-				props.left += "px";
-			}
 			curElem.css( props );
 		}
 	}
@@ -10663,7 +9369,7 @@ jQuery.fn.extend( {
 		}
 
 		// Return zeros for disconnected and hidden (display: none) elements (gh-2310)
-		// Support: IE <=11 only
+		// Support: IE <=11+
 		// Running getBoundingClientRect on a
 		// disconnected node in IE throws an error
 		if ( !elem.getClientRects().length ) {
@@ -10704,12 +9410,13 @@ jQuery.fn.extend( {
 			doc = elem.ownerDocument;
 			offsetParent = elem.offsetParent || doc.documentElement;
 			while ( offsetParent &&
-				( offsetParent === doc.body || offsetParent === doc.documentElement ) &&
+				offsetParent !== doc.documentElement &&
 				jQuery.css( offsetParent, "position" ) === "static" ) {
 
-				offsetParent = offsetParent.parentNode;
+				offsetParent = offsetParent.offsetParent || doc.documentElement;
 			}
-			if ( offsetParent && offsetParent !== elem && offsetParent.nodeType === 1 ) {
+			if ( offsetParent && offsetParent !== elem && offsetParent.nodeType === 1 &&
+				jQuery.css( offsetParent, "position" ) !== "static" ) {
 
 				// Incorporate borders into its offset, since they are outside its content origin
 				parentOffset = jQuery( offsetParent ).offset();
@@ -10743,7 +9450,7 @@ jQuery.fn.extend( {
 				offsetParent = offsetParent.offsetParent;
 			}
 
-			return offsetParent || documentElement;
+			return offsetParent || documentElement$1;
 		} );
 	}
 } );
@@ -10780,32 +9487,13 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 	};
 } );
 
-// Support: Safari <=7 - 9.1, Chrome <=37 - 49
-// Add the top/left cssHooks using jQuery.fn.position
-// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
-// Blink bug: https://bugs.chromium.org/p/chromium/issues/detail?id=589347
-// getComputedStyle returns percent when specified for top/left/bottom/right;
-// rather than make the css module depend on the offset module, just check for it here
-jQuery.each( [ "top", "left" ], function( _i, prop ) {
-	jQuery.cssHooks[ prop ] = addGetHookIf( support.pixelPosition,
-		function( elem, computed ) {
-			if ( computed ) {
-				computed = curCSS( elem, prop );
-
-				// If curCSS returns percentage, fallback to offset
-				return rnumnonpx.test( computed ) ?
-					jQuery( elem ).position()[ prop ] + "px" :
-					computed;
-			}
-		}
-	);
-} );
-
-
 // Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
 jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
-	jQuery.each( { padding: "inner" + name, content: type, "": "outer" + name },
-		function( defaultExtra, funcName ) {
+	jQuery.each( {
+		padding: "inner" + name,
+		content: type,
+		"": "outer" + name
+	}, function( defaultExtra, funcName ) {
 
 		// Margin is only for outerHeight, outerWidth
 		jQuery.fn[ funcName ] = function( margin, value ) {
@@ -10848,7 +9536,6 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 	} );
 } );
 
-
 jQuery.each( [
 	"ajaxStart",
 	"ajaxStop",
@@ -10861,9 +9548,6 @@ jQuery.each( [
 		return this.on( type, fn );
 	};
 } );
-
-
-
 
 jQuery.fn.extend( {
 
@@ -10886,11 +9570,14 @@ jQuery.fn.extend( {
 	},
 
 	hover: function( fnOver, fnOut ) {
-		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
+		return this
+			.on( "mouseenter", fnOver )
+			.on( "mouseleave", fnOut || fnOver );
 	}
 } );
 
-jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
+jQuery.each(
+	( "blur focus focusin focusout resize scroll click dblclick " +
 	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
 	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
 	function( _i, name ) {
@@ -10901,14 +9588,8 @@ jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
 				this.on( name, null, data, fn ) :
 				this.trigger( name );
 		};
-	} );
-
-
-
-
-// Support: Android <=4.0 only
-// Make sure we trim BOM and NBSP
-var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+	}
+);
 
 // Bind a function to a context, optionally partially applying any
 // arguments.
@@ -10925,7 +9606,7 @@ jQuery.proxy = function( fn, context ) {
 
 	// Quick check to determine if target is callable, in the spec
 	// this throws a TypeError, but we will just return undefined.
-	if ( !isFunction( fn ) ) {
+	if ( typeof fn !== "function" ) {
 		return undefined;
 	}
 
@@ -10948,37 +9629,8 @@ jQuery.holdReady = function( hold ) {
 		jQuery.ready( true );
 	}
 };
-jQuery.isArray = Array.isArray;
-jQuery.parseJSON = JSON.parse;
-jQuery.nodeName = nodeName;
-jQuery.isFunction = isFunction;
-jQuery.isWindow = isWindow;
-jQuery.camelCase = camelCase;
-jQuery.type = toType;
 
-jQuery.now = Date.now;
-
-jQuery.isNumeric = function( obj ) {
-
-	// As of jQuery 3.0, isNumeric is limited to
-	// strings and numbers (primitives or objects)
-	// that can be coerced to finite numbers (gh-2662)
-	var type = jQuery.type( obj );
-	return ( type === "number" || type === "string" ) &&
-
-		// parseFloat NaNs numeric-cast false positives ("")
-		// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
-		// subtraction forces infinities to NaN
-		!isNaN( obj - parseFloat( obj ) );
-};
-
-jQuery.trim = function( text ) {
-	return text == null ?
-		"" :
-		( text + "" ).replace( rtrim, "" );
-};
-
-
+jQuery.expr[ ":" ] = jQuery.expr.filters = jQuery.expr.pseudos;
 
 // Register as a named AMD module, since jQuery can be concatenated with other
 // files that may use define, but not via a proper concatenation script that
@@ -10998,9 +9650,6 @@ if ( typeof define === "function" && define.amd ) {
 		return jQuery;
 	} );
 }
-
-
-
 
 var
 
@@ -11023,715 +9672,1599 @@ jQuery.noConflict = function( deep ) {
 };
 
 // Expose jQuery and $ identifiers, even in AMD
-// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
-// and CommonJS for browser emulators (#13566)
+// (trac-7102#comment:10, gh-557)
+// and CommonJS for browser emulators (trac-13566)
 if ( typeof noGlobal === "undefined" ) {
 	window.jQuery = window.$ = jQuery;
 }
 
-
-
-
 return jQuery;
+
 } );
 
 },{}],3:[function(require,module,exports){
+(function (process){(function (){
+// 'path' module extracted from Node.js v8.11.1 (only the posix part)
+// transplited with Babel
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+function assertPath(path) {
+  if (typeof path !== 'string') {
+    throw new TypeError('Path must be a string. Received ' + JSON.stringify(path));
+  }
+}
+
+// Resolves . and .. elements in a path with directory names
+function normalizeStringPosix(path, allowAboveRoot) {
+  var res = '';
+  var lastSegmentLength = 0;
+  var lastSlash = -1;
+  var dots = 0;
+  var code;
+  for (var i = 0; i <= path.length; ++i) {
+    if (i < path.length)
+      code = path.charCodeAt(i);
+    else if (code === 47 /*/*/)
+      break;
+    else
+      code = 47 /*/*/;
+    if (code === 47 /*/*/) {
+      if (lastSlash === i - 1 || dots === 1) {
+        // NOOP
+      } else if (lastSlash !== i - 1 && dots === 2) {
+        if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== 46 /*.*/ || res.charCodeAt(res.length - 2) !== 46 /*.*/) {
+          if (res.length > 2) {
+            var lastSlashIndex = res.lastIndexOf('/');
+            if (lastSlashIndex !== res.length - 1) {
+              if (lastSlashIndex === -1) {
+                res = '';
+                lastSegmentLength = 0;
+              } else {
+                res = res.slice(0, lastSlashIndex);
+                lastSegmentLength = res.length - 1 - res.lastIndexOf('/');
+              }
+              lastSlash = i;
+              dots = 0;
+              continue;
+            }
+          } else if (res.length === 2 || res.length === 1) {
+            res = '';
+            lastSegmentLength = 0;
+            lastSlash = i;
+            dots = 0;
+            continue;
+          }
+        }
+        if (allowAboveRoot) {
+          if (res.length > 0)
+            res += '/..';
+          else
+            res = '..';
+          lastSegmentLength = 2;
+        }
+      } else {
+        if (res.length > 0)
+          res += '/' + path.slice(lastSlash + 1, i);
+        else
+          res = path.slice(lastSlash + 1, i);
+        lastSegmentLength = i - lastSlash - 1;
+      }
+      lastSlash = i;
+      dots = 0;
+    } else if (code === 46 /*.*/ && dots !== -1) {
+      ++dots;
+    } else {
+      dots = -1;
+    }
+  }
+  return res;
+}
+
+function _format(sep, pathObject) {
+  var dir = pathObject.dir || pathObject.root;
+  var base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
+  if (!dir) {
+    return base;
+  }
+  if (dir === pathObject.root) {
+    return dir + base;
+  }
+  return dir + sep + base;
+}
+
+var posix = {
+  // path.resolve([from ...], to)
+  resolve: function resolve() {
+    var resolvedPath = '';
+    var resolvedAbsolute = false;
+    var cwd;
+
+    for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+      var path;
+      if (i >= 0)
+        path = arguments[i];
+      else {
+        if (cwd === undefined)
+          cwd = process.cwd();
+        path = cwd;
+      }
+
+      assertPath(path);
+
+      // Skip empty entries
+      if (path.length === 0) {
+        continue;
+      }
+
+      resolvedPath = path + '/' + resolvedPath;
+      resolvedAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    }
+
+    // At this point the path should be resolved to a full absolute path, but
+    // handle relative paths to be safe (might happen when process.cwd() fails)
+
+    // Normalize the path
+    resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute);
+
+    if (resolvedAbsolute) {
+      if (resolvedPath.length > 0)
+        return '/' + resolvedPath;
+      else
+        return '/';
+    } else if (resolvedPath.length > 0) {
+      return resolvedPath;
+    } else {
+      return '.';
+    }
+  },
+
+  normalize: function normalize(path) {
+    assertPath(path);
+
+    if (path.length === 0) return '.';
+
+    var isAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    var trailingSeparator = path.charCodeAt(path.length - 1) === 47 /*/*/;
+
+    // Normalize the path
+    path = normalizeStringPosix(path, !isAbsolute);
+
+    if (path.length === 0 && !isAbsolute) path = '.';
+    if (path.length > 0 && trailingSeparator) path += '/';
+
+    if (isAbsolute) return '/' + path;
+    return path;
+  },
+
+  isAbsolute: function isAbsolute(path) {
+    assertPath(path);
+    return path.length > 0 && path.charCodeAt(0) === 47 /*/*/;
+  },
+
+  join: function join() {
+    if (arguments.length === 0)
+      return '.';
+    var joined;
+    for (var i = 0; i < arguments.length; ++i) {
+      var arg = arguments[i];
+      assertPath(arg);
+      if (arg.length > 0) {
+        if (joined === undefined)
+          joined = arg;
+        else
+          joined += '/' + arg;
+      }
+    }
+    if (joined === undefined)
+      return '.';
+    return posix.normalize(joined);
+  },
+
+  relative: function relative(from, to) {
+    assertPath(from);
+    assertPath(to);
+
+    if (from === to) return '';
+
+    from = posix.resolve(from);
+    to = posix.resolve(to);
+
+    if (from === to) return '';
+
+    // Trim any leading backslashes
+    var fromStart = 1;
+    for (; fromStart < from.length; ++fromStart) {
+      if (from.charCodeAt(fromStart) !== 47 /*/*/)
+        break;
+    }
+    var fromEnd = from.length;
+    var fromLen = fromEnd - fromStart;
+
+    // Trim any leading backslashes
+    var toStart = 1;
+    for (; toStart < to.length; ++toStart) {
+      if (to.charCodeAt(toStart) !== 47 /*/*/)
+        break;
+    }
+    var toEnd = to.length;
+    var toLen = toEnd - toStart;
+
+    // Compare paths to find the longest common path from root
+    var length = fromLen < toLen ? fromLen : toLen;
+    var lastCommonSep = -1;
+    var i = 0;
+    for (; i <= length; ++i) {
+      if (i === length) {
+        if (toLen > length) {
+          if (to.charCodeAt(toStart + i) === 47 /*/*/) {
+            // We get here if `from` is the exact base path for `to`.
+            // For example: from='/foo/bar'; to='/foo/bar/baz'
+            return to.slice(toStart + i + 1);
+          } else if (i === 0) {
+            // We get here if `from` is the root
+            // For example: from='/'; to='/foo'
+            return to.slice(toStart + i);
+          }
+        } else if (fromLen > length) {
+          if (from.charCodeAt(fromStart + i) === 47 /*/*/) {
+            // We get here if `to` is the exact base path for `from`.
+            // For example: from='/foo/bar/baz'; to='/foo/bar'
+            lastCommonSep = i;
+          } else if (i === 0) {
+            // We get here if `to` is the root.
+            // For example: from='/foo'; to='/'
+            lastCommonSep = 0;
+          }
+        }
+        break;
+      }
+      var fromCode = from.charCodeAt(fromStart + i);
+      var toCode = to.charCodeAt(toStart + i);
+      if (fromCode !== toCode)
+        break;
+      else if (fromCode === 47 /*/*/)
+        lastCommonSep = i;
+    }
+
+    var out = '';
+    // Generate the relative path based on the path difference between `to`
+    // and `from`
+    for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
+      if (i === fromEnd || from.charCodeAt(i) === 47 /*/*/) {
+        if (out.length === 0)
+          out += '..';
+        else
+          out += '/..';
+      }
+    }
+
+    // Lastly, append the rest of the destination (`to`) path that comes after
+    // the common path parts
+    if (out.length > 0)
+      return out + to.slice(toStart + lastCommonSep);
+    else {
+      toStart += lastCommonSep;
+      if (to.charCodeAt(toStart) === 47 /*/*/)
+        ++toStart;
+      return to.slice(toStart);
+    }
+  },
+
+  _makeLong: function _makeLong(path) {
+    return path;
+  },
+
+  dirname: function dirname(path) {
+    assertPath(path);
+    if (path.length === 0) return '.';
+    var code = path.charCodeAt(0);
+    var hasRoot = code === 47 /*/*/;
+    var end = -1;
+    var matchedSlash = true;
+    for (var i = path.length - 1; i >= 1; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          if (!matchedSlash) {
+            end = i;
+            break;
+          }
+        } else {
+        // We saw the first non-path separator
+        matchedSlash = false;
+      }
+    }
+
+    if (end === -1) return hasRoot ? '/' : '.';
+    if (hasRoot && end === 1) return '//';
+    return path.slice(0, end);
+  },
+
+  basename: function basename(path, ext) {
+    if (ext !== undefined && typeof ext !== 'string') throw new TypeError('"ext" argument must be a string');
+    assertPath(path);
+
+    var start = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i;
+
+    if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
+      if (ext.length === path.length && ext === path) return '';
+      var extIdx = ext.length - 1;
+      var firstNonSlashEnd = -1;
+      for (i = path.length - 1; i >= 0; --i) {
+        var code = path.charCodeAt(i);
+        if (code === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else {
+          if (firstNonSlashEnd === -1) {
+            // We saw the first non-path separator, remember this index in case
+            // we need it if the extension ends up not matching
+            matchedSlash = false;
+            firstNonSlashEnd = i + 1;
+          }
+          if (extIdx >= 0) {
+            // Try to match the explicit extension
+            if (code === ext.charCodeAt(extIdx)) {
+              if (--extIdx === -1) {
+                // We matched the extension, so mark this as the end of our path
+                // component
+                end = i;
+              }
+            } else {
+              // Extension does not match, so our result is the entire path
+              // component
+              extIdx = -1;
+              end = firstNonSlashEnd;
+            }
+          }
+        }
+      }
+
+      if (start === end) end = firstNonSlashEnd;else if (end === -1) end = path.length;
+      return path.slice(start, end);
+    } else {
+      for (i = path.length - 1; i >= 0; --i) {
+        if (path.charCodeAt(i) === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else if (end === -1) {
+          // We saw the first non-path separator, mark this as the end of our
+          // path component
+          matchedSlash = false;
+          end = i + 1;
+        }
+      }
+
+      if (end === -1) return '';
+      return path.slice(start, end);
+    }
+  },
+
+  extname: function extname(path) {
+    assertPath(path);
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+    for (var i = path.length - 1; i >= 0; --i) {
+      var code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1)
+            startDot = i;
+          else if (preDotState !== 1)
+            preDotState = 1;
+      } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+        // We saw a non-dot character immediately before the dot
+        preDotState === 0 ||
+        // The (right-most) trimmed path component is exactly '..'
+        preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      return '';
+    }
+    return path.slice(startDot, end);
+  },
+
+  format: function format(pathObject) {
+    if (pathObject === null || typeof pathObject !== 'object') {
+      throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof pathObject);
+    }
+    return _format('/', pathObject);
+  },
+
+  parse: function parse(path) {
+    assertPath(path);
+
+    var ret = { root: '', dir: '', base: '', ext: '', name: '' };
+    if (path.length === 0) return ret;
+    var code = path.charCodeAt(0);
+    var isAbsolute = code === 47 /*/*/;
+    var start;
+    if (isAbsolute) {
+      ret.root = '/';
+      start = 1;
+    } else {
+      start = 0;
+    }
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i = path.length - 1;
+
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+
+    // Get non-dir info
+    for (; i >= start; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1) startDot = i;else if (preDotState !== 1) preDotState = 1;
+        } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+    // We saw a non-dot character immediately before the dot
+    preDotState === 0 ||
+    // The (right-most) trimmed path component is exactly '..'
+    preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      if (end !== -1) {
+        if (startPart === 0 && isAbsolute) ret.base = ret.name = path.slice(1, end);else ret.base = ret.name = path.slice(startPart, end);
+      }
+    } else {
+      if (startPart === 0 && isAbsolute) {
+        ret.name = path.slice(1, startDot);
+        ret.base = path.slice(1, end);
+      } else {
+        ret.name = path.slice(startPart, startDot);
+        ret.base = path.slice(startPart, end);
+      }
+      ret.ext = path.slice(startDot, end);
+    }
+
+    if (startPart > 0) ret.dir = path.slice(0, startPart - 1);else if (isAbsolute) ret.dir = '/';
+
+    return ret;
+  },
+
+  sep: '/',
+  delimiter: ':',
+  win32: null,
+  posix: null
+};
+
+posix.posix = posix;
+
+module.exports = posix;
+
+}).call(this)}).call(this,require('_process'))
+},{"_process":4}],4:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],5:[function(require,module,exports){
+module.exports={
+  "name": "pryv",
+  "version": "3.5.0",
+  "description": "Pryv JavaScript library",
+  "keywords": [
+    "Pryv",
+    "Pryv.io"
+  ],
+  "homepage": "https://github.com/pryv/lib-js",
+  "bugs": {
+    "url": "https://github.com/pryv/lib-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pryv/lib-js.git"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Pryv S.A. <info@pryv.com> (https://pryv.com)",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "dependencies": {},
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
+
+},{}],6:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
 const utils = require('../utils');
-const Service = require('../Service');
-const LoginButton = require('./LoginButton');
 const AuthStates = require('./AuthStates');
-const Cookies = require('./CookieUtils');
-
-const COOKIE_STRING = 'pryv-libjs-';
-
-const QUERY_REGEXP = /[?#&]+([^=&]+)=([^&]*)/g;
-const PRYV_REGEXP = /[?#&]+prYv([^=&]+)=([^&]*)/g;
+const Messages = require('./LoginMessages');
 
 /**
- * @private
+ * Controller for authentication flow
+ * @memberof pryv.Auth
  */
 class AuthController {
-
-
-  constructor(settings, serviceInfoUrl, serviceCustomizations) {
-    this.stateChangeListners = [];
+  /**
+   * Create an AuthController
+   * @param {AuthSettings} settings - Authentication settings
+   * @param {Service} service - Pryv service instance
+   * @param {CustomLoginButton} loginButton - Login button implementation
+   */
+  constructor (settings, service, loginButton) {
     this.settings = settings;
-    this.serviceInfoUrl = serviceInfoUrl;
-    this.serviceCustomizations = serviceCustomizations;
-    
+    validateSettings.call(this, settings);
 
-    if (!settings) { throw new Error('settings cannot be null'); }
-
-    // -- First of all get the button 
-    if (this.settings.spanButtonID) {
-      this.loginButton = new LoginButton(this);
-      this.stateChangeListners.push(this.loginButton.onStateChange.bind(this.loginButton));
-    } else {
-      if (document) {
-        console.log('WARNING: Pryv.Browser initialized with no spanButtonID');
-      }
+    this.stateChangeListeners = [];
+    // External `onStateChange` callers only see `{ status, id, key, serviceInfo? }`
+    // on AUTHORIZED — credentials (`username`, `token`, `apiEndpoint`) stay
+    // inside the lib. Internal listeners (e.g. LoginButton, for cookie
+    // autologin) get the full unfiltered state.
+    if (this.settings.onStateChange) {
+      const externalListener = this.settings.onStateChange;
+      this.stateChangeListeners.push(function (state) {
+        externalListener(filterForExternalListener(state));
+      });
     }
+    this.service = service;
 
-    try { // Wrap all in a large try catch 
-      
+    // probably remove
+    this.languageCode = this.settings.authRequest.languageCode || 'en';
+    this.messages = Messages(this.languageCode);
 
-      // -- Check Error CallBack
-      if (!this.settings.onStateChange) { throw new Error('Missing settings.onStateChange'); }
-      this.stateChangeListners.push(this.settings.onStateChange);
+    this.loginButton = loginButton;
 
-      // -- settings 
-      if (!this.settings.authRequest) { throw new Error('Missing settings.authRequest'); }
+    function validateSettings (settings) {
+      if (!settings) { throw new Error('settings cannot be null'); }
+      // -- settings
+      if (!settings.authRequest) { throw new Error('Missing settings.authRequest'); }
 
-      // -- Extract returnURL 
-      this.settings.authRequest.returnURL = 
-        AuthController.getReturnURL(this.settings.authRequest.returnURL);
+      // -- Extract returnURL
+      settings.authRequest.returnURL =
+        this.getReturnURL(settings.authRequest.returnURL);
 
-      if (!this.settings.authRequest.requestingAppId) {
+      if (!settings.authRequest.requestingAppId) {
         throw new Error('Missing settings.authRequest.requestingAppId');
       }
-      this.cookieKey = COOKIE_STRING + this.settings.authRequest.requestingAppId;
-
-      if (!this.settings.authRequest.requestedPermissions) {
+      if (!settings.authRequest.requestedPermissions) {
         throw new Error('Missing settings.authRequest.requestedPermissions');
       }
-
-      // -- Extract service info from URL query params if nor specified -- //
-      if (!this.serviceInfoUrl) {
-        // TODO
-      }
-    } catch (e) {
-      this.state = {
-        id: AuthStates.ERROR, message: 'During initialization', error: e
-      }
-      throw (e);
     }
   }
 
   /**
-   * @returns {PryvService}
+   * Initialize the auth controller. Call this right after instantiation.
+   * @returns {Promise<Service>} Promise resolving to the Service instance
    */
-  async init() {
-    this.state = { id: AuthStates.LOADING };
-    if (this.pryvService) {
-      throw new Error('Browser service already initialized');
+  async init () {
+    this.serviceInfo = this.service.infoSync();
+    this.state = { status: AuthStates.LOADING };
+    this.assets = await loadAssets(this);
+
+    const loginButton = this.loginButton;
+    // initialize human interaction interface
+    if (loginButton != null) {
+      this.stateChangeListeners.push(loginButton.onStateChange.bind(loginButton));
+      // autologin needs cookies/storage implemented in human interaction interface
+      await checkAutoLogin(this);
     }
 
- 
-    // 1. fetch service-info
-    this.pryvService = new Service(this.serviceInfoUrl, this.serviceCustomizations);
-
-    try {
-      this.pryvServiceInfo = await this.pryvService.info();
-    } catch (e) {
-      this.state = {
-        id: AuthStates.ERROR,
-        message: 'Cannot fetch service/info',
-        error: e
-      }
-      throw e; // forward error
+    // if auto login is not prompted
+    if (this.state.status !== AuthStates.AUTHORIZED) {
+      this.state = { status: AuthStates.INITIALIZED, serviceInfo: this.serviceInfo };
     }
 
-    // 2. setup button with assets
-    if (this.loginButton) {
-      try {
-        await this.loginButton.loadAssets(this.pryvService);
-      } catch (e) {
-        this.state = {
-          id: AuthStates.ERROR,
-          message: 'Cannot fetch button visuals',
-          error: e
-        }
-        throw e; // forward error
-      }
+    if (loginButton != null && loginButton.finishAuthProcessAfterRedirection != null) {
+      // @ts-ignore - this is a valid AuthController
+      await loginButton.finishAuthProcessAfterRedirection(this);
     }
 
-    // 3. Check if there is a prYvkey as result of "out of page login"
-    const params = AuthController.getQueryParamsFromURL();
-    if (params.prYvkey) {
-      try {
-        const res = await utils.superagent.get(
-          this.pryvServiceInfo.access + params.prYvkey);
-        this.processAccess(res.body);
-      } catch (e) {
-        this.state = {
-          id: AuthStates.ERROR,
-          message: 'Cannot fetch result',
-          error: e
-        }
-      }
-      return this.pryvService;
-    }
+    return this.service;
+  }
 
-    // 4. check autologin 
-    let loginCookie = null;
-    try {
-      loginCookie = Cookies.get(this.cookieKey);
-    } catch (e) { console.log(e); }
+  /**
+   * Stops poll for auth request
+   */
+  stopAuthRequest (msg) {
+    this.state = { status: AuthStates.ERROR, message: msg };
+  }
 
-    if (loginCookie) {
-      this.state = {
-        id: AuthStates.AUTHORIZED,
-        apiEndpoint: loginCookie.apiEndpoint,
-        displayName: loginCookie.displayName,
-        action: this.logOut
-      };
+  /**
+   * Handle button click - triggers appropriate action based on current state
+   * @returns {Promise<void>}
+   */
+  async handleClick () {
+    if (isAuthorized.call(this)) {
+      this.state = { status: AuthStates.SIGNOUT };
+    } else if (isInitialized.call(this)) {
+      this.startAuthRequest();
+    } else if (isNeedSignIn.call(this)) {
+      // reopen popup (HACK for now: set to private property to avoid self-assignment)
+      this.state = this._state;
     } else {
-      // 5. Propose Login
-      this.readyAndClean();
+      console.log('Unhandled action in "handleClick()" for status:', this.state.status);
     }
 
-    return this.pryvService;
+    function isAuthorized () {
+      return this.state.status === AuthStates.AUTHORIZED;
+    }
+    function isInitialized () {
+      return this.state.status === AuthStates.INITIALIZED;
+    }
+    function isNeedSignIn () {
+      return this.state.status === AuthStates.NEED_SIGNIN;
+    }
   }
 
   /**
-   * Called at the end init() and when logging out()
+   * Compute the return URL for authentication redirect.
+   * Used only in browser environments.
+   * @param {string} [returnURL] - The return URL setting ('auto#', 'self#', or custom URL)
+   * @param {string} [windowLocationForTest] - Mock window.location.href for testing
+   * @param {string|Navigator} [navigatorForTests] - Mock navigator for testing
+   * @returns {string|boolean} The computed return URL, or false if using popup mode
    */
-  readyAndClean() {
-    Cookies.del(this.cookieKey)
-    this.accessData = null;
-    this.state = {
-      id: AuthStates.INITIALIZED,
-      serviceInfo: this.serviceInfo,
-      action: this.openLoginPage
-    }
-  }
+  getReturnURL (
+    returnURL,
+    windowLocationForTest,
+    navigatorForTests
+  ) {
+    const RETURN_URL_AUTO = 'auto';
 
-  // ----------------------- ACCESS --------------- ///
-
-
-  /**
-   * @private
-   */
-  async postAccess() {
-    try {
-      const res = await utils.superagent.post(this.pryvServiceInfo.access)
-        .set('accept', 'json')
-        .send(this.settings.authRequest);
-      return res.body;
-    } catch (e) {
-      this.state = {
-        id: AuthStates.ERROR,
-        message: 'Requesting access',
-        error: e
-      }
-      throw e; // forward error
-    }
-  }
-
-  /**
-  * @private
-  */
-  async getAccess() {
-    const res = await utils.superagent.get(this.accessData.poll).set('accept', 'json');
-    return res.body;
-  }
-
-  /**
-   * @private 
-   */
-  async poll() {
-    if (this.accessData.status !== 'NEED_SIGNIN') {
-      this.polling = false;
-      return;
-    }
-    if (this.settings.authRequest.returnURL) { // no popup
-      return;
-    }
-    this.polling = true;
-    this.processAccess(await this.getAccess());
-    setTimeout(this.poll.bind(this), this.accessData.poll_rate_ms);
-  }
-
-
-
-  /**
-   * @private 
-   */
-  processAccess(accessData) {
-    if (!accessData || !accessData.status) {
-      this.state = {
-        id: AuthStates.ERROR,
-        message: 'Invalid Access data response',
-        error: new Error('Invalid Access data response')
-      };
-      throw this.state.error;
-    }
-    this.accessData = accessData;
-
-    switch (this.accessData.status) {
-      case 'ERROR':
-        this.state = {
-          id: AuthStates.ERROR,
-          message: 'Error on the backend'
-        };
-        break;
-      case 'ACCEPTED':
-        const apiEndpoint =
-          Service.buildAPIEndpoint(this.pryvServiceInfo, this.accessData.username, this.accessData.token);
-
-        Cookies.set(this.cookieKey, 
-          { apiEndpoint: apiEndpoint, displayName: this.accessData.username });
-
-        this.state = {
-          id: AuthStates.AUTHORIZED,
-          apiEndpoint: apiEndpoint,
-          displayName: this.accessData.username,
-          action: this.logOut
-        };
-
-        break;
-    }
-  }
-
-
-  // ---------------------- STATES ----------------- //
-
-  set state(newState) {
-    //console.log('State Changed:' + JSON.stringify(newState));
-    this._state = newState;
-
-    this.stateChangeListners.map((listner) => {
-      try { listner(this.state) } catch (e) { console.log(e); }
-    });
-  }
-
-  get state() {
-    return this._state;
-  }
-
-
-  // ------------------ ACTIONS  ----------- //
-
-  /**
-   * Follow Browser Process and 
-   * Open Login Page.
-   */
-  async openLoginPage() {
-    console.log('OpenLogin', this);
-    // 1. Make sure Browser is initialized
-    if (!this.pryvServiceInfo) {
-      throw new Error('Browser service must be initialized first');
-    }
-
-    // 2. Post access if needed
-    if (!this.accessData) {
-      this.processAccess(await this.postAccess());
-    }
-
-    // 3.a Open Popup (even if already opened)
-    if (this.accessData.status === 'NEED_SIGNIN')
-      this.popupLogin();
-
-    // 3.a.1 Poll Access if not yet in course
-    if (!this.polling) this.poll();
-  }
-
-  /**
-   * Revoke Connection and clean local cookies
-   * 
-   */
-  logOut() {
-    const message = this.loginButton ? this.loginButton.myMessages.LOGOUT_CONFIRM : 'Logout ?';
-    if (confirm(message)) {
-      this.readyAndClean();
-    }
-  }
-
-  popupLogin() {
-    if (!this.accessData || !this.accessData.url) {
-      throw new Error('Pryv Sign-In Error: NO SETUP. Please call Browser.setupAuth() first.');
-    }
-
-    if (this.settings.authRequest.returnURL) { // open on same page (no Popup) 
-      location.href = this.accessData.url;
-      return;
-    }
-
-    var screenX = typeof window.screenX !== 'undefined' ? window.screenX : window.screenLeft,
-      screenY = typeof window.screenY !== 'undefined' ? window.screenY : window.screenTop,
-      outerWidth = typeof window.outerWidth !== 'undefined' ?
-        window.outerWidth : document.body.clientWidth,
-      outerHeight = typeof window.outerHeight !== 'undefined' ?
-        window.outerHeight : (document.body.clientHeight - 22),
-      width = 270,
-      height = 420,
-      left = parseInt(screenX + ((outerWidth - width) / 2), 10),
-      top = parseInt(screenY + ((outerHeight - height) / 2.5), 10),
-      features = (
-        'width=' + width +
-        ',height=' + height +
-        ',left=' + left +
-        ',top=' + top +
-        ',scrollbars=yes'
-      );
-
-    // Keep "url" for retro-compatibility for Pryv.io before v1.0.4 
-    const authUrl = this.accessData.authUrl || this.accessData.url;
-
-    this.popup = window.open(authUrl, 'prYv Sign-in', features);
-
-    if (!this.popup) {
-      // TODO try to fall back on access
-      console.log('FAILED_TO_OPEN_WINDOW');
-    } else if (window.focus) {
-      this.popup.focus();
-    }
-
-    return;
-  }
-
-  // ------------------ Internal utils ------------------- //
-
-  /**
-   * From the settings and the environement  
-   * @param {string} [setting] Url 
-   * @param {Object} [windowLocationForTest] fake window.location.href
-   * @param {Object} [navigatorForTests] fake navigaotor for testsuseragent
-   */
-  static getReturnURL(setting, 
-    windowLocationForTest, navigatorForTests) {
-    let returnURL = setting || 'auto#';
-  
-    const locationHref = windowLocationForTest || window.location.href;
+    returnURL = returnURL || RETURN_URL_AUTO + '#';
 
     // check the trailer
-    var trailer = returnURL.slice(-1);
+    const trailer = returnURL.slice(-1);
     if ('#&?'.indexOf(trailer) < 0) {
       throw new Error('Pryv access: Last character of --returnURL setting-- is not ' +
         '"?", "&" or "#": ' + returnURL);
     }
-
-    // is Popup ? (not mobile && auto#)
-    if (returnURL.indexOf('auto') === 0 && !AuthController.browserIsMobileOrTablet(navigatorForTests)) {
+    // auto mode for desktop
+    if (returnUrlIsAuto(returnURL) &&
+        !utils.browserIsMobileOrTablet(navigatorForTests)) {
       return false;
-    }
-
-    // set self as return url?
-    if ((returnURL.indexOf('auto') === 0 && AuthController.browserIsMobileOrTablet(navigatorForTests)) ||
-      (returnURL.indexOf('self') === 0)) { // 
-
+    // auto mode for mobile or self
+    } else if ((returnUrlIsAuto(returnURL) &&
+                utils.browserIsMobileOrTablet(navigatorForTests)) ||
+               returnURL.indexOf('self') === 0) {
+      // set self as return url?
       // eventually clean-up current url from previous pryv returnURL
-      returnURL = locationHref + returnURL.substring(4);;
+      const locationHref = windowLocationForTest || window.location.href;
+      returnURL = locationHref + returnURL.substring(4);
     }
-    
-    return AuthController.cleanURLFromPrYvParams(returnURL);
+    return utils.cleanURLFromPrYvParams(returnURL);
+
+    function returnUrlIsAuto (returnURL) {
+      return returnURL.indexOf(RETURN_URL_AUTO) === 0;
+    }
   }
 
   /**
-   * 
-   * @param {Object} [navigatorForTests] mock navigator var only for testing purposes 
+   * Start the authentication request and polling process
+   * @returns {Promise<void>}
+   * @see https://pryv.github.io/reference/#auth-request
    */
-  static browserIsMobileOrTablet(navigatorForTests) {
-    const myNavigator = navigatorForTests || navigator;
-    var check = false;
-    (function (a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true; })(myNavigator.userAgent || myNavigator.vendor || myNavigator.opera);
-    return check;
-  };
+  async startAuthRequest () {
+    // @ts-ignore - postAccess uses .call(this) for context
+    this.state = await postAccess.call(this);
+    // Remember the polling key so listeners on the terminal AUTHORIZED
+    // state can be handed `{ key, serviceInfo? }` (the polling response
+    // itself doesn't echo `key` back).
+    this._authFlowKey = this.state?.key;
 
+    await doPolling.call(this);
 
-  static getQueryParamsFromURL(url) { 
-    url = url || window.location.href;
-    var vars = {};
-    url.replace(QUERY_REGEXP,
-      function (m, key, value) {
-        vars[key] = decodeURIComponent(value);
-      });
-    return vars;
+    /** @this {AuthController} */
+    async function postAccess () {
+      try {
+        const { response, body } = await utils.fetchPost(
+          // @ts-ignore - this is bound via .call()
+          this.serviceInfo.access,
+          // @ts-ignore - this is bound via .call()
+          this.settings.authRequest
+        );
+        if (!response.ok) {
+          throw new Error('Access request failed: ' + JSON.stringify(body));
+        }
+        return body;
+      } catch (e) {
+        this.state = {
+          status: AuthStates.ERROR,
+          message: 'Requesting access',
+          error: e
+        };
+        throw e; // forward error
+      }
+    }
+
+    /** @this {AuthController} */
+    async function doPolling () {
+      // @ts-ignore - this is bound via .call()
+      if (this.state?.status !== AuthStates.NEED_SIGNIN) {
+        return;
+      }
+      // @ts-ignore - this is bound via .call()
+      const pollResponse = await pollAccess(this.state?.poll);
+
+      if (pollResponse.status === AuthStates.NEED_SIGNIN) {
+        // @ts-ignore - this is bound via .call()
+        setTimeout(await doPolling.bind(this), this.state?.poll_rate_ms);
+      } else {
+        // Carry the key forward — listeners on the narrow public surface
+        // need it, and the server doesn't echo it back on ACCEPTED.
+        if (this._authFlowKey != null && pollResponse.key == null) {
+          pollResponse.key = this._authFlowKey;
+        }
+        this.state = pollResponse;
+      }
+
+      async function pollAccess (pollUrl) {
+        try {
+          const { response, body } = await utils.fetchGet(pollUrl);
+          if (response.status === 403 && body?.status === 'REFUSED') {
+            return { status: AuthStates.INITIALIZED };
+          }
+          return body;
+        } catch (e) {
+          return { status: AuthStates.ERROR, message: 'Error while polling for auth request', error: e };
+        }
+      }
+    }
   }
 
-  //util to grab parameters from url query string
-  static getServiceInfoFromURL(url) {
-    const vars = AuthController.getQueryParamsFromURL(url);
-    //TODO check validity of status
-    return vars[AuthController.options.SERVICE_INFO_QUERY_PARAM_KEY];
-  };
+  // -------------- state listeners ---------------------
+  set state (newState) {
+    // retro-compatibility for lib-js < 2.0.9
+    newState.id = newState.status;
 
+    this._state = newState;
 
-  //util to grab parameters from url query string
-  static getStatusFromURL(url) {
-    const vars = AuthController.getQueryParamsFromURL(url);
-    //TODO check validity of status
-    return vars.prYvstatus;
-  };
+    this.stateChangeListeners.forEach((listener) => {
+      try {
+        listener(this.state);
+      } catch (e) {
+        console.log('Error during set state ()', e);
+      }
+    });
+  }
 
-  //util to grab parameters from url query string
-  static cleanURLFromPrYvParams(url) {
-    return url.replace(PRYV_REGEXP, '');
-  };
+  get state () {
+    return this._state;
+  }
 }
 
-AuthController.options = {
-  SERVICE_INFO_QUERY_PARAM_KEY: 'pryvServiceInfoUrl'
+// ----------- private methods -------------
+
+/**
+ * Narrow the state passed to *external* `onStateChange` callers so the
+ * calling app sees only `{ status, id, key, serviceInfo? }` on the
+ * terminal AUTHORIZED state reached through the auth-flow polling path.
+ * `username` / `token` / `apiEndpoint` are kept inside the lib; the
+ * calling app uses `pryv.connectFromKey(key, serviceInfoUrl)` to obtain
+ * a `Connection`.
+ *
+ * The cookie-autologin path (no fresh `key` available, restored from
+ * `LoginButton.getAuthorizationData()`) passes through unchanged so
+ * existing pages that build a `Connection` directly from the restored
+ * state on page load keep working.
+ *
+ * Non-AUTHORIZED states pass through unchanged so error messages /
+ * loading flags / etc. still reach the listener.
+ *
+ * @param {Object} state - full internal state
+ * @returns {Object} narrowed state
+ */
+function filterForExternalListener (state) {
+  if (state == null || state.status !== AuthStates.AUTHORIZED) {
+    return state;
+  }
+  // No key → cookie-autologin path; preserve existing shape.
+  if (state.key == null) {
+    return state;
+  }
+  const out = { status: state.status, id: state.id, key: state.key };
+  if (state.serviceInfo != null) out.serviceInfo = state.serviceInfo;
+  return out;
+}
+
+async function checkAutoLogin (authController) {
+  const loginButton = authController.loginButton;
+  if (loginButton == null) {
+    return;
+  }
+
+  const storedCredentials = await loginButton.getAuthorizationData();
+  if (storedCredentials != null) {
+    authController.state = Object.assign({}, { status: AuthStates.AUTHORIZED }, storedCredentials);
+  }
+}
+
+// ------------------ ACTIONS  ----------- //
+
+async function loadAssets (authController) {
+  let loadedAssets = {};
+  try {
+    loadedAssets = await authController.service.assets();
+    if (typeof location !== 'undefined') {
+      await loadedAssets.loginButtonLoadCSS();
+      const thisMessages = await loadedAssets.loginButtonGetMessages();
+      if (thisMessages.LOADING) {
+        authController.messages = Messages(authController.languageCode, thisMessages);
+      } else {
+        console.log('WARNING Messages cannot be loaded using defaults: ', thisMessages);
+      }
+    }
+  } catch (e) {
+    authController.state = {
+      status: AuthStates.ERROR,
+      message: 'Cannot fetch button visuals',
+      error: e
+    };
+    throw e; // forward error
+  }
+  return loadedAssets;
 }
 
 module.exports = AuthController;
-},{"../Service":11,"../utils":16,"./AuthStates":4,"./CookieUtils":5,"./LoginButton":6}],4:[function(require,module,exports){
 
-
+},{"../utils":24,"./AuthStates":7,"./LoginMessages":8}],7:[function(require,module,exports){
 /**
- * Enum Possible states: ERROR, LOADING, INITIALIZED, AUTHORIZED, LOGOUT
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+/**
+ * The possible auth states:
+ * ERROR, LOADING, INITIALIZED, NEED_SIGNIN, AUTHORIZED, SIGNOUT, REFUSED
  * @readonly
  * @enum {string}
- * @memberof Pryv.Browser
+ * @memberof pryv.Browser
  */
-const AuthState = {
-  ERROR : 'error',
-  LOADING : 'loading',
-  INITIALIZED: 'initialized',
-  AUTHORIZED: 'authorized',
-  LOGOUT: 'logout'
-} 
+module.exports = {
+  ERROR: 'ERROR',
+  LOADING: 'LOADING',
+  INITIALIZED: 'INITIALIZED',
+  NEED_SIGNIN: 'NEED_SIGNIN',
+  AUTHORIZED: 'ACCEPTED',
+  SIGNOUT: 'SIGNOUT',
+  REFUSED: 'REFUSED'
+};
 
+},{}],8:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+module.exports = get;
 
-module.exports = AuthState 
-
-},{}],5:[function(require,module,exports){
-
-
-
-function isBrowser() {
-  return typeof window !== 'undefined';
-}
-
-
-
-function set(cookieKey, value, expireInDays) {
-  if (! isBrowser()) return;
-  expireInDays = expireInDays || 365;
-  var myDate = new Date();
-  var hostName = window.location.hostname;
-  var path = window.location.pathname;
-  myDate.setDate(myDate.getDate() + expireInDays);
-  var cookieStr = encodeURIComponent(cookieKey) + '=' + encodeURIComponent(JSON.stringify(value))
-    + ';expires=' + myDate.toGMTString()
-    + ';domain=.' + hostName + ';path=' + path;
-    // do not add SameSite when removing a cookie
-  if (expireInDays >= 0) cookieStr += ';SameSite=Strict';
-  document.cookie = cookieStr;
-}
-exports.set = set;
-
-exports.get = function get(cookieKey) {
-  const name = encodeURIComponent(cookieKey);
-  if (!isBrowser()) return;
-  var value = "; " + document.cookie;
-  var parts = value.split("; " + name + "=");
-  if (parts.length == 2) return JSON.parse(decodeURIComponent(parts.pop().split(";").shift()));
-}
-
-exports.del = function del(cookieKey) {
-  set(cookieKey, {deleted: true}, -1);
-}
-},{}],6:[function(require,module,exports){
-
-const Messages = require('./LoginButtonMessages');
-const AuthStates = require('./AuthStates');
-
-class LoginButton {
-
-  /**
-   * @param {Browser} auth 
-   */
-  constructor(auth) {
-    // 1. get Language
-    
-    this.languageCode = auth.settings.authRequest.languageCode || 'en';
-    this.myMessages = Messages(this.languageCode);
-    // 2. build button
-    this.loginButtonSpan = document.getElementById(auth.settings.spanButtonID);
-
-    if (!this.loginButtonSpan) {
-      throw new Error('No Cannot find SpanId: ' + auth.settings.spanButtonID + ' in DOM');
-    }
-
-    // up to the time the button is loaded use the Span to dsiplay eventual error messages
-    this.loginButtonText = this.loginButtonSpan;
-
-    this.loginButtonSpan.addEventListener('click', this.onClick.bind(this));
-    this.auth = auth;
-
-
-    this.onStateChange({ id: AuthStates.LOADING });
-  }
-
-  /**
-   * @param {Service} pryvService 
-   */
-  async loadAssets(pryvService) {
-    const assets = await pryvService.assets();
-    assets.loginButtonLoadCSS(); // can be async 
-    this.loginButtonSpan.innerHTML = await assets.loginButtonGetHTML();
-    this.loginButtonText = document.getElementById('pryv-access-btn-text');
-    const thisMessages = await assets.loginButtonGetMessages();
-    if (thisMessages.LOADING) {
-      this.myMessages = Messages(this.languageCode, thisMessages);
-    } else {
-      console.log("WARNING Messages cannot be loaded using defaults: ", thisMessages)
-    }
-    this.onStateChange(); // refresh messages
-    this.refreshText();
-  }
-
-
-  refreshText() {
-    if (this.loginButtonText)
-     this.loginButtonText.innerHTML = this.text;
-  }
-
-  onClick() {
-    if (this.auth.state.action) {
-      this.auth.state.action.apply(this.auth);
-    }
-  }
-
-  onStateChange(state) {
-    if (state) {
-      this.lastState = state;
-    }
-
-    switch (this.lastState.id) {
-      case AuthStates.ERROR:
-        this.text = this.myMessages.ERROR + ': ' + this.lastState.message
-      break;
-      case AuthStates.LOADING:
-        this.text = this.myMessages.LOADING;
-        break;
-      case AuthStates.INITIALIZED:
-        this.text = this.myMessages.LOGIN + ': ' + this.auth.pryvServiceInfo.name;
-      break;
-      case AuthStates.AUTHORIZED:
-        this.text = this.lastState.displayName;
-        break;
-      default:
-        console.log('WARNING Unhandled state for Login: ' + this.lastState.id);
-    }
-    this.refreshText();
-  }
-
-  
-}
-
-
-module.exports = LoginButton;
-},{"./AuthStates":4,"./LoginButtonMessages":7}],7:[function(require,module,exports){
 const Messages = {
   LOADING: {
-    'en': '...'
+    en: '...'
   },
   ERROR: {
-    'en': 'Error',
-    'fr': 'Erreur',
+    en: 'Error',
+    fr: 'Erreur'
   },
   LOGIN: {
-    'en': 'Signin',
-    'fr': 'Login'
+    en: 'Signin',
+    fr: 'Login'
   },
-  LOGOUT_CONFIRM: {
-    'en': 'Logout ?',
-    'fr': 'Se deconnecter ?'
+  SIGNOUT_CONFIRM: {
+    en: 'Logout?',
+    fr: 'Se déconnecter ?'
   }
-}
+};
 
-
-function get(languageCode, definitions) {
+function get (languageCode, definitions) {
   const myMessages = definitions || Messages;
   const res = {};
-  Object.keys(myMessages).map((key) => {
-    res[key] = myMessages[key][languageCode] || myMessages[key]['en'];
+  Object.keys(myMessages).forEach((key) => {
+    res[key] = myMessages[key][languageCode] || myMessages[key].en;
   });
   return res;
 }
 
-
-module.exports = get;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
 const AuthController = require('./AuthController');
 const AuthStates = require('./AuthStates');
+const LoginButton = require('../Browser/LoginButton');
+const Service = require('../Service');
 
 /**
- * @module Browser 
- * @memberof Pryv
+ * @memberof pryv
+ * @namespace pryv.Auth
  */
-
+module.exports = {
+  setupAuth,
+  AuthStates,
+  AuthController
+};
 
 /**
  * Start an authentication process
- * @memberof Pryv.Browser
+ *
+ * @memberof pryv.Auth
  * @param {Object} settings
  * @param {Object} settings.authRequest See https://api.pryv.com/reference/#data-structure-access
  * @param {string} [settings.authRequest.languageCode] Language code, as per LoginButton Messages: 'en', 'fr
  * @param {string} settings.authRequest.requestingAppId Application id, ex: 'my-app'
  * @param {Object} settings.authRequest.requestedPermissions
- * @param {string | boolean} settings.authRequest.returnURL : false, // set this if you don't want a popup
- * @param {string} settings.spanButtonID set and <span> id in DOM to insert default login button or null for custom
- * @param {Browser.AuthStateChangeHandler} settings.onStateChange
- * @param {string} [settings.returnURL=auto#]  Set to "self#" to disable popup and force using the same page. Set a custom url when process is finished (specific use cases). Should always end by # ? or &
+ * @param {string | boolean} settings.authRequest.returnURL : false, // set this if you don't want a popup
+ * @param {string} [settings.authRequest.referer] To track registration source
+ * @param {string} settings.spanButtonID set and <span> id in DOM to insert default login button or null for custom
+ * @param {Function} settings.onStateChange
+ * @param {string} [settings.returnURL] Set to "self#" to disable popup and force using the same page
  * @param {string} serviceInfoUrl
- * @param {Object} [serviceCustomizations] override properties of serviceInfoUrl 
- * @returns {PryvServiceInfo}
+ * @param {Object} [serviceCustomizations] override properties of serviceInfoUrl
+ * @returns {Promise<Service>}
  */
-async function setupAuth(settings, serviceInfoUrl, serviceCustomizations) {
-  return (new AuthController(settings, 
-    serviceInfoUrl, serviceCustomizations)).init();
+async function setupAuth (settings, serviceInfoUrl, serviceCustomizations, HumanInteraction = LoginButton) {
+  const service = new Service(serviceInfoUrl, serviceCustomizations);
+  await service.info();
+
+  const humanInteraction = new HumanInteraction(settings, service);
+  await humanInteraction.init();
+
+  return service;
 }
 
+},{"../Browser/LoginButton":11,"../Service":14,"./AuthController":6,"./AuthStates":7}],10:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
 
-module.exports = {
-  setupAuth: setupAuth,
-  AuthStates: AuthStates,
-  serviceInfoFromUrl: AuthController.getServiceInfoFromURL
-}
-
-
+const utils = require('../utils');
 
 /**
- * Notify the requesting code of all important changes
- * - ERROR => {message: <string>, error: <error>}
- * - LOADING => {}
- * - INITIALIZED => {serviceInfo: <PryvServiceInfo>, action: <Open Popup Function>}
- * - AUTHORIZED => {apiEndPoint: <PryvApiEndpoint>, serviceInfo: <PryvServiceInfo>, displayName: <string> action: <Open Logout Question>}
- * - LOGOUT => {}
- * @callback AuthStateChangeHandler
- * @param {Object} state
- * @param {Pryv.Browser.AuthState} state.id  one of ERROR, LOADING, INITIALIZED, AUTHORIZED, LOGOUT
+ * @memberof pryv.Browser
+ * @namespace pryv.Browser.CookieUtils
  */
+module.exports = {
+  get,
+  set,
+  del
+};
 
-},{"./AuthController":3,"./AuthStates":4}],9:[function(require,module,exports){
+/**
+  * Set a local cookie
+  * @memberof pryv.Browser.CookieUtils
+  * @template T
+  * @param {string} cookieKey - The key for the cookie
+  * @param {T} value - The value (will be JSON stringified)
+  * @param {number} [expireInDays=365] - Expiration date in days from now
+  */
+function set (cookieKey, value, expireInDays) {
+  if (!utils.isBrowser()) return;
+  expireInDays = expireInDays || 365;
+  const myDate = new Date();
+  const hostName = window.location.hostname;
+  const path = window.location.pathname;
+  myDate.setDate(myDate.getDate() + expireInDays);
+  let cookieStr = encodeURIComponent(cookieKey) + '=' +
+    encodeURIComponent(JSON.stringify(value)) +
+    ';expires=' + myDate.toUTCString() +
+    ';domain=.' + hostName + ';path=' + path;
+  // do not add SameSite when removing a cookie
+  if (expireInDays >= 0) cookieStr += ';SameSite=Strict';
+  document.cookie = cookieStr;
+}
 
+/**
+ * Return the value of a local cookie
+ * @memberof pryv.Browser.CookieUtils
+ * @template T
+ * @param {string} cookieKey - The key
+ * @returns {T|undefined} The parsed cookie value or undefined if not found
+ */
+function get (cookieKey) {
+  const name = encodeURIComponent(cookieKey);
+  if (!utils.isBrowser()) return;
+  const value = '; ' + document.cookie;
+  const parts = value.split('; ' + name + '=');
+  if (parts.length === 2) return JSON.parse(decodeURIComponent(parts.pop().split(';').shift()));
+}
+
+/**
+ * Delete a local cookie
+ * @memberof pryv.Browser.CookieUtils
+ * @param {string} cookieKey - The key
+ */
+function del (cookieKey) {
+  set(cookieKey, { deleted: true }, -1);
+}
+
+},{"../utils":24}],11:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+const Cookies = require('./CookieUtils');
+const AuthStates = require('../Auth/AuthStates');
+const AuthController = require('../Auth/AuthController');
+const Messages = require('../Auth/LoginMessages');
+const utils = require('../utils');
+
+/* global location, confirm */
+
+/**
+ * @memberof pryv.Browser
+ */
+class LoginButton {
+  constructor (authSettings, service) {
+    this.authSettings = authSettings;
+    this.service = service;
+    this.serviceInfo = service.infoSync();
+  }
+
+  /**
+   * setup button and load assets
+   */
+  async init () {
+    // initialize button visuals
+    setupButton(this);
+    this.languageCode = this.authSettings.authRequest.languageCode || 'en';
+    this.messages = Messages(this.languageCode);
+    // @ts-ignore - loginButtonText is set by setupButton
+    if (this.loginButtonText) {
+      await loadAssets(this);
+    }
+    // set cookie key for authorization data
+    this._cookieKey = 'pryv-libjs-' + this.authSettings.authRequest.requestingAppId;
+
+    // initialize controller
+    this.auth = new AuthController(this.authSettings, this.service, this);
+    await this.auth.init();
+
+    return this.service;
+  }
+
+  onClick () {
+    this.auth.handleClick();
+  }
+
+  async onStateChange (state) {
+    switch (state.status) {
+      case AuthStates.LOADING:
+        this.text = getLoadingMessage(this);
+        break;
+      case AuthStates.INITIALIZED:
+        this.text = getInitializedMessage(this, this.serviceInfo.name);
+        break;
+      case AuthStates.NEED_SIGNIN: {
+        const loginUrl = state.authUrl || state.url; // url is deprecated
+        if (this.authSettings.authRequest.returnURL) { // open on same page (no Popup)
+          location.href = loginUrl;
+          return;
+        } else {
+          startLoginScreen(this, loginUrl);
+        }
+        break;
+      }
+      case AuthStates.AUTHORIZED:
+        this.text = state.username;
+        this.saveAuthorizationData({
+          apiEndpoint: state.apiEndpoint,
+          username: state.username
+        });
+        break;
+      case AuthStates.SIGNOUT: {
+        const message = this.messages.SIGNOUT_CONFIRM ? this.messages.SIGNOUT_CONFIRM : 'Logout ?';
+        if (confirm(message)) {
+          this.deleteAuthorizationData();
+          this.auth.init();
+        }
+        break;
+      }
+      case AuthStates.ERROR:
+        this.text = getErrorMessage(this, state.message);
+        break;
+      default:
+        console.log('WARNING Unhandled state for Login: ' + state.status);
+    }
+    // @ts-ignore - loginButtonText is set by setupButton
+    if (this.loginButtonText) {
+      // @ts-ignore
+      this.loginButtonText.innerHTML = this.text;
+    }
+  }
+
+  getAuthorizationData () {
+    return Cookies.get(this._cookieKey);
+  }
+
+  saveAuthorizationData (authData) {
+    Cookies.set(this._cookieKey, authData);
+  }
+
+  async deleteAuthorizationData () {
+    Cookies.del(this._cookieKey);
+  }
+
+  /**
+   * not mandatory to implement as non-browsers don't have this behaviour
+   * @param {*} authController
+   */
+  async finishAuthProcessAfterRedirection (authController) {
+    // this step should be applied only for the browser
+    if (!utils.isBrowser()) return;
+
+    // 3. Check if there is a prYvkey as result of "out of page login"
+    const url = window.location.href;
+    const pollUrl = retrievePollUrl(url);
+    if (pollUrl !== null) {
+      try {
+        const { body } = await utils.fetchGet(pollUrl);
+        authController.state = body;
+      } catch (e) {
+        authController.state = {
+          status: AuthStates.ERROR,
+          message: 'Cannot fetch result',
+          error: e
+        };
+      }
+    }
+
+    function retrievePollUrl (url) {
+      const params = utils.getQueryParamsFromURL(url);
+      let pollUrl = null;
+      if (params.prYvkey) { // deprecated method - To be removed
+        pollUrl = authController.serviceInfo.access + params.prYvkey;
+      }
+      if (params.prYvpoll) {
+        pollUrl = params.prYvpoll;
+      }
+      return pollUrl;
+    }
+  }
+}
+
+module.exports = LoginButton;
+
+async function startLoginScreen (loginButton, authUrl) {
+  const screenX = typeof window.screenX !== 'undefined' ? window.screenX : window.screenLeft;
+  const screenY = typeof window.screenY !== 'undefined' ? window.screenY : window.screenTop;
+  const outerWidth = typeof window.outerWidth !== 'undefined' ? window.outerWidth : document.body.clientWidth;
+  const outerHeight = typeof window.outerHeight !== 'undefined' ? window.outerHeight : (document.body.clientHeight - 22);
+  const width = 400;
+  const height = 620;
+  const left = Math.floor(screenX + ((outerWidth - width) / 2));
+  const top = Math.floor(screenY + ((outerHeight - height) / 2.5));
+  const features = (
+    'width=' + width +
+    ',height=' + height +
+    ',left=' + left +
+    ',top=' + top +
+    ',scrollbars=yes'
+  );
+  loginButton.popup = window.open(authUrl, 'prYv Sign-in', features);
+
+  if (!loginButton.popup) {
+    // loginButton.auth.stopAuthRequest('FAILED_TO_OPEN_WINDOW');
+    console.log('Pop-up blocked. A second click should allow it.');
+  } else if (window.focus) {
+    loginButton.popup.focus();
+  }
+}
+
+function setupButton (loginBtn) {
+  loginBtn.loginButtonSpan = document.getElementById(loginBtn.authSettings.spanButtonID);
+
+  if (!loginBtn.loginButtonSpan) {
+    console.log('WARNING: pryv.Browser initialized with no spanButtonID');
+  } else {
+    // up to the time the button is loaded use the Span to display eventual
+    // error messages
+    loginBtn.loginButtonText = loginBtn.loginButtonSpan;
+
+    // bind actions dynamically to the button click
+    loginBtn.loginButtonSpan.addEventListener('click', loginBtn.onClick.bind(loginBtn));
+  }
+}
+
+/**
+ * Loads the style from the service info
+ */
+async function loadAssets (loginBtn) {
+  const assets = await loginBtn.service.assets();
+  loginBtn.loginButtonSpan.innerHTML = await assets.loginButtonGetHTML();
+  loginBtn.loginButtonText = document.getElementById('pryv-access-btn-text');
+}
+
+function getErrorMessage (loginButton, message) {
+  return loginButton.messages.ERROR + ': ' + message;
+}
+
+function getLoadingMessage (loginButton) {
+  return loginButton.messages.LOADING;
+}
+
+function getInitializedMessage (loginButton, serviceName) {
+  return loginButton.messages.LOGIN + ': ' + serviceName;
+}
+
+},{"../Auth/AuthController":6,"../Auth/AuthStates":7,"../Auth/LoginMessages":8,"../utils":24,"./CookieUtils":10}],12:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+const LoginButton = require('./LoginButton');
+const CookieUtils = require('./CookieUtils');
+const utils = require('../utils');
+
+/**
+ * @memberof pryv
+ * @namespace pryv.Browser
+ */
+module.exports = {
+  LoginButton,
+  CookieUtils,
+  // retro-compatibility for lib-js < 2.0.9
+  AuthStates: require('../Auth/AuthStates'),
+  setupAuth: require('../Auth').setupAuth,
+  serviceInfoFromUrl: getServiceInfoFromURL
+};
+
+/**
+ * Util to grab parameters from url query string
+ * @param {*} url
+ */
+function getServiceInfoFromURL (url) {
+  const queryParams = utils.getQueryParamsFromURL(url || window.location.href);
+  return queryParams.pryvServiceInfoUrl;
+}
+
+},{"../Auth":9,"../Auth/AuthStates":7,"../utils":24,"./CookieUtils":10,"./LoginButton":11}],13:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
 const utils = require('./utils.js');
-
 const jsonParser = require('./lib/json-parser');
-
-const browserGetEventStreamed = require('./lib/browser-getEventStreamed');
+const libGetEventStreamed = require('./lib/getEventStreamed');
+const PryvError = require('./lib/PryvError');
+const StaleAccessIdError = require('./lib/StaleAccessIdError');
+const buildSearchParams = require('./lib/buildSearchParams');
 
 /**
  * @class Connection
- * Create an instance of Connection to Pryv API.
- * The connection will be opened on
- * 
+ * A connection is an authenticated link to a Pryv.io account.
+ *
  * @type {TokenAndEndpoint}
  *
  * @example
  * create a connection for the user 'tom' on 'pryv.me' backend with the token 'TTZycvBTiq'
- * const conn = new Pryv.Connection('https://TTZycvBTiq@tom.pryv.me');
+ * const conn = new pryv.Connection('https://TTZycvBTiq@tom.pryv.me');
  *
  * @property {string} [token]
  * @property {string} endpoint
- * @memberof Pryv
- * 
+ * @memberof pryv
+ *
  * @constructor
- * @this {Connection} 
- * @param {PryvApiEndpoint} pryvApiEndpoint
+ * @this {Connection}
+ * @param {APIEndpoint} apiEndpoint
+ * @param {pryv.Service} [service] - eventually initialize Connection with a Service
  */
 class Connection {
-
-  constructor(pryvApiEndpoint) {
-    const { token, endpoint } = utils.extractTokenAndApiEndpoint(pryvApiEndpoint);
+  constructor (apiEndpoint, service) {
+    const { token, endpoint } = utils.extractTokenAndAPIEndpoint(apiEndpoint);
     this.token = token;
     this.endpoint = endpoint;
     this.options = {};
     this.options.chunkSize = 1000;
     this._deltaTime = { value: 0, weight: 0 };
+    if (service && !(service instanceof Service)) {
+      throw new Error('Invalid service param');
+    }
+    this._service = service;
+  }
+
+  /**
+   * get pryv.Service object relative to this connection
+   * @readonly
+   * @property {pryv.Service} service
+   */
+  get service () {
+    if (this._service) return this._service;
+    this._service = new Service(this.endpoint + 'service/info');
+    return this._service;
+  }
+
+  /**
+   * Get username for this connection.
+   * It's async as it's constructed from access info.
+   * @returns {Promise<string>} Promise resolving to the username
+   */
+  async username () {
+    const accessInfo = await this.accessInfo();
+    if (accessInfo.error) {
+      throw new PryvError(
+        'Failed fetching accessinfo: ' + accessInfo.error.message,
+        accessInfo.error
+      );
+    }
+    // @ts-ignore - username is always a string
+    return accessInfo.user.username;
+  }
+
+  /**
+   * Get access info for this connection.
+   *
+   * Memoized per-Connection: the first call fetches from the server and
+   * caches the result; subsequent calls return the cached copy in O(1).
+   * Pass `forceRefresh: true` to invalidate the cache and fetch a fresh
+   * copy from the server — used internally by `connection.socket` to
+   * react to `accessUpdated` server-push events. A failed server
+   * fetch leaves any prior cached value intact.
+   *
+   * @param {boolean} [forceRefresh=false] - bypass + refresh the cache
+   * @returns {Promise<AccessInfo>} Promise resolving to the access info
+   */
+  async accessInfo (forceRefresh = false) {
+    if (!forceRefresh && this._accessInfoCache != null) return this._accessInfoCache;
+    const fresh = await this.get('access-info', null);
+    this._accessInfoCache = fresh;
+    return fresh;
   }
 
   /**
@@ -11742,153 +11275,256 @@ class Connection {
    * @param {Function} [progress] Return percentage of progress (0 - 100);
    * @returns {Promise<Array>} Promise to Array of results matching each method call in order
    */
-  async api(arrayOfAPICalls, progress) {
-    if (! Array.isArray(arrayOfAPICalls)) {
-      throw new Error('Pryv.api() takes an array as input');
+  async api (arrayOfAPICalls, progress) {
+    function httpHandler (batchCall) {
+      return this.post('', batchCall);
+    }
+    return await this._chunkedBatchCall(
+      arrayOfAPICalls,
+      progress,
+      httpHandler.bind(this)
+    );
+  }
+
+  /**
+   * Make one API call
+   * @param {string} method - Method ID (e.g., 'events.get', 'streams.create')
+   * @param {Object|Array} [params={}] - The params associated with this method
+   * @param {string} [expectedKey] - If given, returns the value of this key or throws an error if not present
+   * @returns {Promise<Object>} Promise resolving to the API result or the value of expectedKey
+   * @throws {Error} If .error is present in the response or expectedKey is missing
+   */
+  async apiOne (method, params = {}, expectedKey) {
+    const result = await this.api([{ method, params }]);
+    if (
+      result[0] == null ||
+      result[0].error ||
+      (expectedKey != null && result[0][expectedKey] == null)
+    ) {
+      const innerObject = result[0]?.error || result;
+      throw new PryvError(
+        `Error for api method: "${method}" with params: ${JSON.stringify(
+          params
+        )} >> Result: ${JSON.stringify(innerObject)}"`,
+        innerObject
+      );
+    }
+    if (expectedKey != null) return result[0][expectedKey];
+    return result[0];
+  }
+
+  /**
+   * Revoke : Delete the accessId
+   * - Do not throw error if access is already revoked, just return null;
+   * @param {boolean} [throwOnFail=true] - if set to false do not throw Error on failure
+   * @param {Connection} [usingConnection] - specify which connection issues the revoke, might be necessary when selfRevoke
+   * @returns {Promise<Object|null>} Promise resolving to deletion result or null if already revoked/failed
+   */
+  async revoke (throwOnFail = true, usingConnection) {
+    usingConnection = usingConnection || this;
+    let accessInfo = null;
+    // get accessId
+    try {
+      accessInfo = await this.accessInfo();
+    } catch (e) {
+      if (e.response?.body?.error?.id === 'invalid-access-token') {
+        return null; // Already revoked OK..
+      }
+      if (throwOnFail) throw e;
+      return null;
+    }
+    // delete access
+    try {
+      const result = usingConnection.apiOne('accesses.delete', {
+        id: accessInfo.id
+      });
+      return result;
+    } catch (e) {
+      if (throwOnFail) throw e;
+      return null;
+    }
+  }
+
+  /**
+   * @private
+   */
+  async _chunkedBatchCall (arrayOfAPICalls, progress, callHandler) {
+    if (!Array.isArray(arrayOfAPICalls)) {
+      throw new Error('Connection.api() takes an array as input');
     }
 
     const res = [];
     let percent = 0;
-    for (let cursor = 0; arrayOfAPICalls.length >= cursor; cursor += this.options.chunkSize) {
+    for (
+      let cursor = 0;
+      arrayOfAPICalls.length >= cursor;
+      cursor += this.options.chunkSize
+    ) {
       const thisBatch = [];
-      const cursorMax = Math.min(cursor + this.options.chunkSize, arrayOfAPICalls.length);
+      const cursorMax = Math.min(
+        cursor + this.options.chunkSize,
+        arrayOfAPICalls.length
+      );
       // copy only method and params into a back call to be exuted
-      for (let i = cursor; i < cursorMax ; i++) {      
-        thisBatch.push({ method: arrayOfAPICalls[i].method, params: arrayOfAPICalls[i].params});
+      for (let i = cursor; i < cursorMax; i++) {
+        thisBatch.push({
+          method: arrayOfAPICalls[i].method,
+          params: arrayOfAPICalls[i].params
+        });
       }
-      const resRequest = await this.post('', thisBatch);
+      const resRequest = await callHandler(thisBatch);
       // result checks
-      if (! resRequest || ! Array.isArray(resRequest.results)) {
-        throw new Error('API call result is not an Array: ' + JSON.stringify(resRequest));
+      if (!resRequest || !Array.isArray(resRequest.results)) {
+        throw new Error(
+          'API call result is not an Array: ' + JSON.stringify(resRequest)
+        );
       }
-      if (resRequest.results.length != thisBatch.length) {
-        throw new Error('API call result Array does not match request: ' + JSON.stringify(resRequest));
+      if (resRequest.results.length !== thisBatch.length) {
+        throw new Error(
+          'API call result Array does not match request: ' +
+            JSON.stringify(resRequest)
+        );
       }
 
-
-      // eventually call handleResult 
+      // eventually call handleResult
       for (let i = 0; i < resRequest.results.length; i++) {
         if (arrayOfAPICalls[i + cursor].handleResult) {
-          await arrayOfAPICalls[i + cursor].handleResult.call(null, resRequest.results[i]);
+          await arrayOfAPICalls[i + cursor].handleResult.call(
+            null,
+            resRequest.results[i],
+            thisBatch[i] // request
+          );
         }
       }
-      Array.prototype.push.apply(res, resRequest.results)
-      percent =  Math.round(100 * res.length / arrayOfAPICalls.length);
-      if (progress) { progress(percent, res); }
+      Array.prototype.push.apply(res, resRequest.results);
+      percent = Math.round((100 * res.length) / arrayOfAPICalls.length);
+      if (progress) {
+        progress(percent, res);
+      }
     }
     return res;
   }
 
   /**
-   * Post to API return results  
-   * @param {(Array | Object)} data 
-   * @param {Object} queryParams
-   * @param {string} path 
-   * @returns {Promise<Array|Object>}  Promise to result.body
+   * Post to API and return results
+   * @param {string} path - API path
+   * @param {(Array | Object)} data - Data to post
+   * @returns {Promise<Object|Object[]>} Promise to result.body
    */
-  async post(path, data, queryParams) {
-    const now = Date.now() / 1000;
-    const res = await this.postRaw(path, data, queryParams);
+  async post (path, data) {
+    const now = getTimestamp();
+    const res = await this._postFetch(path, data);
     this._handleMeta(res.body, now);
     return res.body;
   }
 
   /**
-   * Raw Post to API return superagent object  
-   * @param {Array | Object} data 
-   * @param {Object} queryParams
-   * @param {string} path 
-   * @returns {request.superagent}  Promise from superagent's post request
+   * @private
+   * Post object as JSON to API
+   * @param {string} path - API path
+   * @param {Array | Object} data - Data to post as JSON
+   * @returns {Promise<{response: Response, body: Object|Object[]}>} Promise to response and body
    */
-  async postRaw(path, data, queryParams) {
-    return this._post(path)
-      .query(queryParams)
-      .send(data);
-  }
-
-   _post(path) {
-    return utils.superagent.post(this.endpoint + path)
-      .set('Authorization', this.token)
-      .set('accept', 'json');
+  async _postFetch (path, data) {
+    return this._postFetchRaw(path, JSON.stringify(data), 'application/json');
   }
 
   /**
-   * Post to API return results  
-   * @param {Object} queryParams
-   * @param {string} path 
-   * @returns {Promise<Array|Object>}  Promise to result.body
+   * @private
+   * Raw Post to API
+   * @param {string} path - API path
+   * @param {any} data - Raw data to post
+   * @param {string} [contentType] - Content-Type header (optional, allows fetch to set it for FormData)
+   * @returns {Promise<{response: Response, body: Object|Object[]}>} Promise to response and body
    */
-  async get(path, queryParams) {
-    const now = Date.now() / 1000;
-    const res = await this.getRaw(path, queryParams);
+  async _postFetchRaw (path, data, contentType) {
+    const headers = {
+      Authorization: this.token,
+      Accept: 'application/json'
+    };
+    // optional for form-data llowing fetch to
+    // automatically set multipart/form-data with the correct boundary
+    if (contentType) {
+      headers['Content-Type'] = contentType;
+    }
+    const response = await fetch(this.endpoint + path, {
+      method: 'POST',
+      headers,
+      body: data
+    });
+    const body = await response.json();
+    return { response, body };
+  }
+
+  /**
+   * GET from API and return results
+   * @param {string} path - API path
+   * @param {Object} [queryParams] - Query parameters
+   * @returns {Promise<Object|Object[]>} Promise to result.body
+   */
+  async get (path, queryParams) {
+    const now = getTimestamp();
+    const res = await this._getFetchRaw(path, queryParams);
     this._handleMeta(res.body, now);
-    return res.body
+    return res.body;
   }
 
   /**
-   * Raw Get to API return superagent object
-   * @param {Object} queryParams 
-   * @param {string} path 
-   * @returns {request.superagent}  Promise from superagent's get request
+   * @private
+   * Raw GET from API
+   * @param {string} path - API path
+   * @param {Object} [queryParams={}] - Query parameters
+   * @returns {Promise<{response: Response, body: Object|Object[]}>} Promise to response and body
    */
-  getRaw(path, queryParams) {
+  async _getFetchRaw (path, queryParams = {}) {
     path = path || '';
-    return utils.superagent.get(this.endpoint + path)
-      .set('Authorization', this.token)
-      .set('accept', 'json')
-      .query(queryParams);
+    let queryStr = '';
+    if (queryParams && Object.keys(queryParams).length > 0) {
+      queryStr = '?' + buildSearchParams(queryParams);
+    }
+    const response = await fetch(this.endpoint + path + queryStr, {
+      headers: {
+        Authorization: this.token,
+        Accept: 'application/json'
+      }
+    });
+    const body = await response.json();
+    return { response, body };
   }
 
   /**
-   * ADD Data Points to HFEvent (flatJSON format)
-   * https://api.pryv.com/reference/#add-hf-series-data-points
+   * Add data points to an HF (High Frequency) series event (flatJSON format)
+   * @param {string} eventId - The HF event ID
+   * @param {string[]} fields - Array of field names for the series
+   * @param {Array<Array<number|string>>} points - Array of data points, each point is an array of values
+   * @returns {Promise<HFSeriesAddResult>} Promise resolving to status response
+   * @see https://api.pryv.com/reference/#add-hf-series-data-points
    */
-  async addPointsToHFEvent(eventId, fields, points) {
-    const res = await this.post('events/' + eventId + '/series',
-      {
-        format: 'flatJSON',
-        fields: fields,
-        points: points
-      });
-    if (!res.status === 'ok') {
+  async addPointsToHFEvent (eventId, fields, points) {
+    const res = await this.post('events/' + eventId + '/series', {
+      format: 'flatJSON',
+      fields,
+      points
+    });
+    if (res.status !== 'ok') {
       throw new Error('Failed loading serie: ' + JSON.stringify(res.status));
     }
     return res;
   }
 
   /**
-   * Streamed get Event. 
-   * Fallbacks to not streamed, for browsers that does not support `fetch()` API 
+   * Streamed get Event.
    * @see https://api.pryv.com/reference/#get-events
    * @param {Object} queryParams See `events.get` parameters
-   * @param {Function} forEachEvent Function taking one event as parameter. Will be called for each event 
+   * @param {Function} forEachEvent Function taking one event as parameter. Will be called for each event
    * @returns {Promise<Object>} Promise to result.body transformed with `eventsCount: {count}` replacing `events: [...]`
    */
-  async getEventsStreamed(queryParams, forEachEvent) {
-    const myParser = jsonParser(forEachEvent);
-    let res = null;
-    if (typeof window === 'undefined') { // node
-      res = await this.getRaw('events', queryParams)
-        .buffer(false)
-        .parse(myParser);
-
-    } else if (typeof fetch !== 'undefined') { // browser supports fetch 
-      res = await browserGetEventStreamed(this, queryParams, myParser);
-
-    } else { // browser no fetch supports
-      console.log('WARNING: Browser does not support fetch() required by Pryv.Connection.getEventsStreamed()');
-      res = await this.getRaw('events', queryParams);
-      res.body.eventsCount = 0;
-      if (res.body.events) {
-        res.body.events.forEach(forEachEvent);
-        res.body.eventsCount = res.body.events.length;
-        delete res.body.events;
-      }
-    }
-
-    const now = Date.now() / 1000;
+  async getEventsStreamed (queryParams, forEachEvent) {
+    const myParser = jsonParser(forEachEvent, queryParams.includeDeletions);
+    const res = await libGetEventStreamed(this, queryParams, myParser);
+    const now = getTimestamp();
     this._handleMeta(res.body, now);
-    return res.body
+    return res.body;
   }
 
   /**
@@ -11897,60 +11533,181 @@ class Connection {
    * @param {Event} event
    * @param {string} filePath
    */
-  async createEventWithFile(event, filePath) {
-    const res = await this._post('events')
-      .field('event', JSON.stringify(event))
-      .attach('file', filePath);
+  async createEventWithFile (event, filePath) {
+    const fs = require('fs');
+    const path = require('path');
 
-    const now = Date.now() / 1000;
-    this._handleMeta(res.body, now);
-    return res.body
-  }
+    if (!fs || !path) {
+      throw new Error('createEventWithFile is only available in Node.js. Use createEventWithFormData in browser.');
+    }
 
-  /**
- * Create an event with attached formData
- * !! BROWSER ONLY
- * @param {Event} event
- * @param {FormData} formData https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData
- */
-  async createEventWithFormData(event, formData) {
+    const fileName = path.basename(filePath);
+    const mimeType = getMimeType(path.extname(filePath));
+    const fileBlob = await fs.openAsBlob(filePath, { type: mimeType });
+
+    const formData = new FormData();
     formData.append('event', JSON.stringify(event));
-    const res = await this._post('events').send(formData);
-    return res.body
+    formData.append('file', fileBlob, fileName);
+
+    const now = getTimestamp();
+    const { body } = await this._postFetchRaw('events', formData);
+    this._handleMeta(body, now);
+    return body;
   }
 
   /**
-   * Difference in second between the API and locatime
-   * deltaTime is refined at each (non Raw) API call
+   * Create an event from a Buffer
+   * @param {Object} event
+   * @param {Buffer|Blob} bufferData - Buffer for node, Blob for browser
+   * @param {string} filename
+   */
+  async createEventWithFileFromBuffer (event, bufferData, filename) {
+    const mimeType = getMimeType(getExtname(filename));
+    const fileBlob = bufferData instanceof Blob
+      ? bufferData
+      // @ts-ignore - Buffer is valid for Blob in Node.js
+      : new Blob([bufferData], { type: mimeType });
+
+    const formData = new FormData();
+    formData.append('file', fileBlob, filename);
+    const body = await this.createEventWithFormData(event, formData);
+    return body;
+  }
+
+  /**
+   * Create an event with attached formData
+   * !! BROWSER ONLY
+   * @param {Event} event
+   * @param {FormData} formData https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData
+   */
+  async createEventWithFormData (event, formData) {
+    formData.append('event', JSON.stringify(event));
+    const { body } = await this._postFetchRaw('events', formData);
+    return body;
+  }
+
+  /**
+   * Difference in seconds between the Pryv.io API and local time
+   * deltaTime is refined at each (non-raw) API call
    * @readonly
    * @property {number} deltaTime
    */
-  get deltaTime() {
+  get deltaTime () {
     return this._deltaTime.value;
   }
 
   /**
-   * Pryv API Endpoint of this connection
+   * API endpoint of this connection (includes token if present)
    * @readonly
-   * @property {PryvApiEndpoint} deltaTime
+   * @property {APIEndpoint} apiEndpoint
    */
-  get apiEndpoint() {
-    return utils.buildPryvApiEndPoint(this);
+  get apiEndpoint () {
+    return utils.buildAPIEndpoint(this);
+  }
+
+  /**
+   * Update an access by composite id (Pryv.io ≥ 2.0.0-pre.X). Wraps
+   * `accesses.update` and translates the 409 `stale-resource` response
+   * into a typed `StaleAccessIdError` so callers can `instanceof`-test
+   * and refetch + retry without re-parsing the inner error.
+   *
+   * Pass `id` as the wire-format reference returned by the server — bare
+   * cuid on a never-updated access, composite `<base>:<serial>` otherwise.
+   * `changes` is the body of mutable fields (name, deviceName, permissions,
+   * expireAfter, expires:null, clientData).
+   *
+   * @param {string} id
+   * @param {Object} changes
+   * @returns {Promise<Object>} the updated access (with new composite id)
+   * @throws {StaleAccessIdError} if the server reports the id is stale
+   */
+  async updateAccess (id, changes) {
+    try {
+      return await this.apiOne('accesses.update', { id, update: changes }, 'access');
+    } catch (e) {
+      if (e && e.innerObject && e.innerObject.id === 'stale-resource') {
+        throw new StaleAccessIdError(e.message, e.innerObject.data || {});
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * Fetch an access by composite id including its full version history
+   * (oldest first). Server: `accesses.getOne ?includeHistory=true`.
+   *
+   * Useful for audit views. Pass the composite `<base>:<serial>` to
+   * inspect a specific past version (the result's `current` field then
+   * points at the live head's composite id).
+   *
+   * @param {string} id
+   * @returns {Promise<{ access: Object, current?: string, history?: Object[] }>}
+   */
+  async getAccessWithHistory (id) {
+    return await this.apiOne('accesses.getOne', { id, includeHistory: true });
   }
 
   // private method that handle meta data parsing
-    _handleMeta(res, requestLocalTimestamp) {
+  _handleMeta (res, requestLocalTimestamp) {
     if (!res.meta) throw new Error('Cannot find .meta in response.');
-    if (!res.meta.serverTime) throw new Error('Cannot find .meta.serverTime in response.');
+    if (!res.meta.serverTime) { throw new Error('Cannot find .meta.serverTime in response.'); }
 
-    // update deltaTime and weight it 
-    this._deltaTime.value = (this._deltaTime.value * this._deltaTime.weight + res.meta.serverTime - requestLocalTimestamp) / ++this._deltaTime.weight;
+    // update deltaTime and weight it
+    this._deltaTime.value =
+      (this._deltaTime.value * this._deltaTime.weight +
+        res.meta.serverTime -
+        requestLocalTimestamp) /
+      ++this._deltaTime.weight;
   }
-
 }
 
-
 module.exports = Connection;
+
+function getTimestamp () {
+  return Date.now() / 1000;
+}
+
+const MIME_TYPES = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
+  '.bmp': 'image/bmp',
+  '.ico': 'image/x-icon',
+  '.pdf': 'application/pdf',
+  '.json': 'application/json',
+  '.xml': 'application/xml',
+  '.zip': 'application/zip',
+  '.gz': 'application/gzip',
+  '.tar': 'application/x-tar',
+  '.txt': 'text/plain',
+  '.html': 'text/html',
+  '.htm': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.mjs': 'application/javascript',
+  '.mp3': 'audio/mpeg',
+  '.wav': 'audio/wav',
+  '.ogg': 'audio/ogg',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.avi': 'video/x-msvideo',
+  '.mov': 'video/quicktime'
+};
+
+function getMimeType (ext) {
+  return MIME_TYPES[ext.toLowerCase()] || 'application/octet-stream';
+}
+
+function getExtname (filename) {
+  const lastDot = filename.lastIndexOf('.');
+  return lastDot >= 0 ? filename.slice(lastDot) : '';
+}
+
+// service is require "after" to allow circular require
+const Service = require('./Service');
 
 /**
  * API Method call, for batch call https://api.pryv.com/reference/#call-batch
@@ -11959,93 +11716,124 @@ module.exports = Connection;
  * @property {(Object|Array)}  params - The call parameters as required by the method.
  * @property {(Function|Promise)} [handleResult] - Will be called with the result corresponding to this specific call.
  */
-},{"./lib/browser-getEventStreamed":14,"./lib/json-parser":15,"./utils.js":16}],10:[function(require,module,exports){
 
+},{"./Service":14,"./lib/PryvError":18,"./lib/StaleAccessIdError":19,"./lib/buildSearchParams":20,"./lib/getEventStreamed":22,"./lib/json-parser":23,"./utils.js":24,"fs":1,"path":3}],14:[function(require,module,exports){
 /**
- * Pryv library
- * @version 1.0
- * @exports Pryv
- * @namespace Pryv
- * @property {Service} Service
- * @property {Connection} Connection
- * @property {Browser} Browser
- * @property {utils} utils
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
  */
-module.exports = {
-  Service: require('./Service'),
-  Connection: require('./Connection'),
-  Browser: require('./Browser'),
-  utils: require('./utils')
-}
-},{"./Browser":8,"./Connection":9,"./Service":11,"./utils":16}],11:[function(require,module,exports){
-
 const utils = require('./utils.js');
-const Connection = require('./Connection.js');
+const PryvError = require('./lib/PryvError.js');
+const MfaRequiredError = require('./lib/MfaRequiredError.js');
+// Connection is required at the end of this file to allow circular requires.
 const Assets = require('./ServiceAssets.js');
 
 /**
- * @class Service
- * Holds Pryv Service informations
+ * @class pryv.Service
+ * A Pryv.io deployment is a unique "Service", as an example **Pryv Lab** is a service, deployed with the domain name **pryv.me**.
  *
+ * `pryv.Service` exposes tools to interact with Pryv.io at a "Platform" level.
  *
- * @property {TokenAndEndpoint} tokenAndApi
- * @memberof Pryv
- * 
+ *  ##### Initizalization with a service info URL
+```js
+const service = new pryv.Service('https://reg.pryv.me/service/info');
+```
+
+- With the content of a serviceInfo configuration
+
+Service information properties can be overriden with specific values. This might be usefull to test new designs on production platforms.
+
+```js
+const serviceInfoUrl = 'https://reg.pryv.me/service/info';
+const serviceCustomizations = {
+  name: 'Pryv Lab 2',
+  assets: {
+    definitions: 'https://pryv.github.io/assets-pryv.me/index.json'
+  }
+}
+const service = new pryv.Service(serviceInfoUrl, serviceCustomizations);
+```
+
+ * @memberof pryv
+ *
  * @constructor
- * @this {Service} 
- * @param {string} serviceInfoUrl Url point to /service/info of a Pryv platform: https://api.pryv.com/reference/#service-info
+ * @param {string} serviceInfoUrl Url point to /service/info of a Pryv platform see: {@link https://api.pryv.com/reference/#service-info}
  */
 class Service {
-
-  constructor(serviceInfoUrl, serviceCustomizations) {
-    this._pryvServiceInfo = null;
+  constructor (serviceInfoUrl, serviceCustomizations) {
+    this._serviceInfo = null;
     this._assets = null;
-    this._pryvServiceInfoUrl = serviceInfoUrl;
+    this._polling = false;
+    this._serviceInfoUrl = serviceInfoUrl;
     this._pryvServiceCustomizations = serviceCustomizations;
   }
 
   /**
    * Return service info parameters info known of fetch it if needed.
-   * @param {boolean?} forceFetch If true, will force fetching service info.
-   * @returns {Promise<PryvServiceInfo>} Promise to Service info Object
+   * Example
+   *  - name of a platform
+   *    `const serviceName = await service.info().name`
+   * @see ServiceInfo For details on available properties.
+   * @param {boolean} [forceFetch] If true, will force fetching service info.
+   * @returns {Promise<ServiceInfo>} Promise to Service info Object
    */
-  async info(forceFetch) {
-    if (forceFetch || ! this._pryvServiceInfo) {
+  async info (forceFetch) {
+    if (forceFetch || !this._serviceInfo) {
       let baseServiceInfo = {};
-      if (this._pryvServiceInfoUrl) {
-        const res = await utils.superagent.get(this._pryvServiceInfoUrl).set('Access-Control-Allow-Origin', '*').set('accept', 'json');
-        baseServiceInfo = res.body;
+      if (this._serviceInfoUrl) {
+        const { body } = await utils.fetchGet(this._serviceInfoUrl);
+        baseServiceInfo = body;
       }
       Object.assign(baseServiceInfo, this._pryvServiceCustomizations);
+      // @ts-ignore - baseServiceInfo is populated from body or customizations
       this.setServiceInfo(baseServiceInfo);
     }
-    return this._pryvServiceInfo;
+    return this._serviceInfo;
+  }
+
+  /**
+   * Check if a service supports High Frequency Data Sets
+   * @returns {Promise<boolean>} Promise resolving to true if HF is supported
+   */
+  async supportsHF () {
+    const infos = await this.info();
+    return (infos.features == null || infos.features.noHF !== true);
+  }
+
+  /**
+   * Check if a service has username in the hostname or in the path of the API.
+   * @returns {Promise<boolean>} Promise resolving to true if the service does not rely on DNS to find a host related to a username
+   */
+  async isDnsLess () {
+    const infos = await this.info();
+    const hostname = infos.api.split('/')[2];
+    return !hostname.includes('{username}');
   }
 
   /**
    * @private
-   * @param {PryvServiceInfo} serviceInfo
+   * @param {ServiceInfo} serviceInfo
    */
-  setServiceInfo(serviceInfo) {
+  setServiceInfo (serviceInfo) {
     if (!serviceInfo.name) {
       throw new Error('Invalid data from service/info');
     }
-    // cleanup serviceInfo for eventual url not finishing by "/" 
+    // cleanup serviceInfo for eventual url not finishing by "/"
     // code will be obsolete with next version of register
     ['access', 'api', 'register'].forEach((key) => {
       if (serviceInfo[key].slice(-1) !== '/') {
         serviceInfo[key] += '/';
       }
     });
-    this._pryvServiceInfo = serviceInfo;
+    this._serviceInfo = serviceInfo;
   }
 
   /**
    * Return assets property content
-   * @param {boolean?} forceFetch If true, will force fetching service info.
-   * @returns {Promise<ServiceAssets>} Promise to ServiceAssets 
+   * @param {boolean} [forceFetch] If true, will force fetching service info.
+   * @returns {Promise<ServiceAssets|null>} Promise to ServiceAssets
    */
-  async assets(forceFetch) {
+  async assets (forceFetch) {
     if (!forceFetch && this._assets) {
       return this._assets;
     } else {
@@ -12061,77 +11849,487 @@ class Service {
 
   /**
    * Return service info parameters info known or null if not yet loaded
-   * @returns {PryvServiceInfo} Service Info definition
+   * @returns {ServiceInfo} Service Info definition
    */
-  infoSync() {
-    return this._pryvServiceInfo;
+  infoSync () {
+    return this._serviceInfo;
   }
 
-
   /**
-   * Return an API Endpoint from a username and token
-   * @param {string} username
-   * @param {string} [token]
-   * @return {PryvApiEndpoint}
+   * Return an API endpoint from a username and token
+   * @param {string} username - The username
+   * @param {string} [token] - Optional authorization token
+   * @returns {Promise<APIEndpoint>} Promise resolving to the API endpoint URL
    */
-  async apiEndpointFor(username, token) {
+  async apiEndpointFor (username, token) {
     const serviceInfo = await this.info();
     return Service.buildAPIEndpoint(serviceInfo, username, token);
   }
 
   /**
-   * Return an API Endpoint from a username and token and a PryvServiceInfo
-   * @param {PryvServiceInfo} serviceInfo
-   * @param {string} username
-   * @param {string} [token]
-   * @return {PryvApiEndpoint}
+   * Return an API endpoint from a username, token and ServiceInfo.
+   * This method is rarely used. See **apiEndpointFor** as an alternative.
+   * @param {ServiceInfo} serviceInfo - The service info object containing API URL template
+   * @param {string} username - The username
+   * @param {string} [token] - Optional authorization token
+   * @returns {APIEndpoint} The constructed API endpoint URL
    */
-  static buildAPIEndpoint(serviceInfo, username, token) {
+  static buildAPIEndpoint (serviceInfo, username, token) {
     const endpoint = serviceInfo.api.replace('{username}', username);
-    return utils.buildPryvApiEndPoint({ endpoint: endpoint, token: token });
+    return utils.buildAPIEndpoint({ endpoint, token });
   }
 
   /**
    * Issue a "login call on the Service" return a Connection on success
-   * ! Warning the token of the connection will be a "Personal" token that expires
+   * **! Warning**: the token of the connection will be a "Personal" token that expires
    * @see https://api.pryv.com/reference-full/#login-user
-   * @param {string} username 
-   * @param {string} password 
-   * @param {string} appId 
+   * @param {string} username
+   * @param {string} password
+   * @param {string} appId
    * @param {string} [originHeader=service-info.register] Only for Node.js. If not set will use the register value of service info. In browsers this will overridden by current page location.
    * @throws {Error} on invalid login
    */
-  async login(username, password, appId, originHeader) {
+  async login (username, password, appId, originHeader) {
+    const apiEndpoint = await this.apiEndpointFor(username);
+
+    const headers = {};
     originHeader = originHeader || (await this.info()).register;
-    const apiEndPoint = await this.apiEndpointFor(username);
-
-    try {
-      const res = await utils.superagent.post(apiEndPoint + 'auth/login')
-        .set('Origin', originHeader)
-        .set('accept', 'json')
-        .send({ username: username, password: password, appId: appId });
-
-      if (!res.body.token) {
-        throw new Error('Invalid login response: ' + res.body);
-      }
-      return new Connection(
-        Service.buildAPIEndpoint(await this.info(), username, res.body.token));
-    } catch (e) {
-      if (e.response && e.response.body 
-        && e.response.body.error
-        && e.response.body.error.message) {
-        throw new Error(e.response.body.error.message)
-        }
+    if (!utils.isBrowser()) {
+      headers.Origin = originHeader;
     }
+    const { response, body } = await utils.fetchPost(
+      apiEndpoint + 'auth/login',
+      { username, password, appId },
+      headers
+    );
+
+    if (!response.ok) {
+      throw PryvError.fromApiResponse(response, body);
+    }
+
+    if (body && body.mfaToken) {
+      throw new MfaRequiredError(body.mfaToken, response, body);
+    }
+
+    if (!body || !body.token) {
+      throw new PryvError(
+        'Invalid login response: ' + JSON.stringify(body)
+      );
+    }
+    return new Connection(
+      Service.buildAPIEndpoint(await this.info(), username, body.token),
+      this // Pre load Connection with service
+    );
   }
 
+  /**
+   * Re-trigger an MFA challenge (e.g. resend SMS) during a pending login.
+   * Use after `login()` threw `MfaRequiredError` if the user needs another
+   * SMS code.
+   *
+   * @param {string} userId
+   * @param {string} mfaToken - From `MfaRequiredError.mfaToken`
+   * @returns {Promise<void>}
+   * @throws {PryvError} on 4xx/5xx (e.g. invalid/expired mfaToken)
+   */
+  async mfaChallenge (userId, mfaToken) {
+    if (!userId || !mfaToken) {
+      throw new PryvError('mfaChallenge requires userId and mfaToken');
+    }
+    const url = await this.apiEndpointFor(userId) + 'mfa/challenge';
+    const { response, body } = await utils.fetchPost(url, {}, {
+      Authorization: mfaToken
+    });
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+  }
+
+  /**
+   * Finish an MFA-protected login by submitting the SMS code. Returns a
+   * fully-formed `Connection` (parallel to `Service.login`).
+   *
+   * @param {string} userId
+   * @param {string} mfaToken - From `MfaRequiredError.mfaToken`
+   * @param {string} code - The SMS verification code
+   * @returns {Promise<Connection>}
+   * @throws {PryvError} on bad code, expired mfaToken, etc.
+   */
+  async mfaVerify (userId, mfaToken, code) {
+    if (!userId || !mfaToken || code == null) {
+      throw new PryvError('mfaVerify requires userId, mfaToken, code');
+    }
+    const url = await this.apiEndpointFor(userId) + 'mfa/verify';
+    const { response, body } = await utils.fetchPost(url, { code }, {
+      Authorization: mfaToken
+    });
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+    if (!body || !body.token) {
+      throw new PryvError(
+        'mfa.verify did not return a token: ' + JSON.stringify(body)
+      );
+    }
+    return new Connection(
+      Service.buildAPIEndpoint(await this.info(), userId, body.token),
+      this
+    );
+  }
+
+  /**
+   * Check whether a username is registered on this service.
+   * One round-trip via `POST <register>/<userId>/server`.
+   *
+   * @param {string} userId - The username to check
+   * @returns {Promise<boolean>} `true` if registered, `false` on 404
+   * @throws {PryvError} on network errors or non-404 API errors
+   */
+  async userExists (userId) {
+    const serviceInfo = await this.info();
+    const url = serviceInfo.register + encodeURIComponent(userId) + '/server';
+    const { response, body } = await utils.fetchPost(url, {});
+    if (response.ok) return true;
+    if (response.status === 404) return false;
+    throw PryvError.fromApiResponse(response, body);
+  }
+
+  /**
+   * Resolve an email address to a username on this service.
+   * One round-trip via `GET <register>/<email>/uid`.
+   *
+   * @param {string} email - The email to look up
+   * @returns {Promise<string|null>} The username, or `null` if unknown
+   * @throws {PryvError} on network errors or non-404 API errors
+   */
+  async userIdForEmail (email) {
+    const serviceInfo = await this.info();
+    const url = serviceInfo.register + encodeURIComponent(email) + '/uid';
+    const { response, body } = await utils.fetchGet(url);
+    if (response.ok) return (body && (body.uid || body.username)) || null;
+    if (response.status === 404) return null;
+    throw PryvError.fromApiResponse(response, body);
+  }
+
+  /**
+   * Fetch the raw hostings tree advertised by `<register>/hostings`.
+   *
+   * Returns the nested API shape `{ regions: { <region>: { zones:
+   * { <zone>: { hostings: { <key>: { name, description, availableCore,
+   * available } } } } } } }`. For a flat list ready to render in a UI,
+   * use `flatHostings()`.
+   *
+   * @returns {Promise<Object>} the raw `/reg/hostings` body
+   * @throws {PryvError} on non-2xx
+   */
+  async availableHostings () {
+    const serviceInfo = await this.info();
+    const { response, body } = await utils.fetchGet(
+      serviceInfo.register + 'hostings'
+    );
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+    return body;
+  }
+
+  /**
+   * Flatten `availableHostings()` into a list of `{ key, name, description,
+   * region, zone, availableCore, available }` items.
+   *
+   * @returns {Promise<Array<Object>>}
+   * @throws {PryvError} on non-2xx
+   */
+  async flatHostings () {
+    const tree = await this.availableHostings();
+    const out = [];
+    const regions = (tree && tree.regions) || {};
+    for (const [regionKey, region] of Object.entries(regions)) {
+      const zones = (region && region.zones) || {};
+      for (const [zoneKey, zone] of Object.entries(zones)) {
+        const hostings = (zone && zone.hostings) || {};
+        for (const [key, h] of Object.entries(hostings)) {
+          if (!h) continue;
+          out.push({
+            key,
+            name: h.name,
+            description: h.description,
+            region: regionKey,
+            zone: zoneKey,
+            availableCore: h.availableCore,
+            available: h.available === true
+          });
+        }
+      }
+    }
+    return out;
+  }
+
+  /**
+   * Register a new user on this service.
+   *
+   * Hides the v1/v2 register endpoint difference. v2 platforms (service
+   * version >= 2.0 or >= 1.6) accept camelCase fields at `<register>users`;
+   * older v1 service-register expects mixed-case fields at `<register>user`.
+   *
+   * Pass `hosting: 'auto'` to use the first hosting flagged `available: true`
+   * in `flatHostings()` — useful for tests and single-hosting platforms.
+   *
+   * @param {Object} opts
+   * @param {string} opts.username
+   * @param {string} opts.password
+   * @param {string} opts.email
+   * @param {string} opts.hosting - Hosting key (use `service.flatHostings()` to discover) or `'auto'`
+   * @param {string} opts.appId
+   * @param {string} [opts.language='en']
+   * @param {string} [opts.invitationToken='enjoy']
+   * @param {string} [opts.referer]
+   * @returns {Promise<{ username: string, apiEndpoint: string }>}
+   * @throws {PryvError} on duplicate username, weak password, etc.
+   */
+  async createUser (opts) {
+    if (!opts || !opts.username || !opts.password || !opts.email ||
+        !opts.hosting || !opts.appId) {
+      throw new PryvError(
+        'createUser requires username, password, email, hosting, appId'
+      );
+    }
+    const serviceInfo = await this.info();
+    const isModern = supportsCamelCaseRegister(serviceInfo.version);
+    const language = opts.language || 'en';
+    const invitationToken = opts.invitationToken || 'enjoy';
+
+    let hosting = opts.hosting;
+    if (hosting === 'auto') {
+      const flat = await this.flatHostings();
+      const first = flat.find(h => h.available);
+      if (!first) {
+        throw new PryvError(
+          'createUser({ hosting: "auto" }): no hosting flagged available'
+        );
+      }
+      hosting = first.key;
+    }
+
+    let url, payload;
+    if (isModern) {
+      url = serviceInfo.register + 'users';
+      payload = {
+        appId: opts.appId,
+        username: opts.username,
+        password: opts.password,
+        email: opts.email,
+        hosting,
+        language,
+        invitationToken
+      };
+      if (opts.referer != null) payload.referer = opts.referer;
+    } else {
+      url = serviceInfo.register + 'user';
+      payload = {
+        appid: opts.appId,
+        username: opts.username,
+        password: opts.password,
+        email: opts.email,
+        hosting,
+        languageCode: language,
+        invitationtoken: invitationToken
+      };
+      if (opts.referer != null) payload.referer = opts.referer;
+    }
+    const { response, body } = await utils.fetchPost(url, payload);
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+    const apiEndpoint = await this.apiEndpointFor(opts.username);
+    return { username: opts.username, apiEndpoint };
+  }
+
+  /**
+   * Trigger a password-reset email for the given user.
+   * Pre-auth — no token required.
+   *
+   * @param {string} userId
+   * @param {string} appId
+   * @returns {Promise<void>}
+   * @throws {PryvError} on 4xx/5xx
+   */
+  async requestPasswordReset (userId, appId) {
+    if (!userId || !appId) {
+      throw new PryvError('requestPasswordReset requires userId and appId');
+    }
+    const url = await this.apiEndpointFor(userId) +
+      'account/request-password-reset';
+    const { response, body } = await utils.fetchPost(url, {
+      appId,
+      username: userId
+    });
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+  }
+
+  /**
+   * Start an access-request flow. Posts to the platform's auth endpoint
+   * (`serviceInfo.access`) and returns the envelope the consumer needs to
+   * present an approve-link to the user and poll for completion.
+   *
+   * `Browser.setupAuth` already wraps this for the high-level browser flow.
+   * Use this method when you're a non-browser caller (CLI, native app, bot)
+   * or building your own UI on top.
+   *
+   * @param {Object} authRequest - The auth-request body
+   * @param {string} authRequest.requestingAppId
+   * @param {Array<{ streamId: string, level: string, defaultName: string }>} authRequest.requestedPermissions
+   * @param {string} [authRequest.languageCode='en']
+   * @param {string|boolean} [authRequest.returnUrl]
+   * @param {string} [authRequest.referer]
+   * @param {Object} [authRequest.clientData]
+   * @param {string} [authRequest.deviceName]
+   * @param {number} [authRequest.expireAfter]
+   * @returns {Promise<{ key: string, authUrl: string, poll: string, pollRateMs: number }>}
+   * @throws {PryvError} on non-2xx
+   */
+  async startAccessRequest (authRequest) {
+    if (!authRequest || !authRequest.requestingAppId) {
+      throw new PryvError(
+        'startAccessRequest requires authRequest.requestingAppId'
+      );
+    }
+    const serviceInfo = await this.info();
+    const { response, body } = await utils.fetchPost(
+      serviceInfo.access,
+      authRequest
+    );
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+    if (!body || !body.key || !body.poll) {
+      throw new PryvError(
+        'Invalid access-request response: ' + JSON.stringify(body)
+      );
+    }
+    return {
+      key: body.key,
+      authUrl: body.authUrl || body.url,
+      poll: body.poll,
+      pollRateMs: body.poll_rate_ms != null ? body.poll_rate_ms : body.pollRateMs
+    };
+  }
+
+  /**
+   * Poll an in-progress access request once. Accepts either:
+   *   - a `key` returned by `startAccessRequest` (poll URL is built from
+   *     `serviceInfo.access + key`)
+   *   - a full poll URL (use as-is — recommended, since the server-issued
+   *     URL is canonical and may include a different subdomain).
+   *
+   * Returns the raw body. Inspect `body.status` to drive the flow:
+   *   - `'NEED_SIGNIN'` → user has not interacted yet; keep polling.
+   *   - `'ACCEPTED'`    → `body.apiEndpoint` + `body.username` + `body.token` are set.
+   *   - `'REFUSED'`     → user declined.
+   *
+   * @param {string} keyOrPollUrl
+   * @returns {Promise<Object>}
+   * @throws {PryvError} on transport errors or non-2xx-and-not-403-REFUSED
+   */
+  async pollAccessRequest (keyOrPollUrl) {
+    if (!keyOrPollUrl) {
+      throw new PryvError('pollAccessRequest requires a key or poll URL');
+    }
+    let pollUrl = keyOrPollUrl;
+    if (!/^https?:\/\//.test(keyOrPollUrl)) {
+      const serviceInfo = await this.info();
+      pollUrl = serviceInfo.access + keyOrPollUrl;
+    }
+    const { response, body } = await utils.fetchGet(pollUrl);
+    // 403 with status=REFUSED is the canonical "user declined" terminal
+    // state — treat as a successful poll, not an error (matches the
+    // behaviour of `Auth/AuthController.js`).
+    if (response.status === 403 && body && body.status === 'REFUSED') {
+      return body;
+    }
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+    return body;
+  }
+
+  /**
+   * Resolve a completed auth-flow polling key into a `Connection`.
+   *
+   * Pairs with `Service.startAccessRequest` / `Service.pollAccessRequest`
+   * and the headless polling pattern: the calling app holds only the
+   * `key` returned by the auth-flow (not the underlying token /
+   * apiEndpoint), and uses this method to build a working `Connection`.
+   *
+   * The implementation polls `<access>/<key>` once; the call MUST be
+   * made while the access is still in the ACCEPTED state (which
+   * persists until expiry — see `expireAfter` on the access request).
+   *
+   * @param {string} key - polling key from `startAccessRequest`
+   * @returns {Promise<Connection>}
+   * @throws {PryvError} if the key is not ACCEPTED (NEED_SIGNIN, REFUSED, ERROR)
+   */
+  async connectFromKey (key) {
+    if (!key) {
+      throw new PryvError('connectFromKey requires a key');
+    }
+    const body = await this.pollAccessRequest(key);
+    if (body.status !== 'ACCEPTED') {
+      throw new PryvError(
+        'connectFromKey: access is not ACCEPTED (status=' + body.status + ')'
+      );
+    }
+    if (!body.apiEndpoint) {
+      throw new PryvError(
+        'connectFromKey: ACCEPTED response missing apiEndpoint'
+      );
+    }
+    return new Connection(body.apiEndpoint, this);
+  }
+
+  /**
+   * Set a new password using a reset token (from the reset email).
+   * Pre-auth — no login token required.
+   *
+   * @param {string} userId
+   * @param {string} newPassword
+   * @param {string} resetToken
+   * @param {string} appId
+   * @returns {Promise<void>}
+   * @throws {PryvError} on `unknown-or-expired-reset-token`, weak password, etc.
+   */
+  async resetPassword (userId, newPassword, resetToken, appId) {
+    if (!userId || !newPassword || !resetToken || !appId) {
+      throw new PryvError(
+        'resetPassword requires userId, newPassword, resetToken, appId'
+      );
+    }
+    const url = await this.apiEndpointFor(userId) + 'account/reset-password';
+    const { response, body } = await utils.fetchPost(url, {
+      username: userId,
+      newPassword,
+      resetToken,
+      appId
+    });
+    if (!response.ok) throw PryvError.fromApiResponse(response, body);
+  }
+}
+
+/**
+ * Detect whether the platform's service-info `version` supports the modern
+ * camelCase register endpoint (`POST /users`). v2 service-register routes
+ * both, but v1 platforms only accept the mixed-case `POST /user`.
+ *
+ * @param {string|undefined} version - service-info `version` field
+ * @returns {boolean}
+ */
+function supportsCamelCaseRegister (version) {
+  if (!version || typeof version !== 'string') return true; // optimistic: assume v2+
+  const m = /^(\d+)\.(\d+)/.exec(version);
+  if (!m) return true;
+  const major = parseInt(m[1], 10);
+  const minor = parseInt(m[2], 10);
+  if (major >= 2) return true;
+  if (major === 1 && minor >= 6) return true;
+  return false;
 }
 
 module.exports = Service;
 
+// Require is done after exports to allow circular references
+const Connection = require('./Connection');
+
 /**
  * Object to handle Pryv Service Informations https://api.pryv.com/reference/#service-info
- * @typedef {Object} PryvServiceInfo
+ * @typedef {Object} ServiceInfo
  * @property {string} register The URL of the register service.
  * @property {string} access The URL of the access page.
  * @property {string} api The API endpoint format.
@@ -12139,47 +12337,56 @@ module.exports = Service;
  * @property {string} home The URL of the platform's home page.
  * @property {string} support The email or URL of the support page.
  * @property {string} terms The terms and conditions, in plain text or the URL displaying them.
- * @property {string} eventTypes The URL of the list of validated event types.
+ * @property {string} eventTypes The URL of the list of validated event types.
  * @property {Object} [assets] Holder for service specific Assets (icons, css, ...)
- * @property {String} [assets.definitions] URL to json object with assets definitions
+ * @property {string} [assets.definitions] URL to json object with assets definitions
+ * @property {Object} [features] Platform feature flags
+ * @property {boolean} [features.noHF] True if HF data is not supported
  */
 
-},{"./Connection.js":9,"./ServiceAssets.js":12,"./utils.js":16}],12:[function(require,module,exports){
-const utils = require('./utils.js');
+},{"./Connection":13,"./ServiceAssets.js":15,"./lib/MfaRequiredError.js":17,"./lib/PryvError.js":18,"./utils.js":24}],15:[function(require,module,exports){
 /**
- * @class ServiceAssets
- * Holds Pryv Service informations
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+const utils = require('./utils.js');
+
+/* global location */
+
+/**
+ * Holds Pryv Service informations.
  *
- * @property { TokenAndEndpoint } tokenAndApi
- * @memberof Pryv
+ * It's returned by `service.assets()`
  *
- * @constructor
- * @this { ServiceAssets }
- * @param { string } pryvServiceAssetsSourceUrl Url point to assets of the service of a Pryv platform: https://api.pryv.com/reference/#service-info property `assets.src`
+ * @memberof pryv
  **/
 class ServiceAssets {
-
-  constructor(assets, assetsURL) {
+  /**
+   * Private => use ServiceAssets.setup()
+   * @param {Object} assets The content of service/info.assets properties.
+   * @param {string} assetsURL Url point to assets of the service of a Pryv platform
+   */
+  constructor (assets, assetsURL) {
     this._assets = assets;
     this._assetsURL = assetsURL;
   }
 
   /**
-   * Load Assets definition
-   * @param {string} pryvServiceAssetsSourceUrl
-   * @returns {ServiceAssets}
+   * Load Assets definition from URL
+   * @param {string} pryvServiceAssetsSourceUrl - URL to the assets definition JSON
+   * @returns {Promise<ServiceAssets>} Promise resolving to ServiceAssets instance
    */
-  static async setup(pryvServiceAssetsSourceUrl) {
-    const res = await utils.superagent.get(pryvServiceAssetsSourceUrl).set('accept', 'json');
-    return new ServiceAssets(res.body, pryvServiceAssetsSourceUrl);
+  static async setup (pryvServiceAssetsSourceUrl) {
+    const { body } = await utils.fetchGet(pryvServiceAssetsSourceUrl);
+    return new ServiceAssets(body, pryvServiceAssetsSourceUrl);
   }
 
   /**
    * get a value from path separated by `:`
-   * exemple of key `lib-js:buttonSignIn`
-   * @param {string} [keyPath] if null, will return the all assets  
+   * example of key `lib-js:buttonSignIn`
+   * @param {string} [keyPath] if null, will return the all assets
    */
-  get(keyPath) {
+  get (keyPath) {
     let result = Object.assign({}, this._assets);
     if (keyPath) {
       keyPath.split(':').forEach((key) => {
@@ -12193,13 +12400,13 @@ class ServiceAssets {
   /**
    * get an Url from path separated by `:`
    * identical to doing assets.relativeURL(assets.get(keyPath))
-   * exemple of key `lib-js:buttonSignIn`
-   * @param {string} [keyPath] if null, will return the all assets  
+   * example of key `lib-js:buttonSignIn`
+   * @param {string} [keyPath] if null, will return the all assets
    */
-  getUrl(keyPath) {
+  getUrl (keyPath) {
     const url = this.get(keyPath);
     if (typeof url !== 'string') {
-      throw new Error(url + ' returned ' + value); 
+      throw new Error(`Unexpected value for ${keyPath}: ${url}`);
     }
     return this.relativeURL(url);
   }
@@ -12207,16 +12414,16 @@ class ServiceAssets {
   /**
    * get relativeUrl
    */
-  relativeURL(url) {
+  relativeURL (url) {
     return relPathToAbs(this._assets.baseUrl || this._assetsURL, url);
   }
 
-  //----------------   Default service ressources
-  
+  // ---------------- Default service resources
+
   /**
    * Set all defaults Favicon, CSS
    */
-  async setAllDefaults() {
+  async setAllDefaults () {
     this.setFavicon();
     await this.loadCSS();
   }
@@ -12224,8 +12431,10 @@ class ServiceAssets {
   /**
    * Set service Favicon to Web Page
    */
-  setFavicon() {
-    var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+  setFavicon () {
+    /** @type {HTMLLinkElement} */
+    // @ts-ignore - querySelector returns Element but we know it's HTMLLinkElement
+    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';
     link.href = this.relativeURL(this._assets.favicon.default.url);
@@ -12235,41 +12444,43 @@ class ServiceAssets {
   /**
    * Set default service CSS
    */
-  async loadCSS() {
+  async loadCSS () {
     loadCSS(this.relativeURL(this._assets.css.default.url));
   }
 
   // ---- Login
 
   /**
-  * Load CSS for Login button
-  */
-  async loginButtonLoadCSS() {
+   * Load CSS for Login button
+   */
+  async loginButtonLoadCSS () {
     loadCSS(this.relativeURL(this._assets['lib-js'].buttonSignIn.css));
   }
 
   /**
-  * Get HTML for Login Button
-  */
-  async loginButtonGetHTML() {
-    const res = await utils.superagent.get(this.relativeURL(this._assets['lib-js'].buttonSignIn.html)).set('accept', 'html');
-    return res.text;
+   * Get HTML for Login Button
+   * @returns {Promise<string>} Promise resolving to HTML string
+   */
+  async loginButtonGetHTML () {
+    const { text } = await utils.fetchGetText(this.relativeURL(this._assets['lib-js'].buttonSignIn.html));
+    return text;
   }
 
- /**
- * Get Messages strings for Login Button
- */
-  async loginButtonGetMessages() {
-    const res = await utils.superagent.get(this.relativeURL(this._assets['lib-js'].buttonSignIn.messages)).set('accept', 'json');
-    return res.body;
+  /**
+   * Get Messages strings for Login Button
+   * @returns {Promise<Object.<string, string>>} Promise resolving to messages object
+   */
+  async loginButtonGetMessages () {
+    const { body } = await utils.fetchGet(this.relativeURL(this._assets['lib-js'].buttonSignIn.messages));
+    return body;
   }
-
 }
 
+module.exports = ServiceAssets;
 
-function loadCSS(url) {
-  var head = document.getElementsByTagName('head')[0];
-  var link = document.createElement('link');
+function loadCSS (url) {
+  const head = document.getElementsByTagName('head')[0];
+  const link = document.createElement('link');
   link.id = url;
   link.rel = 'stylesheet';
   link.type = 'text/css';
@@ -12278,8 +12489,11 @@ function loadCSS(url) {
   head.appendChild(link);
 }
 
+/* HACK: disabling linting until code is cleaned up */
+/* eslint-disable */
+
   /*\
-  |*| Modified version of 
+  |*| Modified version of
   |*| :: translate relative paths to absolute paths ::
   |*|
   |*| https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
@@ -12289,9 +12503,11 @@ function loadCSS(url) {
   |*|
   \*/
 
-function relPathToAbs(baseUrlString, sRelPath) {
+function relPathToAbs (baseUrlString, sRelPath) {
+  /** @type {Location|HTMLAnchorElement} */
   var baseLocation = location;
   if (baseUrlString) {
+    // @ts-ignore - HTMLAnchorElement has compatible URL properties
     baseLocation = document.createElement('a');
     baseLocation.href = baseUrlString;
   }
@@ -12302,25 +12518,327 @@ function relPathToAbs(baseUrlString, sRelPath) {
     sDir = (sDir + sPath.substring(nStart, nEnd)).replace(new RegExp("(?:\\\/+[^\\\/]*){0," + ((nUpLn - 1) / 3) + "}$"),
       "/");
   }
-  return baseLocation.protocol + '//' + baseLocation.hostname + ':' +
-    baseLocation.port + sDir + sPath.substr(nStart);
+  const portStr = baseLocation.port ? ':' + baseLocation.port : '';
+  return baseLocation.protocol + '//' + baseLocation.hostname + portStr + sDir + sPath.substr(nStart);
 }
 
+},{"./utils.js":24}],16:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+/**
+ * `pryv` library
+ * @exports pryv
+ * @property {pryv.Service} Service - To interact with Pryv.io at a "Platform level"
+ * @property {pryv.Connection} Connection - To interact with an individual's (user) data set
+ * @property {pryv.Browser} Browser - Browser Tools - Access request helpers and visuals (button)
+ * @property {pryv.utils} utils - Exposes some utils for HTTP calls and tools to manipulate Pryv's API endpoints
+ * @property {pryv.PryvError} PryvError - Custom error class with innerObject + structured API-error fields
+ * @property {pryv.MfaRequiredError} MfaRequiredError - Thrown by Service.login when the platform returns an mfaToken instead of a token. Carries `.mfaToken`.
+ * @property {pryv.StaleAccessIdError} StaleAccessIdError - Thrown when a Pryv.io server rejects an `accesses.update` / `accesses.delete` with a 409 stale-resource. Refetch + retry.
+ * @property {Object} ERRORS - Catalogue of Pryv API error ids (mirrors open-pryv.io/components/errors)
+ */
+const Service = require('./Service');
 
-module.exports = ServiceAssets;
-},{"./utils.js":16}],13:[function(require,module,exports){
-const Pryv = require('./Pryv');
-
-module.exports = Pryv;
-},{"./Pryv":10}],14:[function(require,module,exports){
+module.exports = {
+  Service,
+  Connection: require('./Connection'),
+  Auth: require('./Auth'),
+  Browser: require('./Browser'),
+  utils: require('./utils'),
+  PryvError: require('./lib/PryvError'),
+  MfaRequiredError: require('./lib/MfaRequiredError'),
+  StaleAccessIdError: require('./lib/StaleAccessIdError'),
+  ERRORS: require('./lib/errorIds'),
+  version: require('../package.json').version,
+  connectFromKey
+};
 
 /**
- * Replacement for getEventStreamed for Browser
- * To be used as long as superagent does not propose it.
- * 
+ * Module-level convenience over `Service#connectFromKey` — builds a
+ * `Service` on the fly, fetches its info, and resolves the given
+ * auth-flow polling key into a working `Connection`.
+ *
+ * Mirrors the `pryv.connectFromKey(key, serviceInfoUrl)` shape the
+ * headless polling pattern documents.
+ *
+ * @param {string} key - polling key from `Service.startAccessRequest`
+ * @param {string} serviceInfoUrl - URL of the platform's `/service/info`
+ * @param {Object} [serviceCustomizations] - same shape as `new Service(url, customizations)`
+ * @returns {Promise<import('./Connection')>}
  */
-async function getEventStreamed(conn, queryParam, parser) {
+async function connectFromKey (key, serviceInfoUrl, serviceCustomizations) {
+  const service = new Service(serviceInfoUrl, serviceCustomizations);
+  await service.info();
+  return service.connectFromKey(key);
+}
 
+},{"../package.json":5,"./Auth":9,"./Browser":12,"./Connection":13,"./Service":14,"./lib/MfaRequiredError":17,"./lib/PryvError":18,"./lib/StaleAccessIdError":19,"./lib/errorIds":21,"./utils":24}],17:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+
+const PryvError = require('./PryvError');
+
+/**
+ * Thrown by `Service.login` when the platform replied with `{ mfaToken }`
+ * instead of `{ token }`. Consumers catch this, prompt the user for the
+ * SMS code, then call `Service.mfaVerify(userId, err.mfaToken, code)`.
+ *
+ *   try { conn = await service.login(u, p, app) }
+ *   catch (err) {
+ *     if (err instanceof MfaRequiredError) {
+ *       const code = await prompt()
+ *       conn = await service.mfaVerify(u, err.mfaToken, code)
+ *     } else { throw err }
+ *   }
+ *
+ * @extends PryvError
+ */
+class MfaRequiredError extends PryvError {
+  /**
+   * @param {string} mfaToken - The token returned by the API (use with mfa.challenge / mfa.verify)
+   * @param {Response} response - The fetch Response object
+   * @param {Object} [body] - Parsed JSON body
+   */
+  constructor (mfaToken, response, body) {
+    const apiErr = body && body.error;
+    const message = (apiErr && apiErr.message) || 'MFA required';
+    super(message);
+    this.name = 'MfaRequiredError';
+    /** @type {string} */
+    this.mfaToken = mfaToken;
+    this.id = (apiErr && apiErr.id) || 'mfa-required';
+    this.status = response && response.status;
+    this.response = { body, status: response && response.status };
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, MfaRequiredError);
+    }
+  }
+}
+
+module.exports = MfaRequiredError;
+
+},{"./PryvError":18}],18:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+
+/**
+ * Custom error class for Pryv library errors.
+ *
+ * Two construction patterns are supported (additive — both stay valid):
+ *
+ *   // Legacy: wrap an underlying error or value
+ *   throw new PryvError('Failed to do X', innerError)
+ *
+ *   // Structured: carry the API error id, HTTP status, and raw response
+ *   throw PryvError.fromApiResponse(response, body)
+ *
+ * Structured fields (`id`, `status`, `response`) are `undefined` unless set
+ * via the static factory or assigned post-hoc.
+ *
+ * @extends Error
+ */
+class PryvError extends Error {
+  /**
+   * @param {string} message - Error message
+   * @param {Error|Object} [innerObject] - Underlying error or value
+   */
+  constructor (message, innerObject) {
+    super(message);
+    this.name = 'PryvError';
+    /** @type {Error|Object|undefined} */
+    this.innerObject = innerObject;
+    /** @type {string|undefined} Pryv API error id, e.g. `'unknown-user'` */
+    this.id = undefined;
+    /** @type {number|undefined} HTTP status that produced this error */
+    this.status = undefined;
+    /** @type {{ body: any, status: number }|undefined} Raw response */
+    this.response = undefined;
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, PryvError);
+    }
+  }
+
+  /**
+   * Build a PryvError from a fetch Response and its parsed JSON body.
+   * Pulls `id` and `message` from `body.error` when present (Pryv API shape).
+   *
+   * @param {Response} response - The fetch Response object
+   * @param {Object} [body] - Parsed JSON body
+   * @returns {PryvError}
+   */
+  static fromApiResponse (response, body) {
+    const apiErr = body && body.error;
+    const message = (apiErr && apiErr.message) ||
+      `Pryv API error (HTTP ${response.status})`;
+    const err = new PryvError(message);
+    err.id = apiErr && apiErr.id;
+    err.status = response.status;
+    err.response = { body, status: response.status };
+    return err;
+  }
+}
+
+module.exports = PryvError;
+
+},{}],19:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+
+const PryvError = require('./PryvError');
+
+/**
+ * Typed error surfaced when a Pryv.io server (≥ 2.0.0-pre.X) rejects
+ * an `accesses.update` or `accesses.delete` call with a 409
+ * `stale-resource` response.
+ *
+ * The composite access id `<base>:<serial>` carries the version the
+ * caller last observed. If the access has since been updated, the
+ * server rejects the call so the caller refetches the current head
+ * (`connection.api('accesses.getOne', { id: base })`) and retries
+ * with the fresh composite id.
+ *
+ * Reach for `.data.provided` to see what the caller sent and
+ * `.data.currentSerial` to see what the server currently has.
+ *
+ * @extends PryvError
+ */
+class StaleAccessIdError extends PryvError {
+  /**
+   * @param {string} message
+   * @param {{ provided?: string, currentSerial?: number | null }} data
+   */
+  constructor (message, data) {
+    super(message);
+    this.name = 'StaleAccessIdError';
+    /** @type {{ provided?: string, currentSerial?: number | null }} */
+    this.data = data || {};
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, StaleAccessIdError);
+    }
+  }
+}
+
+module.exports = StaleAccessIdError;
+
+},{"./PryvError":18}],20:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+
+/**
+ * Build URL search params string from an object, properly handling arrays.
+ * Arrays are expanded as repeated keys: { a: ['x', 'y'] } => 'a=x&a=y'
+ * @param {Object} params - Query parameters object
+ * @returns {string} - URL encoded query string
+ */
+function buildSearchParams (params) {
+  const searchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        searchParams.append(key, item);
+      }
+    } else if (value !== undefined && value !== null) {
+      searchParams.append(key, value);
+    }
+  }
+  return searchParams.toString();
+}
+
+module.exports = buildSearchParams;
+
+},{}],21:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+
+/**
+ * Catalogue of Pryv API error ids.
+ *
+ * Mirrors `open-pryv.io/components/errors/src/ErrorIds.js`. Use these
+ * constants instead of hardcoding error-id strings:
+ *
+ *   if (err instanceof PryvError && err.id === pryv.ERRORS.UNKNOWN_USER) { … }
+ *
+ * Adding a new id here is safe; renaming or removing one is a breaking
+ * change for consumers using the constant.
+ */
+const ERRORS = Object.freeze({
+  API_UNAVAILABLE: 'api-unavailable',
+  CORRUPTED_DATA: 'corrupted-data',
+  FORBIDDEN: 'forbidden',
+  INVALID_ACCESS_TOKEN: 'invalid-access-token',
+  INVALID_CREDENTIALS: 'invalid-credentials',
+  UNSUPPORTED_OPERATION: 'unsupported-operation',
+  INVALID_EVENT_TYPE: 'invalid-event-type',
+  INVALID_ITEM_ID: 'invalid-item-id',
+  INVALID_METHOD: 'invalid-method',
+  INVALID_OPERATION: 'invalid-operation',
+  INVALID_PARAMETERS_FORMAT: 'invalid-parameters-format',
+  INVALID_REQUEST_STRUCTURE: 'invalid-request-structure',
+  ITEM_ALREADY_EXISTS: 'item-already-exists',
+  MISSING_HEADER: 'missing-header',
+  UNEXPECTED_ERROR: 'unexpected-error',
+  UNKNOWN_REFERENCED_RESOURCE: 'unknown-referenced-resource',
+  UNKNOWN_RESOURCE: 'unknown-resource',
+  UNSUPPORTED_CONTENT_TYPE: 'unsupported-content-type',
+  TOO_MANY_RESULTS: 'too-many-results',
+  GONE: 'removed-method',
+  UNAVAILABLE_METHOD: 'unavailable-method',
+
+  // Registration / unique-field validation
+  INVALID_INVITATION_TOKEN: 'invitationToken-invalid',
+  INVALID_USERNAME: 'username-invalid',
+  USERNAME_REQUIRED: 'username-required',
+  INVALID_EMAIL: 'email-invalid',
+  INVALID_LANGUAGE: 'language-invalid',
+  INVALID_APP_ID: 'appid-invalid',
+  INVALID_PASSWORD: 'password-invalid',
+  INVALID_REFERER: 'referer-invalid',
+  EMAIL_REQUIRED: 'email-required',
+  PASSWORD_REQUIRED: 'password-required',
+  MISSING_REQUIRED_FIELD: 'missing-required-field',
+  NEW_PASSWORD_FIELD_IS_REQUIRED: 'newPassword-required',
+
+  // Account-stream / system-stream protections
+  DENIED_STREAM_ACCESS: 'denied-stream-access',
+  TOO_HIGH_ACCESS_FOR_SYSTEM_STREAMS: 'too-high-access-for-account-stream',
+  FORBIDDEN_MULTIPLE_ACCOUNT_STREAMS: 'forbidden-multiple-account-streams-events',
+  FORBIDDEN_ACCOUNT_EVENT_MODIFICATION: 'forbidden-none-editable-account-streams',
+  FORBIDDEN_TO_CHANGE_ACCOUNT_STREAM_ID: 'forbidden-change-account-streams-id',
+  FORBIDDEN_TO_EDIT_NONEDITABLE_ACCOUNT_FIELDS: 'forbidden-to-edit-noneditable-account-fields',
+
+  // Pre-auth lookups (returned by `/reg/:email/uid` and similar)
+  UNKNOWN_USER: 'unknown-user',
+  UNKNOWN_EMAIL: 'unknown-email'
+});
+
+module.exports = ERRORS;
+
+},{}],22:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+/* global fetch */
+
+const buildSearchParams = require('./buildSearchParams');
+
+module.exports = getEventStreamed;
+
+async function getEventStreamed (conn, queryParam, parser) {
   /**
    * Holds Parser's settings
    */
@@ -12328,19 +12846,19 @@ async function getEventStreamed(conn, queryParam, parser) {
     ondata: null,
     onend: null,
     encoding: 'utf8'
-  }
+  };
 
   /**
    * Mock Response
    */
   const fakeRes = {
-    setEncoding : function(encoding) {
+    setEncoding: function (encoding) {
       parserSettings.encoding = encoding;
     }, // will receive 'data' and 'end' callbacks
-    on: function(key, f) { 
+    on: function (key, f) {
       parserSettings['on' + key] = f;
     }
-  }
+  };
 
   /**
    * Holds results from the parser
@@ -12348,23 +12866,22 @@ async function getEventStreamed(conn, queryParam, parser) {
   let errResult;
   let bodyObjectResult;
   /**
-   * 
+   *
    */
-  parser(fakeRes, function (err, bodyObject) { 
+  parser(fakeRes, function (err, bodyObject) {
     errResult = err;
     bodyObjectResult = bodyObject;
   });
 
-
   // ------------   fetch ------------------- //
-  let url = new URL(conn.endpoint + 'events');
-  url.search = new URLSearchParams(queryParam);
-  let fetchParams = {method: 'GET', headers: {Accept: 'application/jon'}};
+  const url = new URL(conn.endpoint + 'events');
+  url.search = buildSearchParams(queryParam);
+  const fetchParams = { method: 'GET', headers: { Accept: 'application/json' } };
   if (conn.token) fetchParams.headers.Authorization = conn.token;
 
-  let response = await fetch(url,fetchParams);
+  const response = await fetch(url, fetchParams);
   const reader = response.body.getReader();
-  
+
   while (true) {
     const { done, value } = await reader.read();
     parserSettings.ondata(new TextDecoder(parserSettings.encoding).decode(value));
@@ -12372,7 +12889,7 @@ async function getEventStreamed(conn, queryParam, parser) {
   }
 
   if (errResult) {
-    throw new Error(errResult);
+    throw new Error(errResult?.message + ' ' + errResult?.rawResponse);
   }
 
   // We're done!
@@ -12381,46 +12898,51 @@ async function getEventStreamed(conn, queryParam, parser) {
     body: bodyObjectResult, // from the parser
     statusCode: response.status,
     headers: {}
-  }
+  };
   // add headers to result
-  for (var pair of response.headers.entries()) {
+  // @ts-ignore - Headers.entries() exists in modern environments
+  for (const pair of response.headers.entries()) {
     result.headers[pair[0]] = pair[1];
   }
 
   return result;
 }
 
-
-module.exports = getEventStreamed;
-},{}],15:[function(require,module,exports){
-const EVENTMARKER = '"events":[';
+},{"./buildSearchParams":20}],23:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
+// there two steps 1 find events, then eventDeletions
+const EVENTMARKERS = ['"events":[', '"eventDeletions":['];
 
 /**
- * Customize superagent parser
- * Work only for 'node'
+ * Stremed JSON parser for events
  */
-module.exports = function (foreachEvent) {
+module.exports = function (foreachEvent, includeDeletions) {
+  let eventOrEventDeletions = 0; // start with event
   let buffer = ''; // temp data
   let body = null; // to be returned
 
-  //IN EVENTS VARS
-  let depth = 0; // level of depth in brackets 
-  let inString = false; // cursor is in a String 
+  // IN EVENTS VARS
+  let depth = 0; // level of depth in brackets
+  let inString = false; // cursor is in a String
   let skipNextOne = false; // when a backslash is found
   let cursorPos = 0; // position of Character Cursor
 
   // counters
   let eventsCount = 0;
+  let eventDeletionsCount = 0;
 
   const states = {
     A_BEFORE_EVENTS: 0,
     B_IN_EVENTS: 1,
     D_AFTER_EVENTS: 2
-  }
+  };
 
   let state = states.A_BEFORE_EVENTS;
 
-  function processBuffer() {
+  function processBuffer () {
     switch (state) {
       case states.A_BEFORE_EVENTS:
         searchStartEvents();
@@ -12434,20 +12956,20 @@ module.exports = function (foreachEvent) {
     }
   }
 
-
-  function searchStartEvents() {
-    // search for "events": and happend any info before to the body 
-    var n = buffer.indexOf(EVENTMARKER);
+  function searchStartEvents () {
+    // search for "events": and happend any info before to the body
+    const n = buffer.indexOf(EVENTMARKERS[eventOrEventDeletions]);
     if (n > 0) {
-      body = buffer.substring(0, n);
-      buffer = buffer.substr(n + EVENTMARKER.length);
+      if (eventOrEventDeletions === 0) { // do only once
+        body = buffer.substring(0, n);
+      }
+      buffer = buffer.substr(n + EVENTMARKERS[eventOrEventDeletions].length);
       state = states.B_IN_EVENTS;
       processEvents();
     }
   }
 
-
-  function processEvents() {
+  function processEvents () {
     /// ---- in Event
     while (cursorPos < buffer.length && (state === states.B_IN_EVENTS)) {
       if (skipNextOne) { // ignore next character
@@ -12456,19 +12978,29 @@ module.exports = function (foreachEvent) {
         continue;
       }
       switch (buffer.charCodeAt(cursorPos)) {
-        case 93:  // ]
+        case 93: // ]
           if (depth === 0) { // end of events
-            state = states.D_AFTER_EVENTS;
             if (cursorPos !== 0) {
               throw new Error('Found trailling ] in mid-course');
             }
-            buffer = '"eventsCount":' + eventsCount + '' + buffer.substr(1);
+            if (eventOrEventDeletions === 0 && includeDeletions) {
+              state = states.A_BEFORE_EVENTS;
+              eventOrEventDeletions = 1; // now look for eventDeletions
+              return;
+            } else { // done
+              state = states.D_AFTER_EVENTS;
+              let eventsOrDeletionMsg = '';
+              if (eventOrEventDeletions === 1) {
+                eventsOrDeletionMsg = '"eventDeletionsCount":' + eventDeletionsCount + ',';
+              }
+              buffer = eventsOrDeletionMsg + '"eventsCount":' + eventsCount + '' + buffer.substr(1);
+            }
           }
           break;
-        case 92:  // \
+        case 92: // \
           skipNextOne = true;
           break;
-        case 123:  // {
+        case 123: // {
           if (!inString) depth++;
           break;
         case 34: // "
@@ -12480,9 +13012,13 @@ module.exports = function (foreachEvent) {
             // ignore possible coma ',' if first char
             const ignoreComa = (buffer.charCodeAt(0) === 44) ? 1 : 0;
             const eventStr = buffer.substring(ignoreComa, cursorPos + 1);
-            
-            eventsCount++;
-            buffer = buffer.substr(cursorPos + 1 );
+
+            if (eventOrEventDeletions === 0) {
+              eventsCount++;
+            } else {
+              eventDeletionsCount++;
+            }
+            buffer = buffer.substr(cursorPos + 1);
             addEvent(eventStr);
             cursorPos = -1;
           }
@@ -12492,11 +13028,10 @@ module.exports = function (foreachEvent) {
     }
   }
 
-  function afterEvents() {
+  function afterEvents () {
     // just happend the end of message;
     body += buffer;
     buffer = '';
-    return;
   }
 
   return function (res, fn) {
@@ -12523,52 +13058,108 @@ module.exports = function (foreachEvent) {
     });
   };
 
-
   /// --- Direct Push
-  function addEvent(strEvent) {
+  function addEvent (strEvent) {
     foreachEvent(JSON.parse(strEvent));
   }
-
 };
-},{}],16:[function(require,module,exports){
 
+},{}],24:[function(require,module,exports){
+/**
+ * @license
+ * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+ */
 const regexAPIandToken = /(.+):\/\/(.+)@(.+)/gm;
 const regexSchemaAndPath = /(.+):\/\/(.+)/gm;
+const buildSearchParams = require('./lib/buildSearchParams');
 
 /**
- * Utilities to access Pryv API
- * @namespace utils
- * @memberof Pryv
+ * Utilities to access Pryv API.
+ * @memberof pryv
+ * @namespace pryv.utils
  */
-const utils = {
-
+const utils = module.exports = {
   /**
-   * Exposes superagent https://visionmedia.github.io/superagent/
-   * @memberof Pryv.utils
-   * @property {Superagent} superagent 
+   * Perform a GET request and parse JSON response
+   * @param {string} url - URL to fetch
+   * @param {Object} [queryParams={}] - Query parameters to append
+   * @param {Object} [headers={}] - Additional headers
+   * @returns {Promise<{response: Response, body: Object}>} Promise resolving to response and parsed body
    */
-  superagent: require('superagent'),
+  async fetchGet (url, queryParams = {}, headers = {}) {
+    let queryStr = '';
+    if (queryParams && Object.keys(queryParams).length > 0) {
+      queryStr = '?' + buildSearchParams(queryParams);
+    }
+    const myHeaders = Object.assign({ Accept: 'application/json' }, headers);
+    const response = await fetch(url + queryStr, { headers: myHeaders });
+    const body = await response.json();
+    return { response, body };
+  },
 
   /**
-   * From a PryvApiEndpoint URL, return an object (TokenAndAPI) with two properties
-   * @memberof Pryv.utils
-   * @param {PryvApiEndpoint} pryvApiEndpoint
+   * Perform a GET request and return text response
+   * @param {string} url - URL to fetch
+   * @param {Object} [headers={}] - Additional headers
+   * @returns {Promise<{response: Response, text: string}>} Promise resolving to response and text body
+   */
+  async fetchGetText (url, headers = {}) {
+    const myHeaders = Object.assign({ Accept: 'text/html' }, headers);
+    const response = await fetch(url, { headers: myHeaders });
+    const text = await response.text();
+    return { response, text };
+  },
+
+  /**
+   * Perform a POST request with JSON data
+   * @param {string} url - URL to post to
+   * @param {Object} [data] - Data to send as JSON
+   * @param {Object} [headers={}] - Additional headers
+   * @returns {Promise<{response: Response, body: Object}>} Promise resolving to response and parsed body
+   */
+  async fetchPost (url, data, headers = {}) {
+    const myHeaders = Object.assign({
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }, headers);
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(data)
+    });
+    const body = await response.json();
+    return { response, body };
+  },
+
+  /**
+   * Returns true is run in a browser
+   * @memberof pryv.utils
+   * @returns {boolean}
+   */
+  isBrowser: function () {
+    return typeof window !== 'undefined' && typeof document !== 'undefined';
+  },
+
+  /**
+   * From a APIEndpoint URL, return an object (TokenAndAPI) with two properties
+   * @memberof pryv.utils
+   * @param {APIEndpoint} apiEndpoint
    * @returns {TokenAndEndpoint}
    */
-  extractTokenAndApiEndpoint: function (pryvApiEndpoint) {
+  extractTokenAndAPIEndpoint: function (apiEndpoint) {
     regexAPIandToken.lastIndex = 0;
-    const res = regexAPIandToken.exec(pryvApiEndpoint);
+    const res = regexAPIandToken.exec(apiEndpoint);
 
-    if (res !== null) { // has token
+    if (res !== null) { // has token
       // add a trailing '/' to end point if missing
       if (!res[3].endsWith('/')) {
         res[3] += '/';
       }
-      return { endpoint: res[1] + '://' + res[3], token: res[2] }
+      return { endpoint: res[1] + '://' + res[3], token: res[2] };
     }
     // else check if valid url
     regexSchemaAndPath.lastIndex = 0;
-    const res2 = regexSchemaAndPath.exec(pryvApiEndpoint);
+    const res2 = regexSchemaAndPath.exec(apiEndpoint);
     if (res2 === null) {
       throw new Error('Cannot find endpoint, invalid URL format');
     }
@@ -12577,50 +13168,237 @@ const utils = {
       res2[2] += '/';
     }
 
-    return { endpoint: res2[1] + '://' + res2[2] , token: null }
+    return { endpoint: res2[1] + '://' + res2[2], token: null };
   },
 
   /**
-   * Get a PryvApiEndpoint URL from a TokenAndAPI object
-   * @memberof Pryv.utils
-   * @param {TokenAndEndpoint} tokenAndApi
-   * @returns {PryvApiEndpoint}
+   * Get a APIEndpoint URL from a TokenAndAPI object
+   * @memberof pryv.utils
+   * @param {TokenAndEndpoint} tokenAndAPI
+   * @returns {APIEndpoint}
    */
-  buildPryvApiEndPoint: function (tokenAndApi) {
-    if (! tokenAndApi.token) { 
-      let res = tokenAndApi.endpoint + '';
-      if (!tokenAndApi.endpoint.endsWith('/')) {
+  buildAPIEndpoint: function (tokenAndAPI) {
+    if (!tokenAndAPI.token) {
+      let res = tokenAndAPI.endpoint + '';
+      if (!tokenAndAPI.endpoint.endsWith('/')) {
         res += '/';
       }
-      return res; 
+      return res;
     }
     regexSchemaAndPath.lastIndex = 0;
-    let res = regexSchemaAndPath.exec(tokenAndApi.endpoint);
+    const res = regexSchemaAndPath.exec(tokenAndAPI.endpoint);
     // add a trailing '/' to end point if missing
     if (!res[2].endsWith('/')) {
       res[2] += '/';
     }
-    return res[1] + '://' + tokenAndApi.token + '@' + res[2];
+    return res[1] + '://' + tokenAndAPI.token + '@' + res[2];
+  },
+
+  /**
+   * Decompose a Pryv apiEndpoint into `{ token, username, host }` using
+   * the platform's `service.info.api` URL template to invert whichever
+   * username placement the platform uses (subdomain vs path-style).
+   *
+   * Pryv apiEndpoints follow one of two URL shapes (the difference is
+   * platform-defined, encoded in `service.info.api`):
+   *
+   *   subdomain  template `https://{username}.<domain>/`
+   *              endpoint `https://<token>@<username>.<domain>/`
+   *   path-style template `https://<host>/{username}/`
+   *              endpoint `https://<token>@<host>/<username>/`
+   *
+   * Returns the **canonical platform host** (no `<username>.` subdomain
+   * prefix in subdomain mode) — the identity cross-account features
+   * (e.g. CMC counterparty slugs) key on, regardless of which user the
+   * endpoint belongs to.
+   *
+   * `token` and `username` are null when the endpoint carries no token /
+   * when the endpoint shape doesn't match the template; `host` is
+   * best-effort in that case.
+   *
+   * @memberof pryv.utils
+   * @param {APIEndpoint} apiEndpoint  e.g. 'https://t0k3n@alice.pryv.me/'
+   * @param {string} serviceInfoApi    e.g. 'https://{username}.pryv.me/'
+   *                                   from /service/info → field `api`.
+   * @returns {DecomposedAPIEndpoint}
+   *
+   * @example
+   *   const conn = new pryv.Connection(apiEndpoint);
+   *   const info = await conn.service.info();
+   *   const me = pryv.utils.decomposeAPIEndpoint(apiEndpoint, info.api);
+   *   // → { token: 't0k3n', username: 'alice', host: 'pryv.me' }
+   */
+  decomposeAPIEndpoint: function (apiEndpoint, serviceInfoApi) {
+    const { token, endpoint } = utils.extractTokenAndAPIEndpoint(apiEndpoint);
+    const tplIdx = serviceInfoApi.indexOf('{username}');
+    if (tplIdx < 0) {
+      // Template doesn't carry {username} — operator-defined, can't decompose.
+      let host = '';
+      try { host = new URL(endpoint).host; } catch (_e) {}
+      return { token, username: null, host };
+    }
+    const tplPrefix = serviceInfoApi.slice(0, tplIdx);
+    const tplSuffix = serviceInfoApi.slice(tplIdx + '{username}'.length);
+    if (!endpoint.startsWith(tplPrefix) || !endpoint.endsWith(tplSuffix)) {
+      let host = '';
+      try { host = new URL(endpoint).host; } catch (_e) {}
+      return { token, username: null, host };
+    }
+    const username = endpoint.slice(tplPrefix.length, endpoint.length - tplSuffix.length);
+    // Disambiguate by where {username} sits in the template:
+    //   - subdomain  → prefix ends with `://` (username right after scheme)
+    //   - path-style → prefix has more after `://` (host already in prefix)
+    const isSubdomainTemplate = /:\/\/$/.test(tplPrefix);
+    let host;
+    if (isSubdomainTemplate) {
+      // tplSuffix starts with the domain (e.g. '.pryv.me/')
+      host = tplSuffix.replace(/^\.+/, '').replace(/\/+$/, '');
+    } else {
+      // path-style — host is in the prefix's URL
+      try {
+        host = new URL(tplPrefix).host;
+      } catch (_e) {
+        host = '';
+      }
+    }
+    return { token, username, host };
+  },
+
+  /**
+   * Check if the browser is running on a mobile device or tablet
+   * @memberof pryv.utils
+   * @param {string|Navigator} [navigator] - Navigator object or user agent string (for testing)
+   * @returns {boolean} True if mobile or tablet
+   */
+  browserIsMobileOrTablet: function (navigator) {
+    if (navigator == null) {
+      return false;
+    }
+    let check = false;
+    // @ts-ignore - navigator is Navigator when not null
+    // eslint-disable-next-line no-useless-escape
+    (function (a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true; })(navigator.userAgent || navigator.vendor || navigator.opera);
+    return check;
+  },
+
+  /**
+   * Remove Pryv-specific query parameters from URL
+   * @memberof pryv.utils
+   * @param {string} url - URL to clean
+   * @returns {string} URL without prYv* parameters
+   */
+  cleanURLFromPrYvParams: function (url) {
+    const PRYV_REGEXP = /[?#&]+prYv([^=&]+)=([^&]*)/g;
+    return url.replace(PRYV_REGEXP, '');
+  },
+
+  /**
+   * Parse a wire-format access reference into `{ base, serial }`
+   * (Pryv.io ≥ 2.0.0-pre.X). Accepts both bare cuid (`"abc123"` →
+   * `{ base: 'abc123', serial: null }`) and composite (`"abc123:3"` →
+   * `{ base: 'abc123', serial: 3 }`). Throws on malformed input.
+   * Apply this to `access.id`, `access.createdBy`,
+   * `access.modifiedBy`, and `streamIds` entries of the form
+   * `access-<base>:<serial>` from audit events.
+   * @memberof pryv.utils
+   * @param {string} ref - Access reference string
+   * @returns {{ base: string, serial: number | null }}
+   */
+  parseAccessRef: function (ref) {
+    if (typeof ref !== 'string' || ref.length === 0) {
+      throw new Error('parseAccessRef: expected a non-empty string, got ' + JSON.stringify(ref));
+    }
+    const colonIdx = ref.indexOf(':');
+    if (colonIdx === -1) return { base: ref, serial: null };
+    const base = ref.slice(0, colonIdx);
+    const tail = ref.slice(colonIdx + 1);
+    if (base.length === 0) {
+      throw new Error('parseAccessRef: empty base in ' + JSON.stringify(ref));
+    }
+    const serial = Number(tail);
+    if (!Number.isInteger(serial) || serial < 1) {
+      throw new Error('parseAccessRef: serial must be a positive integer, got ' + JSON.stringify(tail));
+    }
+    return { base, serial };
+  },
+
+  /**
+   * Render an `{ base, serial }` pair back to the wire format. Bare
+   * cuid when serial is null/undefined; `<base>:<serial>` otherwise.
+   * Mostly used to construct the composite id when calling
+   * `connection.api()` for `accesses.update` / `accesses.delete`.
+   * @memberof pryv.utils
+   * @param {{ base: string, serial?: number | null }} ref
+   * @returns {string}
+   */
+  serializeAccessRef: function (ref) {
+    if (ref == null || typeof ref.base !== 'string' || ref.base.length === 0) {
+      throw new Error('serializeAccessRef: ref.base must be a non-empty string');
+    }
+    if (ref.serial == null) return ref.base;
+    if (!Number.isInteger(ref.serial) || ref.serial < 1) {
+      throw new Error('serializeAccessRef: serial must be a positive integer, got ' + JSON.stringify(ref.serial));
+    }
+    return ref.base + ':' + ref.serial;
+  },
+
+  /**
+   * Extract query parameters from a URL
+   * @memberof pryv.utils
+   * @param {string} url - URL to parse
+   * @returns {Object.<string, string>} Object with key-value pairs of query parameters
+   */
+  getQueryParamsFromURL: function (url) {
+    /** @type {Object.<string, string>} */
+    const vars = {};
+    const QUERY_REGEXP = /[?#&]+([^=&]+)=([^&]*)/g;
+    url.replace(QUERY_REGEXP,
+      // @ts-ignore - replace callback is used for side effects
+      function (m, key, value) {
+        vars[key] = decodeURIComponent(value);
+      });
+    return vars;
   }
+};
 
-}
+// TODO: remove following deprecated aliases with next major version
 
-module.exports = utils;
+/**
+ * @deprecated Renamed to `extractTokenAndAPIEndpoint()`
+ */
+utils.extractTokenAndApiEndpoint = utils.extractTokenAndAPIEndpoint;
+
+/**
+ * @deprecated Renamed to `buildAPIEndpoint()`
+ */
+// TODO: remove deprecated alias with next major version
+utils.buildPryvApiEndpoint = utils.buildAPIEndpoint;
 
 // --------------- typedfs ------------------------------- //
 
 /**
  * An object with two properties: token & apiEndpoint
  * @typedef {Object} TokenAndEndpoint
- * @property {string}  [token] Authorization token
- * @property {string}  endpoint url of Pryv api endpoint
+ * @property {string} [token] Authorization token
+ * @property {string} endpoint url of API endpoint
  */
 
 /**
  * A String url of the form http(s)://{token}@{apiEndpoint}
- * @typedef {string} PryvApiEndpoint
+ * @typedef {string} APIEndpoint
  */
 
+/**
+ * Decomposed form of an APIEndpoint, returned by `decomposeAPIEndpoint`.
+ * `token` and `username` are `null` when the endpoint doesn't carry a
+ * token / doesn't match the `service.info.api` template. `host` is the
+ * canonical platform host (no `<username>.` subdomain prefix in
+ * subdomain-style deployments).
+ * @typedef {Object} DecomposedAPIEndpoint
+ * @property {string|null} token
+ * @property {string|null} username
+ * @property {string} host
+ */
 
 /**
  * Common Meta are returned by each standard call on the API https://api.pryv.com/reference/#in-method-results
@@ -12629,2220 +13407,8 @@ module.exports = utils;
  * @property {number} serverTime The current server time as a timestamp in second. Keeping track of server time is necessary to properly handle time in API calls.
  * @property {string} serial The serial will change every time the core or register is updated. If you compare it with the serial of a previous response and notice a difference, you should reload the service information.
  */
-},{"superagent":18}],17:[function(require,module,exports){
-"use strict";
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function Agent() {
-  this._defaults = [];
-}
-
-['use', 'on', 'once', 'set', 'query', 'type', 'accept', 'auth', 'withCredentials', 'sortQuery', 'retry', 'ok', 'redirects', 'timeout', 'buffer', 'serialize', 'parse', 'ca', 'key', 'pfx', 'cert', 'disableTLSCerts'].forEach(function (fn) {
-  // Default setting for all requests from this agent
-  Agent.prototype[fn] = function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    this._defaults.push({
-      fn: fn,
-      args: args
-    });
-
-    return this;
-  };
-});
-
-Agent.prototype._setDefaults = function (req) {
-  this._defaults.forEach(function (def) {
-    req[def.fn].apply(req, _toConsumableArray(def.args));
-  });
-};
-
-module.exports = Agent;
-
-},{}],18:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-/**
- * Root reference for iframes.
- */
-var root;
-
-if (typeof window !== 'undefined') {
-  // Browser window
-  root = window;
-} else if (typeof self === 'undefined') {
-  // Other environments
-  console.warn('Using browser-only version of superagent in non-browser environment');
-  root = void 0;
-} else {
-  // Web Worker
-  root = self;
-}
-
-var Emitter = require('component-emitter');
-
-var safeStringify = require('fast-safe-stringify');
-
-var RequestBase = require('./request-base');
-
-var isObject = require('./is-object');
-
-var ResponseBase = require('./response-base');
-
-var Agent = require('./agent-base');
-/**
- * Noop.
- */
-
-
-function noop() {}
-/**
- * Expose `request`.
- */
-
-
-module.exports = function (method, url) {
-  // callback
-  if (typeof url === 'function') {
-    return new exports.Request('GET', method).end(url);
-  } // url first
-
-
-  if (arguments.length === 1) {
-    return new exports.Request('GET', method);
-  }
-
-  return new exports.Request(method, url);
-};
-
-exports = module.exports;
-var request = exports;
-exports.Request = Request;
-/**
- * Determine XHR.
- */
-
-request.getXHR = function () {
-  if (root.XMLHttpRequest && (!root.location || root.location.protocol !== 'file:' || !root.ActiveXObject)) {
-    return new XMLHttpRequest();
-  }
-
-  try {
-    return new ActiveXObject('Microsoft.XMLHTTP');
-  } catch (_unused) {}
-
-  try {
-    return new ActiveXObject('Msxml2.XMLHTTP.6.0');
-  } catch (_unused2) {}
-
-  try {
-    return new ActiveXObject('Msxml2.XMLHTTP.3.0');
-  } catch (_unused3) {}
-
-  try {
-    return new ActiveXObject('Msxml2.XMLHTTP');
-  } catch (_unused4) {}
-
-  throw new Error('Browser-only version of superagent could not find XHR');
-};
-/**
- * Removes leading and trailing whitespace, added to support IE.
- *
- * @param {String} s
- * @return {String}
- * @api private
- */
-
-
-var trim = ''.trim ? function (s) {
-  return s.trim();
-} : function (s) {
-  return s.replace(/(^\s*|\s*$)/g, '');
-};
-/**
- * Serialize the given `obj`.
- *
- * @param {Object} obj
- * @return {String}
- * @api private
- */
-
-function serialize(obj) {
-  if (!isObject(obj)) return obj;
-  var pairs = [];
-
-  for (var key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) pushEncodedKeyValuePair(pairs, key, obj[key]);
-  }
-
-  return pairs.join('&');
-}
-/**
- * Helps 'serialize' with serializing arrays.
- * Mutates the pairs array.
- *
- * @param {Array} pairs
- * @param {String} key
- * @param {Mixed} val
- */
-
-
-function pushEncodedKeyValuePair(pairs, key, val) {
-  if (val === undefined) return;
-
-  if (val === null) {
-    pairs.push(encodeURI(key));
-    return;
-  }
-
-  if (Array.isArray(val)) {
-    val.forEach(function (v) {
-      pushEncodedKeyValuePair(pairs, key, v);
-    });
-  } else if (isObject(val)) {
-    for (var subkey in val) {
-      if (Object.prototype.hasOwnProperty.call(val, subkey)) pushEncodedKeyValuePair(pairs, "".concat(key, "[").concat(subkey, "]"), val[subkey]);
-    }
-  } else {
-    pairs.push(encodeURI(key) + '=' + encodeURIComponent(val));
-  }
-}
-/**
- * Expose serialization method.
- */
-
-
-request.serializeObject = serialize;
-/**
- * Parse the given x-www-form-urlencoded `str`.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-function parseString(str) {
-  var obj = {};
-  var pairs = str.split('&');
-  var pair;
-  var pos;
-
-  for (var i = 0, len = pairs.length; i < len; ++i) {
-    pair = pairs[i];
-    pos = pair.indexOf('=');
-
-    if (pos === -1) {
-      obj[decodeURIComponent(pair)] = '';
-    } else {
-      obj[decodeURIComponent(pair.slice(0, pos))] = decodeURIComponent(pair.slice(pos + 1));
-    }
-  }
-
-  return obj;
-}
-/**
- * Expose parser.
- */
-
-
-request.parseString = parseString;
-/**
- * Default MIME type map.
- *
- *     superagent.types.xml = 'application/xml';
- *
- */
-
-request.types = {
-  html: 'text/html',
-  json: 'application/json',
-  xml: 'text/xml',
-  urlencoded: 'application/x-www-form-urlencoded',
-  form: 'application/x-www-form-urlencoded',
-  'form-data': 'application/x-www-form-urlencoded'
-};
-/**
- * Default serialization map.
- *
- *     superagent.serialize['application/xml'] = function(obj){
- *       return 'generated xml here';
- *     };
- *
- */
-
-request.serialize = {
-  'application/x-www-form-urlencoded': serialize,
-  'application/json': safeStringify
-};
-/**
- * Default parsers.
- *
- *     superagent.parse['application/xml'] = function(str){
- *       return { object parsed from str };
- *     };
- *
- */
-
-request.parse = {
-  'application/x-www-form-urlencoded': parseString,
-  'application/json': JSON.parse
-};
-/**
- * Parse the given header `str` into
- * an object containing the mapped fields.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-function parseHeader(str) {
-  var lines = str.split(/\r?\n/);
-  var fields = {};
-  var index;
-  var line;
-  var field;
-  var val;
-
-  for (var i = 0, len = lines.length; i < len; ++i) {
-    line = lines[i];
-    index = line.indexOf(':');
-
-    if (index === -1) {
-      // could be empty line, just skip it
-      continue;
-    }
-
-    field = line.slice(0, index).toLowerCase();
-    val = trim(line.slice(index + 1));
-    fields[field] = val;
-  }
-
-  return fields;
-}
-/**
- * Check if `mime` is json or has +json structured syntax suffix.
- *
- * @param {String} mime
- * @return {Boolean}
- * @api private
- */
-
-
-function isJSON(mime) {
-  // should match /json or +json
-  // but not /json-seq
-  return /[/+]json($|[^-\w])/.test(mime);
-}
-/**
- * Initialize a new `Response` with the given `xhr`.
- *
- *  - set flags (.ok, .error, etc)
- *  - parse header
- *
- * Examples:
- *
- *  Aliasing `superagent` as `request` is nice:
- *
- *      request = superagent;
- *
- *  We can use the promise-like API, or pass callbacks:
- *
- *      request.get('/').end(function(res){});
- *      request.get('/', function(res){});
- *
- *  Sending data can be chained:
- *
- *      request
- *        .post('/user')
- *        .send({ name: 'tj' })
- *        .end(function(res){});
- *
- *  Or passed to `.send()`:
- *
- *      request
- *        .post('/user')
- *        .send({ name: 'tj' }, function(res){});
- *
- *  Or passed to `.post()`:
- *
- *      request
- *        .post('/user', { name: 'tj' })
- *        .end(function(res){});
- *
- * Or further reduced to a single call for simple cases:
- *
- *      request
- *        .post('/user', { name: 'tj' }, function(res){});
- *
- * @param {XMLHTTPRequest} xhr
- * @param {Object} options
- * @api private
- */
-
-
-function Response(req) {
-  this.req = req;
-  this.xhr = this.req.xhr; // responseText is accessible only if responseType is '' or 'text' and on older browsers
-
-  this.text = this.req.method !== 'HEAD' && (this.xhr.responseType === '' || this.xhr.responseType === 'text') || typeof this.xhr.responseType === 'undefined' ? this.xhr.responseText : null;
-  this.statusText = this.req.xhr.statusText;
-  var status = this.xhr.status; // handle IE9 bug: http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
-
-  if (status === 1223) {
-    status = 204;
-  }
-
-  this._setStatusProperties(status);
-
-  this.headers = parseHeader(this.xhr.getAllResponseHeaders());
-  this.header = this.headers; // getAllResponseHeaders sometimes falsely returns "" for CORS requests, but
-  // getResponseHeader still works. so we get content-type even if getting
-  // other headers fails.
-
-  this.header['content-type'] = this.xhr.getResponseHeader('content-type');
-
-  this._setHeaderProperties(this.header);
-
-  if (this.text === null && req._responseType) {
-    this.body = this.xhr.response;
-  } else {
-    this.body = this.req.method === 'HEAD' ? null : this._parseBody(this.text ? this.text : this.xhr.response);
-  }
-} // eslint-disable-next-line new-cap
-
-
-ResponseBase(Response.prototype);
-/**
- * Parse the given body `str`.
- *
- * Used for auto-parsing of bodies. Parsers
- * are defined on the `superagent.parse` object.
- *
- * @param {String} str
- * @return {Mixed}
- * @api private
- */
-
-Response.prototype._parseBody = function (str) {
-  var parse = request.parse[this.type];
-
-  if (this.req._parser) {
-    return this.req._parser(this, str);
-  }
-
-  if (!parse && isJSON(this.type)) {
-    parse = request.parse['application/json'];
-  }
-
-  return parse && str && (str.length > 0 || str instanceof Object) ? parse(str) : null;
-};
-/**
- * Return an `Error` representative of this response.
- *
- * @return {Error}
- * @api public
- */
-
-
-Response.prototype.toError = function () {
-  var req = this.req;
-  var method = req.method;
-  var url = req.url;
-  var msg = "cannot ".concat(method, " ").concat(url, " (").concat(this.status, ")");
-  var err = new Error(msg);
-  err.status = this.status;
-  err.method = method;
-  err.url = url;
-  return err;
-};
-/**
- * Expose `Response`.
- */
-
-
-request.Response = Response;
-/**
- * Initialize a new `Request` with the given `method` and `url`.
- *
- * @param {String} method
- * @param {String} url
- * @api public
- */
-
-function Request(method, url) {
-  var self = this;
-  this._query = this._query || [];
-  this.method = method;
-  this.url = url;
-  this.header = {}; // preserves header name case
-
-  this._header = {}; // coerces header names to lowercase
-
-  this.on('end', function () {
-    var err = null;
-    var res = null;
-
-    try {
-      res = new Response(self);
-    } catch (err_) {
-      err = new Error('Parser is unable to parse the response');
-      err.parse = true;
-      err.original = err_; // issue #675: return the raw response if the response parsing fails
-
-      if (self.xhr) {
-        // ie9 doesn't have 'response' property
-        err.rawResponse = typeof self.xhr.responseType === 'undefined' ? self.xhr.responseText : self.xhr.response; // issue #876: return the http status code if the response parsing fails
-
-        err.status = self.xhr.status ? self.xhr.status : null;
-        err.statusCode = err.status; // backwards-compat only
-      } else {
-        err.rawResponse = null;
-        err.status = null;
-      }
-
-      return self.callback(err);
-    }
-
-    self.emit('response', res);
-    var new_err;
-
-    try {
-      if (!self._isResponseOK(res)) {
-        new_err = new Error(res.statusText || res.text || 'Unsuccessful HTTP response');
-      }
-    } catch (err_) {
-      new_err = err_; // ok() callback can throw
-    } // #1000 don't catch errors from the callback to avoid double calling it
-
-
-    if (new_err) {
-      new_err.original = err;
-      new_err.response = res;
-      new_err.status = res.status;
-      self.callback(new_err, res);
-    } else {
-      self.callback(null, res);
-    }
-  });
-}
-/**
- * Mixin `Emitter` and `RequestBase`.
- */
-// eslint-disable-next-line new-cap
-
-
-Emitter(Request.prototype); // eslint-disable-next-line new-cap
-
-RequestBase(Request.prototype);
-/**
- * Set Content-Type to `type`, mapping values from `request.types`.
- *
- * Examples:
- *
- *      superagent.types.xml = 'application/xml';
- *
- *      request.post('/')
- *        .type('xml')
- *        .send(xmlstring)
- *        .end(callback);
- *
- *      request.post('/')
- *        .type('application/xml')
- *        .send(xmlstring)
- *        .end(callback);
- *
- * @param {String} type
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.type = function (type) {
-  this.set('Content-Type', request.types[type] || type);
-  return this;
-};
-/**
- * Set Accept to `type`, mapping values from `request.types`.
- *
- * Examples:
- *
- *      superagent.types.json = 'application/json';
- *
- *      request.get('/agent')
- *        .accept('json')
- *        .end(callback);
- *
- *      request.get('/agent')
- *        .accept('application/json')
- *        .end(callback);
- *
- * @param {String} accept
- * @return {Request} for chaining
- * @api public
- */
-
-
-Request.prototype.accept = function (type) {
-  this.set('Accept', request.types[type] || type);
-  return this;
-};
-/**
- * Set Authorization field value with `user` and `pass`.
- *
- * @param {String} user
- * @param {String} [pass] optional in case of using 'bearer' as type
- * @param {Object} options with 'type' property 'auto', 'basic' or 'bearer' (default 'basic')
- * @return {Request} for chaining
- * @api public
- */
-
-
-Request.prototype.auth = function (user, pass, options) {
-  if (arguments.length === 1) pass = '';
-
-  if (_typeof(pass) === 'object' && pass !== null) {
-    // pass is optional and can be replaced with options
-    options = pass;
-    pass = '';
-  }
-
-  if (!options) {
-    options = {
-      type: typeof btoa === 'function' ? 'basic' : 'auto'
-    };
-  }
-
-  var encoder = function encoder(string) {
-    if (typeof btoa === 'function') {
-      return btoa(string);
-    }
-
-    throw new Error('Cannot use basic auth, btoa is not a function');
-  };
-
-  return this._auth(user, pass, options, encoder);
-};
-/**
- * Add query-string `val`.
- *
- * Examples:
- *
- *   request.get('/shoes')
- *     .query('size=10')
- *     .query({ color: 'blue' })
- *
- * @param {Object|String} val
- * @return {Request} for chaining
- * @api public
- */
-
-
-Request.prototype.query = function (val) {
-  if (typeof val !== 'string') val = serialize(val);
-  if (val) this._query.push(val);
-  return this;
-};
-/**
- * Queue the given `file` as an attachment to the specified `field`,
- * with optional `options` (or filename).
- *
- * ``` js
- * request.post('/upload')
- *   .attach('content', new Blob(['<a id="a"><b id="b">hey!</b></a>'], { type: "text/html"}))
- *   .end(callback);
- * ```
- *
- * @param {String} field
- * @param {Blob|File} file
- * @param {String|Object} options
- * @return {Request} for chaining
- * @api public
- */
-
-
-Request.prototype.attach = function (field, file, options) {
-  if (file) {
-    if (this._data) {
-      throw new Error("superagent can't mix .send() and .attach()");
-    }
-
-    this._getFormData().append(field, file, options || file.name);
-  }
-
-  return this;
-};
-
-Request.prototype._getFormData = function () {
-  if (!this._formData) {
-    this._formData = new root.FormData();
-  }
-
-  return this._formData;
-};
-/**
- * Invoke the callback with `err` and `res`
- * and handle arity check.
- *
- * @param {Error} err
- * @param {Response} res
- * @api private
- */
-
-
-Request.prototype.callback = function (err, res) {
-  if (this._shouldRetry(err, res)) {
-    return this._retry();
-  }
-
-  var fn = this._callback;
-  this.clearTimeout();
-
-  if (err) {
-    if (this._maxRetries) err.retries = this._retries - 1;
-    this.emit('error', err);
-  }
-
-  fn(err, res);
-};
-/**
- * Invoke callback with x-domain error.
- *
- * @api private
- */
-
-
-Request.prototype.crossDomainError = function () {
-  var err = new Error('Request has been terminated\nPossible causes: the network is offline, Origin is not allowed by Access-Control-Allow-Origin, the page is being unloaded, etc.');
-  err.crossDomain = true;
-  err.status = this.status;
-  err.method = this.method;
-  err.url = this.url;
-  this.callback(err);
-}; // This only warns, because the request is still likely to work
-
-
-Request.prototype.agent = function () {
-  console.warn('This is not supported in browser version of superagent');
-  return this;
-};
-
-Request.prototype.ca = Request.prototype.agent;
-Request.prototype.buffer = Request.prototype.ca; // This throws, because it can't send/receive data as expected
-
-Request.prototype.write = function () {
-  throw new Error('Streaming is not supported in browser version of superagent');
-};
-
-Request.prototype.pipe = Request.prototype.write;
-/**
- * Check if `obj` is a host object,
- * we don't want to serialize these :)
- *
- * @param {Object} obj host object
- * @return {Boolean} is a host object
- * @api private
- */
-
-Request.prototype._isHost = function (obj) {
-  // Native objects stringify to [object File], [object Blob], [object FormData], etc.
-  return obj && _typeof(obj) === 'object' && !Array.isArray(obj) && Object.prototype.toString.call(obj) !== '[object Object]';
-};
-/**
- * Initiate request, invoking callback `fn(res)`
- * with an instanceof `Response`.
- *
- * @param {Function} fn
- * @return {Request} for chaining
- * @api public
- */
-
-
-Request.prototype.end = function (fn) {
-  if (this._endCalled) {
-    console.warn('Warning: .end() was called twice. This is not supported in superagent');
-  }
-
-  this._endCalled = true; // store callback
-
-  this._callback = fn || noop; // querystring
-
-  this._finalizeQueryString();
-
-  this._end();
-};
-
-Request.prototype._setUploadTimeout = function () {
-  var self = this; // upload timeout it's wokrs only if deadline timeout is off
-
-  if (this._uploadTimeout && !this._uploadTimeoutTimer) {
-    this._uploadTimeoutTimer = setTimeout(function () {
-      self._timeoutError('Upload timeout of ', self._uploadTimeout, 'ETIMEDOUT');
-    }, this._uploadTimeout);
-  }
-}; // eslint-disable-next-line complexity
-
-
-Request.prototype._end = function () {
-  if (this._aborted) return this.callback(new Error('The request has been aborted even before .end() was called'));
-  var self = this;
-  this.xhr = request.getXHR();
-  var xhr = this.xhr;
-  var data = this._formData || this._data;
-
-  this._setTimeouts(); // state change
-
-
-  xhr.onreadystatechange = function () {
-    var readyState = xhr.readyState;
-
-    if (readyState >= 2 && self._responseTimeoutTimer) {
-      clearTimeout(self._responseTimeoutTimer);
-    }
-
-    if (readyState !== 4) {
-      return;
-    } // In IE9, reads to any property (e.g. status) off of an aborted XHR will
-    // result in the error "Could not complete the operation due to error c00c023f"
-
-
-    var status;
-
-    try {
-      status = xhr.status;
-    } catch (_unused5) {
-      status = 0;
-    }
-
-    if (!status) {
-      if (self.timedout || self._aborted) return;
-      return self.crossDomainError();
-    }
-
-    self.emit('end');
-  }; // progress
-
-
-  var handleProgress = function handleProgress(direction, e) {
-    if (e.total > 0) {
-      e.percent = e.loaded / e.total * 100;
-
-      if (e.percent === 100) {
-        clearTimeout(self._uploadTimeoutTimer);
-      }
-    }
-
-    e.direction = direction;
-    self.emit('progress', e);
-  };
-
-  if (this.hasListeners('progress')) {
-    try {
-      xhr.addEventListener('progress', handleProgress.bind(null, 'download'));
-
-      if (xhr.upload) {
-        xhr.upload.addEventListener('progress', handleProgress.bind(null, 'upload'));
-      }
-    } catch (_unused6) {// Accessing xhr.upload fails in IE from a web worker, so just pretend it doesn't exist.
-      // Reported here:
-      // https://connect.microsoft.com/IE/feedback/details/837245/xmlhttprequest-upload-throws-invalid-argument-when-used-from-web-worker-context
-    }
-  }
-
-  if (xhr.upload) {
-    this._setUploadTimeout();
-  } // initiate request
-
-
-  try {
-    if (this.username && this.password) {
-      xhr.open(this.method, this.url, true, this.username, this.password);
-    } else {
-      xhr.open(this.method, this.url, true);
-    }
-  } catch (err) {
-    // see #1149
-    return this.callback(err);
-  } // CORS
-
-
-  if (this._withCredentials) xhr.withCredentials = true; // body
-
-  if (!this._formData && this.method !== 'GET' && this.method !== 'HEAD' && typeof data !== 'string' && !this._isHost(data)) {
-    // serialize stuff
-    var contentType = this._header['content-type'];
-
-    var _serialize = this._serializer || request.serialize[contentType ? contentType.split(';')[0] : ''];
-
-    if (!_serialize && isJSON(contentType)) {
-      _serialize = request.serialize['application/json'];
-    }
-
-    if (_serialize) data = _serialize(data);
-  } // set header fields
-
-
-  for (var field in this.header) {
-    if (this.header[field] === null) continue;
-    if (Object.prototype.hasOwnProperty.call(this.header, field)) xhr.setRequestHeader(field, this.header[field]);
-  }
-
-  if (this._responseType) {
-    xhr.responseType = this._responseType;
-  } // send stuff
-
-
-  this.emit('request', this); // IE11 xhr.send(undefined) sends 'undefined' string as POST payload (instead of nothing)
-  // We need null here if data is undefined
-
-  xhr.send(typeof data === 'undefined' ? null : data);
-};
-
-request.agent = function () {
-  return new Agent();
-};
-
-['GET', 'POST', 'OPTIONS', 'PATCH', 'PUT', 'DELETE'].forEach(function (method) {
-  Agent.prototype[method.toLowerCase()] = function (url, fn) {
-    var req = new request.Request(method, url);
-
-    this._setDefaults(req);
-
-    if (fn) {
-      req.end(fn);
-    }
-
-    return req;
-  };
-});
-Agent.prototype.del = Agent.prototype.delete;
-/**
- * GET `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.get = function (url, data, fn) {
-  var req = request('GET', url);
-
-  if (typeof data === 'function') {
-    fn = data;
-    data = null;
-  }
-
-  if (data) req.query(data);
-  if (fn) req.end(fn);
-  return req;
-};
-/**
- * HEAD `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-
-request.head = function (url, data, fn) {
-  var req = request('HEAD', url);
-
-  if (typeof data === 'function') {
-    fn = data;
-    data = null;
-  }
-
-  if (data) req.query(data);
-  if (fn) req.end(fn);
-  return req;
-};
-/**
- * OPTIONS query to `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-
-request.options = function (url, data, fn) {
-  var req = request('OPTIONS', url);
-
-  if (typeof data === 'function') {
-    fn = data;
-    data = null;
-  }
-
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-/**
- * DELETE `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-
-function del(url, data, fn) {
-  var req = request('DELETE', url);
-
-  if (typeof data === 'function') {
-    fn = data;
-    data = null;
-  }
-
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-}
-
-request.del = del;
-request.delete = del;
-/**
- * PATCH `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.patch = function (url, data, fn) {
-  var req = request('PATCH', url);
-
-  if (typeof data === 'function') {
-    fn = data;
-    data = null;
-  }
-
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-/**
- * POST `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-
-request.post = function (url, data, fn) {
-  var req = request('POST', url);
-
-  if (typeof data === 'function') {
-    fn = data;
-    data = null;
-  }
-
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-/**
- * PUT `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-
-request.put = function (url, data, fn) {
-  var req = request('PUT', url);
-
-  if (typeof data === 'function') {
-    fn = data;
-    data = null;
-  }
-
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-},{"./agent-base":17,"./is-object":19,"./request-base":20,"./response-base":21,"component-emitter":23,"fast-safe-stringify":1}],19:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-/**
- * Check if `obj` is an object.
- *
- * @param {Object} obj
- * @return {Boolean}
- * @api private
- */
-function isObject(obj) {
-  return obj !== null && _typeof(obj) === 'object';
-}
-
-module.exports = isObject;
-
-},{}],20:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-/**
- * Module of mixed-in functions shared between node and client code
- */
-var isObject = require('./is-object');
-/**
- * Expose `RequestBase`.
- */
-
-
-module.exports = RequestBase;
-/**
- * Initialize a new `RequestBase`.
- *
- * @api public
- */
-
-function RequestBase(obj) {
-  if (obj) return mixin(obj);
-}
-/**
- * Mixin the prototype properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-
-function mixin(obj) {
-  for (var key in RequestBase.prototype) {
-    if (Object.prototype.hasOwnProperty.call(RequestBase.prototype, key)) obj[key] = RequestBase.prototype[key];
-  }
-
-  return obj;
-}
-/**
- * Clear previous timeout.
- *
- * @return {Request} for chaining
- * @api public
- */
-
-
-RequestBase.prototype.clearTimeout = function () {
-  clearTimeout(this._timer);
-  clearTimeout(this._responseTimeoutTimer);
-  clearTimeout(this._uploadTimeoutTimer);
-  delete this._timer;
-  delete this._responseTimeoutTimer;
-  delete this._uploadTimeoutTimer;
-  return this;
-};
-/**
- * Override default response body parser
- *
- * This function will be called to convert incoming data into request.body
- *
- * @param {Function}
- * @api public
- */
-
-
-RequestBase.prototype.parse = function (fn) {
-  this._parser = fn;
-  return this;
-};
-/**
- * Set format of binary response body.
- * In browser valid formats are 'blob' and 'arraybuffer',
- * which return Blob and ArrayBuffer, respectively.
- *
- * In Node all values result in Buffer.
- *
- * Examples:
- *
- *      req.get('/')
- *        .responseType('blob')
- *        .end(callback);
- *
- * @param {String} val
- * @return {Request} for chaining
- * @api public
- */
-
-
-RequestBase.prototype.responseType = function (val) {
-  this._responseType = val;
-  return this;
-};
-/**
- * Override default request body serializer
- *
- * This function will be called to convert data set via .send or .attach into payload to send
- *
- * @param {Function}
- * @api public
- */
-
-
-RequestBase.prototype.serialize = function (fn) {
-  this._serializer = fn;
-  return this;
-};
-/**
- * Set timeouts.
- *
- * - response timeout is time between sending request and receiving the first byte of the response. Includes DNS and connection time.
- * - deadline is the time from start of the request to receiving response body in full. If the deadline is too short large files may not load at all on slow connections.
- * - upload is the time  since last bit of data was sent or received. This timeout works only if deadline timeout is off
- *
- * Value of 0 or false means no timeout.
- *
- * @param {Number|Object} ms or {response, deadline}
- * @return {Request} for chaining
- * @api public
- */
-
-
-RequestBase.prototype.timeout = function (options) {
-  if (!options || _typeof(options) !== 'object') {
-    this._timeout = options;
-    this._responseTimeout = 0;
-    this._uploadTimeout = 0;
-    return this;
-  }
-
-  for (var option in options) {
-    if (Object.prototype.hasOwnProperty.call(options, option)) {
-      switch (option) {
-        case 'deadline':
-          this._timeout = options.deadline;
-          break;
-
-        case 'response':
-          this._responseTimeout = options.response;
-          break;
-
-        case 'upload':
-          this._uploadTimeout = options.upload;
-          break;
-
-        default:
-          console.warn('Unknown timeout option', option);
-      }
-    }
-  }
-
-  return this;
-};
-/**
- * Set number of retry attempts on error.
- *
- * Failed requests will be retried 'count' times if timeout or err.code >= 500.
- *
- * @param {Number} count
- * @param {Function} [fn]
- * @return {Request} for chaining
- * @api public
- */
-
-
-RequestBase.prototype.retry = function (count, fn) {
-  // Default to 1 if no count passed or true
-  if (arguments.length === 0 || count === true) count = 1;
-  if (count <= 0) count = 0;
-  this._maxRetries = count;
-  this._retries = 0;
-  this._retryCallback = fn;
-  return this;
-};
-
-var ERROR_CODES = ['ECONNRESET', 'ETIMEDOUT', 'EADDRINFO', 'ESOCKETTIMEDOUT'];
-/**
- * Determine if a request should be retried.
- * (Borrowed from segmentio/superagent-retry)
- *
- * @param {Error} err an error
- * @param {Response} [res] response
- * @returns {Boolean} if segment should be retried
- */
-
-RequestBase.prototype._shouldRetry = function (err, res) {
-  if (!this._maxRetries || this._retries++ >= this._maxRetries) {
-    return false;
-  }
-
-  if (this._retryCallback) {
-    try {
-      var override = this._retryCallback(err, res);
-
-      if (override === true) return true;
-      if (override === false) return false; // undefined falls back to defaults
-    } catch (err_) {
-      console.error(err_);
-    }
-  }
-
-  if (res && res.status && res.status >= 500 && res.status !== 501) return true;
-
-  if (err) {
-    if (err.code && ERROR_CODES.includes(err.code)) return true; // Superagent timeout
-
-    if (err.timeout && err.code === 'ECONNABORTED') return true;
-    if (err.crossDomain) return true;
-  }
-
-  return false;
-};
-/**
- * Retry request
- *
- * @return {Request} for chaining
- * @api private
- */
-
-
-RequestBase.prototype._retry = function () {
-  this.clearTimeout(); // node
-
-  if (this.req) {
-    this.req = null;
-    this.req = this.request();
-  }
-
-  this._aborted = false;
-  this.timedout = false;
-  this.timedoutError = null;
-  return this._end();
-};
-/**
- * Promise support
- *
- * @param {Function} resolve
- * @param {Function} [reject]
- * @return {Request}
- */
-
-
-RequestBase.prototype.then = function (resolve, reject) {
-  var _this = this;
-
-  if (!this._fullfilledPromise) {
-    var self = this;
-
-    if (this._endCalled) {
-      console.warn('Warning: superagent request was sent twice, because both .end() and .then() were called. Never call .end() if you use promises');
-    }
-
-    this._fullfilledPromise = new Promise(function (resolve, reject) {
-      self.on('abort', function () {
-        if (_this.timedout && _this.timedoutError) {
-          reject(_this.timedoutError);
-          return;
-        }
-
-        var err = new Error('Aborted');
-        err.code = 'ABORTED';
-        err.status = _this.status;
-        err.method = _this.method;
-        err.url = _this.url;
-        reject(err);
-      });
-      self.end(function (err, res) {
-        if (err) reject(err);else resolve(res);
-      });
-    });
-  }
-
-  return this._fullfilledPromise.then(resolve, reject);
-};
-
-RequestBase.prototype.catch = function (cb) {
-  return this.then(undefined, cb);
-};
-/**
- * Allow for extension
- */
-
-
-RequestBase.prototype.use = function (fn) {
-  fn(this);
-  return this;
-};
-
-RequestBase.prototype.ok = function (cb) {
-  if (typeof cb !== 'function') throw new Error('Callback required');
-  this._okCallback = cb;
-  return this;
-};
-
-RequestBase.prototype._isResponseOK = function (res) {
-  if (!res) {
-    return false;
-  }
-
-  if (this._okCallback) {
-    return this._okCallback(res);
-  }
-
-  return res.status >= 200 && res.status < 300;
-};
-/**
- * Get request header `field`.
- * Case-insensitive.
- *
- * @param {String} field
- * @return {String}
- * @api public
- */
-
-
-RequestBase.prototype.get = function (field) {
-  return this._header[field.toLowerCase()];
-};
-/**
- * Get case-insensitive header `field` value.
- * This is a deprecated internal API. Use `.get(field)` instead.
- *
- * (getHeader is no longer used internally by the superagent code base)
- *
- * @param {String} field
- * @return {String}
- * @api private
- * @deprecated
- */
-
-
-RequestBase.prototype.getHeader = RequestBase.prototype.get;
-/**
- * Set header `field` to `val`, or multiple fields with one object.
- * Case-insensitive.
- *
- * Examples:
- *
- *      req.get('/')
- *        .set('Accept', 'application/json')
- *        .set('X-API-Key', 'foobar')
- *        .end(callback);
- *
- *      req.get('/')
- *        .set({ Accept: 'application/json', 'X-API-Key': 'foobar' })
- *        .end(callback);
- *
- * @param {String|Object} field
- * @param {String} val
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.set = function (field, val) {
-  if (isObject(field)) {
-    for (var key in field) {
-      if (Object.prototype.hasOwnProperty.call(field, key)) this.set(key, field[key]);
-    }
-
-    return this;
-  }
-
-  this._header[field.toLowerCase()] = val;
-  this.header[field] = val;
-  return this;
-};
-/**
- * Remove header `field`.
- * Case-insensitive.
- *
- * Example:
- *
- *      req.get('/')
- *        .unset('User-Agent')
- *        .end(callback);
- *
- * @param {String} field field name
- */
-
-
-RequestBase.prototype.unset = function (field) {
-  delete this._header[field.toLowerCase()];
-  delete this.header[field];
-  return this;
-};
-/**
- * Write the field `name` and `val`, or multiple fields with one object
- * for "multipart/form-data" request bodies.
- *
- * ``` js
- * request.post('/upload')
- *   .field('foo', 'bar')
- *   .end(callback);
- *
- * request.post('/upload')
- *   .field({ foo: 'bar', baz: 'qux' })
- *   .end(callback);
- * ```
- *
- * @param {String|Object} name name of field
- * @param {String|Blob|File|Buffer|fs.ReadStream} val value of field
- * @return {Request} for chaining
- * @api public
- */
-
-
-RequestBase.prototype.field = function (name, val) {
-  // name should be either a string or an object.
-  if (name === null || undefined === name) {
-    throw new Error('.field(name, val) name can not be empty');
-  }
-
-  if (this._data) {
-    throw new Error(".field() can't be used if .send() is used. Please use only .send() or only .field() & .attach()");
-  }
-
-  if (isObject(name)) {
-    for (var key in name) {
-      if (Object.prototype.hasOwnProperty.call(name, key)) this.field(key, name[key]);
-    }
-
-    return this;
-  }
-
-  if (Array.isArray(val)) {
-    for (var i in val) {
-      if (Object.prototype.hasOwnProperty.call(val, i)) this.field(name, val[i]);
-    }
-
-    return this;
-  } // val should be defined now
-
-
-  if (val === null || undefined === val) {
-    throw new Error('.field(name, val) val can not be empty');
-  }
-
-  if (typeof val === 'boolean') {
-    val = String(val);
-  }
-
-  this._getFormData().append(name, val);
-
-  return this;
-};
-/**
- * Abort the request, and clear potential timeout.
- *
- * @return {Request} request
- * @api public
- */
-
-
-RequestBase.prototype.abort = function () {
-  if (this._aborted) {
-    return this;
-  }
-
-  this._aborted = true;
-  if (this.xhr) this.xhr.abort(); // browser
-
-  if (this.req) this.req.abort(); // node
-
-  this.clearTimeout();
-  this.emit('abort');
-  return this;
-};
-
-RequestBase.prototype._auth = function (user, pass, options, base64Encoder) {
-  switch (options.type) {
-    case 'basic':
-      this.set('Authorization', "Basic ".concat(base64Encoder("".concat(user, ":").concat(pass))));
-      break;
-
-    case 'auto':
-      this.username = user;
-      this.password = pass;
-      break;
-
-    case 'bearer':
-      // usage would be .auth(accessToken, { type: 'bearer' })
-      this.set('Authorization', "Bearer ".concat(user));
-      break;
-
-    default:
-      break;
-  }
-
-  return this;
-};
-/**
- * Enable transmission of cookies with x-domain requests.
- *
- * Note that for this to work the origin must not be
- * using "Access-Control-Allow-Origin" with a wildcard,
- * and also must set "Access-Control-Allow-Credentials"
- * to "true".
- *
- * @api public
- */
-
-
-RequestBase.prototype.withCredentials = function (on) {
-  // This is browser-only functionality. Node side is no-op.
-  if (on === undefined) on = true;
-  this._withCredentials = on;
-  return this;
-};
-/**
- * Set the max redirects to `n`. Does nothing in browser XHR implementation.
- *
- * @param {Number} n
- * @return {Request} for chaining
- * @api public
- */
-
-
-RequestBase.prototype.redirects = function (n) {
-  this._maxRedirects = n;
-  return this;
-};
-/**
- * Maximum size of buffered response body, in bytes. Counts uncompressed size.
- * Default 200MB.
- *
- * @param {Number} n number of bytes
- * @return {Request} for chaining
- */
-
-
-RequestBase.prototype.maxResponseSize = function (n) {
-  if (typeof n !== 'number') {
-    throw new TypeError('Invalid argument');
-  }
-
-  this._maxResponseSize = n;
-  return this;
-};
-/**
- * Convert to a plain javascript object (not JSON string) of scalar properties.
- * Note as this method is designed to return a useful non-this value,
- * it cannot be chained.
- *
- * @return {Object} describing method, url, and data of this request
- * @api public
- */
-
-
-RequestBase.prototype.toJSON = function () {
-  return {
-    method: this.method,
-    url: this.url,
-    data: this._data,
-    headers: this._header
-  };
-};
-/**
- * Send `data` as the request body, defaulting the `.type()` to "json" when
- * an object is given.
- *
- * Examples:
- *
- *       // manual json
- *       request.post('/user')
- *         .type('json')
- *         .send('{"name":"tj"}')
- *         .end(callback)
- *
- *       // auto json
- *       request.post('/user')
- *         .send({ name: 'tj' })
- *         .end(callback)
- *
- *       // manual x-www-form-urlencoded
- *       request.post('/user')
- *         .type('form')
- *         .send('name=tj')
- *         .end(callback)
- *
- *       // auto x-www-form-urlencoded
- *       request.post('/user')
- *         .type('form')
- *         .send({ name: 'tj' })
- *         .end(callback)
- *
- *       // defaults to x-www-form-urlencoded
- *      request.post('/user')
- *        .send('name=tobi')
- *        .send('species=ferret')
- *        .end(callback)
- *
- * @param {String|Object} data
- * @return {Request} for chaining
- * @api public
- */
-// eslint-disable-next-line complexity
-
-
-RequestBase.prototype.send = function (data) {
-  var isObj = isObject(data);
-  var type = this._header['content-type'];
-
-  if (this._formData) {
-    throw new Error(".send() can't be used if .attach() or .field() is used. Please use only .send() or only .field() & .attach()");
-  }
-
-  if (isObj && !this._data) {
-    if (Array.isArray(data)) {
-      this._data = [];
-    } else if (!this._isHost(data)) {
-      this._data = {};
-    }
-  } else if (data && this._data && this._isHost(this._data)) {
-    throw new Error("Can't merge these send calls");
-  } // merge
-
-
-  if (isObj && isObject(this._data)) {
-    for (var key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) this._data[key] = data[key];
-    }
-  } else if (typeof data === 'string') {
-    // default to x-www-form-urlencoded
-    if (!type) this.type('form');
-    type = this._header['content-type'];
-
-    if (type === 'application/x-www-form-urlencoded') {
-      this._data = this._data ? "".concat(this._data, "&").concat(data) : data;
-    } else {
-      this._data = (this._data || '') + data;
-    }
-  } else {
-    this._data = data;
-  }
-
-  if (!isObj || this._isHost(data)) {
-    return this;
-  } // default to json
-
-
-  if (!type) this.type('json');
-  return this;
-};
-/**
- * Sort `querystring` by the sort function
- *
- *
- * Examples:
- *
- *       // default order
- *       request.get('/user')
- *         .query('name=Nick')
- *         .query('search=Manny')
- *         .sortQuery()
- *         .end(callback)
- *
- *       // customized sort function
- *       request.get('/user')
- *         .query('name=Nick')
- *         .query('search=Manny')
- *         .sortQuery(function(a, b){
- *           return a.length - b.length;
- *         })
- *         .end(callback)
- *
- *
- * @param {Function} sort
- * @return {Request} for chaining
- * @api public
- */
-
-
-RequestBase.prototype.sortQuery = function (sort) {
-  // _sort default to true but otherwise can be a function or boolean
-  this._sort = typeof sort === 'undefined' ? true : sort;
-  return this;
-};
-/**
- * Compose querystring to append to req.url
- *
- * @api private
- */
-
-
-RequestBase.prototype._finalizeQueryString = function () {
-  var query = this._query.join('&');
-
-  if (query) {
-    this.url += (this.url.includes('?') ? '&' : '?') + query;
-  }
-
-  this._query.length = 0; // Makes the call idempotent
-
-  if (this._sort) {
-    var index = this.url.indexOf('?');
-
-    if (index >= 0) {
-      var queryArr = this.url.slice(index + 1).split('&');
-
-      if (typeof this._sort === 'function') {
-        queryArr.sort(this._sort);
-      } else {
-        queryArr.sort();
-      }
-
-      this.url = this.url.slice(0, index) + '?' + queryArr.join('&');
-    }
-  }
-}; // For backwards compat only
-
-
-RequestBase.prototype._appendQueryString = function () {
-  console.warn('Unsupported');
-};
-/**
- * Invoke callback with timeout error.
- *
- * @api private
- */
-
-
-RequestBase.prototype._timeoutError = function (reason, timeout, errno) {
-  if (this._aborted) {
-    return;
-  }
-
-  var err = new Error("".concat(reason + timeout, "ms exceeded"));
-  err.timeout = timeout;
-  err.code = 'ECONNABORTED';
-  err.errno = errno;
-  this.timedout = true;
-  this.timedoutError = err;
-  this.abort();
-  this.callback(err);
-};
-
-RequestBase.prototype._setTimeouts = function () {
-  var self = this; // deadline
-
-  if (this._timeout && !this._timer) {
-    this._timer = setTimeout(function () {
-      self._timeoutError('Timeout of ', self._timeout, 'ETIME');
-    }, this._timeout);
-  } // response timeout
-
-
-  if (this._responseTimeout && !this._responseTimeoutTimer) {
-    this._responseTimeoutTimer = setTimeout(function () {
-      self._timeoutError('Response timeout of ', self._responseTimeout, 'ETIMEDOUT');
-    }, this._responseTimeout);
-  }
-};
-
-},{"./is-object":19}],21:[function(require,module,exports){
-"use strict";
-
-/**
- * Module dependencies.
- */
-var utils = require('./utils');
-/**
- * Expose `ResponseBase`.
- */
-
-
-module.exports = ResponseBase;
-/**
- * Initialize a new `ResponseBase`.
- *
- * @api public
- */
-
-function ResponseBase(obj) {
-  if (obj) return mixin(obj);
-}
-/**
- * Mixin the prototype properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-
-function mixin(obj) {
-  for (var key in ResponseBase.prototype) {
-    if (Object.prototype.hasOwnProperty.call(ResponseBase.prototype, key)) obj[key] = ResponseBase.prototype[key];
-  }
-
-  return obj;
-}
-/**
- * Get case-insensitive `field` value.
- *
- * @param {String} field
- * @return {String}
- * @api public
- */
-
-
-ResponseBase.prototype.get = function (field) {
-  return this.header[field.toLowerCase()];
-};
-/**
- * Set header related properties:
- *
- *   - `.type` the content type without params
- *
- * A response of "Content-Type: text/plain; charset=utf-8"
- * will provide you with a `.type` of "text/plain".
- *
- * @param {Object} header
- * @api private
- */
-
-
-ResponseBase.prototype._setHeaderProperties = function (header) {
-  // TODO: moar!
-  // TODO: make this a util
-  // content-type
-  var ct = header['content-type'] || '';
-  this.type = utils.type(ct); // params
-
-  var params = utils.params(ct);
-
-  for (var key in params) {
-    if (Object.prototype.hasOwnProperty.call(params, key)) this[key] = params[key];
-  }
-
-  this.links = {}; // links
-
-  try {
-    if (header.link) {
-      this.links = utils.parseLinks(header.link);
-    }
-  } catch (_unused) {// ignore
-  }
-};
-/**
- * Set flags such as `.ok` based on `status`.
- *
- * For example a 2xx response will give you a `.ok` of __true__
- * whereas 5xx will be __false__ and `.error` will be __true__. The
- * `.clientError` and `.serverError` are also available to be more
- * specific, and `.statusType` is the class of error ranging from 1..5
- * sometimes useful for mapping respond colors etc.
- *
- * "sugar" properties are also defined for common cases. Currently providing:
- *
- *   - .noContent
- *   - .badRequest
- *   - .unauthorized
- *   - .notAcceptable
- *   - .notFound
- *
- * @param {Number} status
- * @api private
- */
-
-
-ResponseBase.prototype._setStatusProperties = function (status) {
-  var type = status / 100 | 0; // status / class
-
-  this.statusCode = status;
-  this.status = this.statusCode;
-  this.statusType = type; // basics
-
-  this.info = type === 1;
-  this.ok = type === 2;
-  this.redirect = type === 3;
-  this.clientError = type === 4;
-  this.serverError = type === 5;
-  this.error = type === 4 || type === 5 ? this.toError() : false; // sugar
-
-  this.created = status === 201;
-  this.accepted = status === 202;
-  this.noContent = status === 204;
-  this.badRequest = status === 400;
-  this.unauthorized = status === 401;
-  this.notAcceptable = status === 406;
-  this.forbidden = status === 403;
-  this.notFound = status === 404;
-  this.unprocessableEntity = status === 422;
-};
-
-},{"./utils":22}],22:[function(require,module,exports){
-"use strict";
-
-/**
- * Return the mime type for the given `str`.
- *
- * @param {String} str
- * @return {String}
- * @api private
- */
-exports.type = function (str) {
-  return str.split(/ *; */).shift();
-};
-/**
- * Return header field parameters.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-
-exports.params = function (str) {
-  return str.split(/ *; */).reduce(function (obj, str) {
-    var parts = str.split(/ *= */);
-    var key = parts.shift();
-    var val = parts.shift();
-    if (key && val) obj[key] = val;
-    return obj;
-  }, {});
-};
-/**
- * Parse Link header fields.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-
-exports.parseLinks = function (str) {
-  return str.split(/ *, */).reduce(function (obj, str) {
-    var parts = str.split(/ *; */);
-    var url = parts[0].slice(1, -1);
-    var rel = parts[1].split(/ *= */)[1].slice(1, -1);
-    obj[rel] = url;
-    return obj;
-  }, {});
-};
-/**
- * Strip content related fields from `header`.
- *
- * @param {Object} header
- * @return {Object} header
- * @api private
- */
-
-
-exports.cleanHeader = function (header, changesOrigin) {
-  delete header['content-type'];
-  delete header['content-length'];
-  delete header['transfer-encoding'];
-  delete header.host; // secuirty
-
-  if (changesOrigin) {
-    delete header.authorization;
-    delete header.cookie;
-  }
-
-  return header;
-};
-
-},{}],23:[function(require,module,exports){
-
-/**
- * Expose `Emitter`.
- */
-
-if (typeof module !== 'undefined') {
-  module.exports = Emitter;
-}
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(obj) {
-  if (obj) return mixin(obj);
-};
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (var key in Emitter.prototype) {
-    obj[key] = Emitter.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.on =
-Emitter.prototype.addEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
-    .push(fn);
-  return this;
-};
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.once = function(event, fn){
-  function on() {
-    this.off(event, on);
-    fn.apply(this, arguments);
-  }
-
-  on.fn = fn;
-  this.on(event, on);
-  return this;
-};
-
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.off =
-Emitter.prototype.removeListener =
-Emitter.prototype.removeAllListeners =
-Emitter.prototype.removeEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-
-  // all
-  if (0 == arguments.length) {
-    this._callbacks = {};
-    return this;
-  }
-
-  // specific event
-  var callbacks = this._callbacks['$' + event];
-  if (!callbacks) return this;
-
-  // remove all handlers
-  if (1 == arguments.length) {
-    delete this._callbacks['$' + event];
-    return this;
-  }
-
-  // remove specific handler
-  var cb;
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i];
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1);
-      break;
-    }
-  }
-
-  // Remove event specific arrays for event types that no
-  // one is subscribed for to avoid memory leak.
-  if (callbacks.length === 0) {
-    delete this._callbacks['$' + event];
-  }
-
-  return this;
-};
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
-
-Emitter.prototype.emit = function(event){
-  this._callbacks = this._callbacks || {};
-
-  var args = new Array(arguments.length - 1)
-    , callbacks = this._callbacks['$' + event];
-
-  for (var i = 1; i < arguments.length; i++) {
-    args[i - 1] = arguments[i];
-  }
-
-  if (callbacks) {
-    callbacks = callbacks.slice(0);
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
-      callbacks[i].apply(this, args);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
-Emitter.prototype.listeners = function(event){
-  this._callbacks = this._callbacks || {};
-  return this._callbacks['$' + event] || [];
-};
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
-
-Emitter.prototype.hasListeners = function(event){
-  return !! this.listeners(event).length;
-};
-
-},{}],"scriptBrowserify.js":[function(require,module,exports){
+},{"./lib/buildSearchParams":20}],"scriptBrowserify.js":[function(require,module,exports){
 /* global require */
 
 var $ = require('jquery'),
@@ -14989,11 +13555,23 @@ function requestAccess() {
 
     settings.spanButtonID = 'pryvButton';
 
-    settings.onStateChange = function (state) {
+    settings.onStateChange = async function (state) {
       logToConsole('##pryvAuthStateChange \t ' + JSON.stringify(state));
       if (state.id === Pryv.Browser.AuthStates.AUTHORIZED) {
-        apiEndpointArea.text(state.apiEndpoint);
-        logToConsole('# Auth succeeded for user ' + state.apiEndpoint);
+        try {
+          // cookie-autologin delivers the full legacy state (apiEndpoint included);
+          // a fresh login delivers only { status, id, key, serviceInfo? } and the
+          // apiEndpoint is resolved from the key.
+          var apiEndpoint = state.apiEndpoint;
+          if (!apiEndpoint && state.key) {
+            var connection = await Pryv.connectFromKey(state.key, serviceInfoUrlArea.val());
+            apiEndpoint = connection.apiEndpoint;
+          }
+          apiEndpointArea.text(apiEndpoint);
+          logToConsole('# Auth succeeded for user ' + apiEndpoint);
+        } catch (err) {
+          logToConsole('# Error resolving access from key: ' + err);
+        }
       }
       if (state.id === Pryv.Browser.AuthStates.LOGOUT) {
         logToConsole('# Logout');
@@ -15019,4 +13597,4 @@ function toggleDevOptions() {
   returnURL.parent().parent().toggle();
   oauthState.parent().parent().hide();
 }
-},{"jquery":2,"pryv":13}]},{},["scriptBrowserify.js"]);
+},{"jquery":2,"pryv":16}]},{},["scriptBrowserify.js"]);
