@@ -4,28 +4,23 @@
   "version": "2.0.0",
   "description": "This is a web app to generate pryv access tokens.",
   "scripts": {
-    "grunt": "grunt",
-    "webserver": "backloop.dev ./dist 4443"
+    "build": "node build.js",
+    "watch": "node build.js --watch",
+    "webserver": "backloop.dev ./dist 4443",
+    "gh-pages": "node build.js && gh-pages -d dist -m \"publish app-web-access\""
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/pryv/app-web-access"
   },
   "dependencies": {
+    "jquery": "^3.7.1",
     "pryv": "^3.5.0"
   },
   "devDependencies": {
     "backloop.dev": "^3.0.2",
-    "grunt": "latest",
-    "grunt-browserify": "latest",
-    "grunt-build-gh-pages": "latest",
-    "grunt-cli": "latest",
-    "grunt-contrib-clean": "latest",
-    "grunt-contrib-copy": "latest",
-    "grunt-contrib-jshint": "latest",
-    "grunt-contrib-watch": "latest",
-    "grunt-shell": "latest",
-    "jquery": "latest"
+    "esbuild": "^0.28.1",
+    "gh-pages": "^6.3.0"
   },
   "engines": {
     "node": ">=20.0.0"

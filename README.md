@@ -13,9 +13,10 @@ Example: [http://pryv.github.io/app-web-access/?pryvServiceInfoUrl=https://reg.p
 *Prerequisites:* __node__ & __npm__
 
 * Download dependencies with `npm install`.
-* Generate web app with `npm run grunt`.
+* Generate web app into `dist/` with `npm run build` (esbuild; `npm run watch` to rebuild on change).
 * Run the npm server with `npm run webserver`.
 * Open https://l.rec.la:4444/
+* Publish to GitHub Pages with `npm run gh-pages`.
 
 ## License
 
