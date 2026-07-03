@@ -8,6 +8,10 @@ Pass a register name in the query parameter: `http://pryv.github.io/app-web-acce
 
 Example: [http://pryv.github.io/app-web-access/?pryvServiceInfoUrl=https://reg.pryv.me/service/info](http://pryv.github.io/app-web-access/?pryvServiceInfoUrl=https://reg.pryv.me/service/info)
 
+### Advanced options
+
+- **Auth app URL**: request a specific auth (consent) app instead of the platform's default. The value is sent as `authUrl` in the access request; the platform only honors it if it matches one of its `access:trustedAuthUrls` entries — otherwise the request is rejected with `invalid-parameters`.
+
 ## Contribute
 
 *Prerequisites:* __node__ & __npm__

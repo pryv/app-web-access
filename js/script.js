@@ -11,6 +11,7 @@ var masterToken,
   serviceInfoUrlArea,
   permissionsArea,
   clientDataArea,
+  authUrlArea,
   oauthState,
   submitButton,
   toggleDev,
@@ -39,6 +40,7 @@ window.onload = function () {
   serviceInfoUrlArea = $('#serviceInfoUrlArea');
   permissionsArea = $('#permissionsArea');
   clientDataArea = $('#clientDataArea');
+  authUrlArea = $('#authUrlArea');
   oauthState = $('#oauthState');
   submitButton = $('#submitButton');
   toggleDev = $('#toggleDev');
@@ -133,6 +135,13 @@ function requestAccess() {
   authRequest.oauthState = oauthState.val();
   authRequest.referer = referer.val() || null;
 
+  // Custom auth (consent) app: sent to the access endpoint as `authUrl`,
+  // which only accepts it if it matches an `access:trustedAuthUrls` entry.
+  var customAuthUrl = authUrlArea.val().trim();
+  if (customAuthUrl) {
+    authRequest.authUrl = customAuthUrl;
+  }
+
   try {
     authRequest.requestedPermissions = JSON.parse(permissionsArea.val());
 
@@ -181,6 +190,8 @@ function requestAccess() {
 function toggleDevOptions() {
   returnURL.val('auto#');
   lang.val('default');
+  authUrlArea.val('');
+  authUrlArea.parent().parent().toggle();
   lang.parent().parent().toggle();
   referer.parent().parent().toggle();
   returnURL.parent().parent().toggle();
