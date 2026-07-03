@@ -8788,6 +8788,7 @@
   var serviceInfoUrlArea;
   var permissionsArea;
   var clientDataArea;
+  var authUrlArea;
   var oauthState;
   var submitButton;
   var toggleDev;
@@ -8810,6 +8811,7 @@
     serviceInfoUrlArea = $("#serviceInfoUrlArea");
     permissionsArea = $("#permissionsArea");
     clientDataArea = $("#clientDataArea");
+    authUrlArea = $("#authUrlArea");
     oauthState = $("#oauthState");
     submitButton = $("#submitButton");
     toggleDev = $("#toggleDev");
@@ -8874,6 +8876,10 @@
     authRequest.returnURL = returnURL.val();
     authRequest.oauthState = oauthState.val();
     authRequest.referer = referer.val() || null;
+    var customAuthUrl = authUrlArea.val().trim();
+    if (customAuthUrl) {
+      authRequest.authUrl = customAuthUrl;
+    }
     try {
       authRequest.requestedPermissions = JSON.parse(permissionsArea.val());
       var clientData = clientDataArea.val();
@@ -8909,6 +8915,8 @@
   function toggleDevOptions() {
     returnURL.val("auto#");
     lang.val("default");
+    authUrlArea.val("");
+    authUrlArea.parent().parent().toggle();
     lang.parent().parent().toggle();
     referer.parent().parent().toggle();
     returnURL.parent().parent().toggle();

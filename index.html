@@ -108,6 +108,15 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="authUrlArea" class="col-sm-4 col-form-label">
+                            Auth app URL<br><small>Leave empty for the platform default. Must match one of the
+                                platform's <b>access:trustedAuthUrls</b> entries.</small></label>
+                        <div class="col-sm-6">
+                            <input id='authUrlArea' class="form-control" name='authUrlArea' type='text' value=''
+                                placeholder='https://pryv.github.io/app-web-user-account/auth' />
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="languageCode" class="col-sm-4 col-form-label">Language</label>
                         <div class="col-sm-6">
                             <select name='languageCode' id='languageCode' class="form-control">
