@@ -18,7 +18,7 @@
     "pryv": "^3.5.0"
   },
   "devDependencies": {
-    "backloop.dev": "^3.0.2",
+    "backloop.dev": "git+https://github.com/perki/backloop.dev-node.git#v5.1.0",
     "esbuild": "^0.28.1",
     "gh-pages": "^6.3.0"
   },
