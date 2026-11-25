@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "jquery": "^3.7.1",
-    "pryv": "^3.5.0"
+    "pryv": "^3.20.0"
   },
   "devDependencies": {
     "backloop.dev": "git+https://github.com/perki/backloop.dev-node.git#v5.1.0",
