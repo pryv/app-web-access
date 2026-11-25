@@ -171,7 +171,7 @@ function requestAccess() {
           logToConsole('# Error resolving access from key: ' + err);
         }
       }
-      if (state.id === Pryv.Browser.AuthStates.LOGOUT) {
+      if (state.id === Pryv.Browser.AuthStates.SIGNOUT) {
         logToConsole('# Logout');
       }
     };
