@@ -1,5 +1,16 @@
 (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __esm = (fn, res, err) => function __init() {
+    if (err) throw err[0];
+    try {
+      return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+    } catch (e) {
+      throw err = [e], e;
+    }
+  };
   var __commonJS = (cb, mod) => function __require() {
     try {
       return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -7,6 +18,19 @@
       throw mod = 0, e;
     }
   };
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
   // node_modules/jquery/dist/jquery.js
   var require_jquery = __commonJS({
@@ -6569,25 +6593,36 @@
          * @param {string|Navigator} [navigator] - Navigator object or user agent string (for testing)
          * @returns {boolean} True if mobile or tablet
          */
-        browserIsMobileOrTablet: function(navigator) {
-          if (navigator == null) {
+        browserIsMobileOrTablet: function(navigator2) {
+          if (navigator2 == null) {
             return false;
           }
           let check = false;
           (function(a) {
             if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
-          })(navigator.userAgent || navigator.vendor || navigator.opera);
+          })(navigator2.userAgent || navigator2.vendor || navigator2.opera);
           return check;
         },
         /**
-         * Remove Pryv-specific query parameters from URL
+         * Remove the one-shot Pryv auth-completion query parameters from a URL,
+         * keeping any long-lived `pryv*` params intact.
+         *
+         * Both casings are stripped:
+         *   - Modern lowercase: `pryvKey`, `pryvPoll`
+         *   - Legacy capital-Y: `prYv<anything>` (anything starting with `prYv`)
+         *
+         * `pryv*` params that are NOT in the modern allowlist (e.g.
+         * `pryvServiceInfoUrl`, `pryvApiEndpoint`) are intentionally preserved —
+         * they are not one-shot.
+         *
          * @memberof pryv.utils
          * @param {string} url - URL to clean
-         * @returns {string} URL without prYv* parameters
+         * @returns {string} URL without the one-shot auth-completion params
          */
         cleanURLFromPrYvParams: function(url) {
-          const PRYV_REGEXP = /[?#&]+prYv([^=&]+)=([^&]*)/g;
-          return url.replace(PRYV_REGEXP, "");
+          const LEGACY = /[?#&]+prYv([^=&]+)=([^&]*)/g;
+          const MODERN = /[?#&]+(pryvKey|pryvPoll)=([^&]*)/g;
+          return url.replace(LEGACY, "").replace(MODERN, "");
         },
         /**
          * Parse a wire-format access reference into `{ base, serial }`
@@ -6638,6 +6673,23 @@
           return ref.base + ":" + ref.serial;
         },
         /**
+         * Whether a value is an http(s) URL: the only kind ever navigated to or
+         * opened, and loaded from the sign-in button HTML of a service.
+         * @memberof pryv.utils
+         * @private
+         * @param {*} value
+         * @param {string} [base] - base URL, for a relative value (default: the page)
+         * @returns {boolean}
+         */
+        isHttpUrl: function(value, base = globalThis.location?.href) {
+          if (typeof value !== "string" || value === "") return false;
+          try {
+            return ["http:", "https:"].includes(new URL(value, base || void 0).protocol);
+          } catch (e) {
+            return false;
+          }
+        },
+        /**
          * Extract query parameters from a URL
          * @memberof pryv.utils
          * @param {string} url - URL to parse
@@ -6650,7 +6702,11 @@
             QUERY_REGEXP,
             // @ts-ignore - replace callback is used for side effects
             function(m, key, value) {
-              vars[key] = decodeURIComponent(value);
+              try {
+                vars[key] = decodeURIComponent(value);
+              } catch (e) {
+                vars[key] = value;
+              }
             }
           );
           return vars;
@@ -6676,6 +6732,8 @@
           this.id = void 0;
           this.status = void 0;
           this.response = void 0;
+          Object.defineProperty(this, "innerObject", { enumerable: false });
+          Object.defineProperty(this, "response", { enumerable: false });
           if (Error.captureStackTrace) {
             Error.captureStackTrace(this, _PryvError);
           }
@@ -6718,15 +6776,245 @@
           super(message);
           this.name = "MfaRequiredError";
           this.mfaToken = mfaToken;
+          this.method = body && body.mfaMethod;
           this.id = apiErr && apiErr.id || "mfa-required";
           this.status = response && response.status;
           this.response = { body, status: response && response.status };
+          Object.defineProperty(this, "mfaToken", { enumerable: false });
           if (Error.captureStackTrace) {
             Error.captureStackTrace(this, _MfaRequiredError);
           }
         }
       };
       module.exports = MfaRequiredError;
+    }
+  });
+
+  // node_modules/pryv/src/SharedSecrets.js
+  var require_SharedSecrets = __commonJS({
+    "node_modules/pryv/src/SharedSecrets.js"(exports, module) {
+      function parseKey(key) {
+        if (typeof key !== "string") return null;
+        const parts = key.split(".");
+        if (parts.length !== 2 || parts[0].length === 0 || parts[1].length === 0) return null;
+        return { id: parts[0], randomPart: parts[1] };
+      }
+      function base64url(bytes) {
+        let binary = "";
+        for (const b of new Uint8Array(bytes)) binary += String.fromCharCode(b);
+        const b64 = typeof btoa === "function" ? btoa(binary) : Buffer.from(binary, "binary").toString("base64");
+        return b64.replace(/=+$/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      }
+      function toHex(buffer) {
+        return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+      }
+      function subtle() {
+        const c = globalThis.crypto;
+        if (c == null || c.subtle == null) {
+          throw new Error("Web Crypto is unavailable \u2014 Node 20+ or a secure browser context is required.");
+        }
+        return c.subtle;
+      }
+      function randomPart() {
+        const bytes = new Uint8Array(24);
+        globalThis.crypto.getRandomValues(bytes);
+        return base64url(bytes);
+      }
+      async function sha256Hex(value) {
+        const data = new TextEncoder().encode(value);
+        return toHex(await subtle().digest("SHA-256", data));
+      }
+      async function hmacSha256Hex(verifierSecret, message) {
+        const enc = new TextEncoder();
+        const cryptoKey = await subtle().importKey(
+          "raw",
+          enc.encode(verifierSecret),
+          { name: "HMAC", hash: "SHA-256" },
+          false,
+          ["sign"]
+        );
+        return toHex(await subtle().sign("HMAC", cryptoKey, enc.encode(message)));
+      }
+      async function create(connection, params) {
+        const { signature, ...rest } = params || {};
+        const body = { ...rest };
+        let key = null;
+        if (signature != null && signature.type === "hmac-sha256") {
+          const random = randomPart();
+          body.keyHash = await sha256Hex(random);
+          body.signature = {
+            type: "hmac-sha256",
+            value: await hmacSha256Hex(signature.verifierSecret, random)
+          };
+          const hmacRes = (
+            /** @type {any} */
+            await connection.post("shared-secrets", body)
+          );
+          return { ...hmacRes.sharedSecret, key: hmacRes.sharedSecret.id + "." + random };
+        }
+        if (signature != null) body.signature = signature;
+        const res = (
+          /** @type {any} */
+          await connection.post("shared-secrets", body)
+        );
+        key = res.sharedSecret.key;
+        return { ...res.sharedSecret, key };
+      }
+      async function retrieve(apiEndpoint, key, options = {}) {
+        const body = { key };
+        if (options.passphrase != null) {
+          body.signature = { type: "secret", payload: options.passphrase };
+        } else if (options.verifierSecret != null) {
+          const parsed2 = parseKey(key);
+          if (parsed2 == null) throw new Error("Malformed shared-secret key.");
+          body.signature = {
+            type: "hmac-sha256",
+            payload: await hmacSha256Hex(options.verifierSecret, parsed2.randomPart)
+          };
+        }
+        const base = apiEndpoint.endsWith("/") ? apiEndpoint : apiEndpoint + "/";
+        const res = await fetch(base + "shared-secrets/retrieve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const parsed = await res.json();
+        if (!res.ok) {
+          const err = (
+            /** @type {Error & { id?: string, returnUrl?: string }} */
+            new Error(parsed?.error?.message || "Shared secret unavailable.")
+          );
+          err.id = parsed?.error?.data?.id || parsed?.error?.id;
+          err.returnUrl = parsed?.error?.data?.returnUrl;
+          throw err;
+        }
+        return parsed;
+      }
+      async function status(connection, key) {
+        const res = await connection.post("shared-secrets/status", { key });
+        return res.sharedSecret;
+      }
+      module.exports = {
+        create,
+        retrieve,
+        status,
+        parseKey,
+        hmacSha256Hex,
+        sha256Hex
+      };
+    }
+  });
+
+  // node_modules/pryv/src/lib/handoff.js
+  var require_handoff = __commonJS({
+    "node_modules/pryv/src/lib/handoff.js"(exports, module) {
+      var utils = require_utils();
+      var SharedSecrets = require_SharedSecrets();
+      var PryvError = require_PryvError();
+      var TTL_MS = 10 * 60 * 1e3;
+      var cache = /* @__PURE__ */ new Map();
+      var inflight = /* @__PURE__ */ new Map();
+      function cacheGet(key) {
+        if (key == null) return null;
+        const entry = cache.get(key);
+        if (entry == null) return null;
+        if (Date.now() > entry.expiresAt) {
+          cache.delete(key);
+          return null;
+        }
+        return entry;
+      }
+      function sweep() {
+        const now = Date.now();
+        for (const [k, entry] of cache) {
+          if (now > entry.expiresAt) cache.delete(k);
+        }
+      }
+      function cacheSet(key, value) {
+        if (key == null) return;
+        sweep();
+        cache.set(key, Object.assign({}, value, { expiresAt: Date.now() + TTL_MS }));
+      }
+      function cacheClear(key) {
+        if (arguments.length === 0) cache.clear();
+        else cache.delete(key);
+      }
+      function isHandoffBody(body) {
+        return body != null && body.handoff != null && body.handoff.type === "shared-secret" && typeof body.handoff.key === "string";
+      }
+      async function resolveHandoff(pollBody, cacheKey) {
+        const cached = cacheGet(cacheKey);
+        if (cached != null) return cached;
+        if (cacheKey != null && inflight.has(cacheKey)) return inflight.get(cacheKey);
+        const promise = doResolve(pollBody, cacheKey);
+        if (cacheKey == null) return promise;
+        inflight.set(cacheKey, promise);
+        try {
+          return await promise;
+        } finally {
+          inflight.delete(cacheKey);
+        }
+      }
+      async function doResolve(pollBody, cacheKey) {
+        let result;
+        try {
+          result = await SharedSecrets.retrieve(pollBody.apiEndpoint, pollBody.handoff.key);
+        } catch (err) {
+          const pe = new PryvError(
+            "Credential hand-off could not be retrieved (" + (err && (err.id || err.message)) + "); restart the auth request.",
+            err
+          );
+          pe.id = "credential-handoff-failed";
+          throw pe;
+        }
+        const secret = result && result.secret || {};
+        if (typeof secret.token !== "string" || typeof secret.apiEndpoint !== "string") {
+          const pe = new PryvError("Credential hand-off returned an incomplete secret.");
+          pe.id = "credential-handoff-failed";
+          throw pe;
+        }
+        const { endpoint } = utils.extractTokenAndAPIEndpoint(secret.apiEndpoint);
+        const apiEndpoint = utils.buildAPIEndpoint({ endpoint, token: secret.token });
+        const entry = { apiEndpoint, username: secret.username, token: secret.token };
+        cacheSet(cacheKey, entry);
+        return entry;
+      }
+      module.exports = { resolveHandoff, isHandoffBody, cacheGet, cacheSet, cacheClear };
+    }
+  });
+
+  // node_modules/pryv/src/lib/pollUrls.js
+  var require_pollUrls = __commonJS({
+    "node_modules/pryv/src/lib/pollUrls.js"(exports, module) {
+      var MAX_ENTRIES = 1e3;
+      var TTL_MS = 60 * 60 * 1e3;
+      var pollUrls = /* @__PURE__ */ new Map();
+      function sweep() {
+        const now = Date.now();
+        for (const [key, entry] of pollUrls) {
+          if (now > entry.expiresAt) pollUrls.delete(key);
+        }
+      }
+      function remember(key, pollUrl) {
+        if (typeof key !== "string" || key === "" || typeof pollUrl !== "string" || !/^https?:\/\//.test(pollUrl)) return;
+        sweep();
+        pollUrls.delete(key);
+        pollUrls.set(key, { pollUrl, expiresAt: Date.now() + TTL_MS });
+        while (pollUrls.size > MAX_ENTRIES) pollUrls.delete(pollUrls.keys().next().value);
+      }
+      function lookup(key) {
+        const entry = pollUrls.get(key);
+        if (entry == null) return null;
+        if (Date.now() > entry.expiresAt) {
+          pollUrls.delete(key);
+          return null;
+        }
+        return entry.pollUrl;
+      }
+      function clear() {
+        pollUrls.clear();
+      }
+      module.exports = { remember, lookup, clear, MAX_ENTRIES, TTL_MS };
     }
   });
 
@@ -6819,7 +7107,8 @@
           loadCSS(this.relativeURL(this._assets["lib-js"].buttonSignIn.css));
         }
         /**
-         * Get HTML for Login Button
+         * Get HTML for Login Button, as the service sends it: untrusted, never write it
+         * with `innerHTML` (the default button rebuilds it from an allow-list)
          * @returns {Promise<string>} Promise resolving to HTML string
          */
         async loginButtonGetHTML() {
@@ -6837,6 +7126,7 @@
       };
       module.exports = ServiceAssets;
       function loadCSS(url) {
+        if (document.getElementById(url) != null) return;
         const head = document.getElementsByTagName("head")[0];
         const link = document.createElement("link");
         link.id = url;
@@ -7146,33 +7436,37 @@
          * Get username for this connection.
          * It's async as it's constructed from access info.
          * @returns {Promise<string>} Promise resolving to the username
+         * @throws {PryvError} If the server answers access-info with an error, as
+         *   `accessInfo()` does (server's error on `innerObject`)
          */
         async username() {
           const accessInfo = await this.accessInfo();
-          if (accessInfo.error) {
-            throw new PryvError(
-              "Failed fetching accessinfo: " + accessInfo.error.message,
-              accessInfo.error
-            );
-          }
           return accessInfo.user.username;
         }
         /**
          * Get access info for this connection.
          *
-         * Memoized per-Connection: the first call fetches from the server and
-         * caches the result; subsequent calls return the cached copy in O(1).
-         * Pass `forceRefresh: true` to invalidate the cache and fetch a fresh
-         * copy from the server — used internally by `connection.socket` to
-         * react to `accessUpdated` server-push events. A failed server
-         * fetch leaves any prior cached value intact.
+         * Memoized per-Connection: the first successful call fetches from the
+         * server and caches the result; subsequent calls return the cached copy
+         * in O(1). Pass `forceRefresh: true` to invalidate the cache and fetch a
+         * fresh copy from the server — used internally by `connection.socket` to
+         * react to `accessUpdated` server-push events.
+         *
+         * Only a successful answer is cached: a failure is never cached, so the
+         * next call asks the server again, and a failed refresh leaves any prior
+         * cached value intact.
          *
          * @param {boolean} [forceRefresh=false] - bypass + refresh the cache
          * @returns {Promise<AccessInfo>} Promise resolving to the access info
+         * @throws {PryvError} If the server answers with an error (for example
+         *   `invalid-access-token` for an unknown, expired or deleted token), as
+         *   `apiOne()` does: the message names the method and the server's error id
+         *   and message, the server's error is on `innerObject`.
          */
         async accessInfo(forceRefresh = false) {
           if (!forceRefresh && this._accessInfoCache != null) return this._accessInfoCache;
           const fresh = await this.get("access-info", null);
+          if (fresh.error) throw apiCallError("getAccessInfo", fresh.error);
           this._accessInfoCache = fresh;
           return fresh;
         }
@@ -7200,18 +7494,16 @@
          * @param {Object|Array} [params={}] - The params associated with this method
          * @param {string} [expectedKey] - If given, returns the value of this key or throws an error if not present
          * @returns {Promise<Object>} Promise resolving to the API result or the value of expectedKey
-         * @throws {Error} If .error is present in the response or expectedKey is missing
+         * @throws {Error} If .error is present in the response or expectedKey is missing.
+         *   The message names the method and the server's error id and message; the full
+         *   error (or result) is on `innerObject`. The call's params are never in the message:
+         *   they can carry passwords and tokens, and error messages end up in logs and on screen.
          */
         async apiOne(method, params = {}, expectedKey) {
           const result = await this.api([{ method, params }]);
           if (result[0] == null || result[0].error || expectedKey != null && result[0][expectedKey] == null) {
-            const innerObject = result[0]?.error || result;
-            throw new PryvError(
-              `Error for api method: "${method}" with params: ${JSON.stringify(
-                params
-              )} >> Result: ${JSON.stringify(innerObject)}"`,
-              innerObject
-            );
+            const reason = result[0] == null ? "no result" : `"${expectedKey}" missing in result`;
+            throw apiCallError(method, result[0]?.error, result, reason);
           }
           if (expectedKey != null) return result[0][expectedKey];
           return result[0];
@@ -7229,17 +7521,16 @@
           try {
             accessInfo = await this.accessInfo();
           } catch (e) {
-            if (e.response?.body?.error?.id === "invalid-access-token") {
+            if (e.innerObject?.id === "invalid-access-token") {
               return null;
             }
             if (throwOnFail) throw e;
             return null;
           }
           try {
-            const result = usingConnection.apiOne("accesses.delete", {
+            return await usingConnection.apiOne("accesses.delete", {
               id: accessInfo.id
             });
-            return result;
           } catch (e) {
             if (throwOnFail) throw e;
             return null;
@@ -7252,12 +7543,16 @@
           if (!Array.isArray(arrayOfAPICalls)) {
             throw new Error("Connection.api() takes an array as input");
           }
+          const chunkSize = this.options.chunkSize;
+          if (!Number.isInteger(chunkSize) || chunkSize < 1) {
+            throw new Error("Connection options.chunkSize must be a positive integer, got: " + chunkSize);
+          }
           const res = [];
           let percent = 0;
-          for (let cursor = 0; arrayOfAPICalls.length >= cursor; cursor += this.options.chunkSize) {
+          for (let cursor = 0; cursor < arrayOfAPICalls.length; cursor += chunkSize) {
             const thisBatch = [];
             const cursorMax = Math.min(
-              cursor + this.options.chunkSize,
+              cursor + chunkSize,
               arrayOfAPICalls.length
             );
             for (let i = cursor; i < cursorMax; i++) {
@@ -7268,14 +7563,10 @@
             }
             const resRequest = await callHandler(thisBatch);
             if (!resRequest || !Array.isArray(resRequest.results)) {
-              throw new Error(
-                "API call result is not an Array: " + JSON.stringify(resRequest)
-              );
+              throw new PryvError("API call result is not an Array", resRequest);
             }
             if (resRequest.results.length !== thisBatch.length) {
-              throw new Error(
-                "API call result Array does not match request: " + JSON.stringify(resRequest)
-              );
+              throw new PryvError("API call result Array does not match request", resRequest);
             }
             for (let i = 0; i < resRequest.results.length; i++) {
               if (arrayOfAPICalls[i + cursor].handleResult) {
@@ -7327,7 +7618,7 @@
          */
         async _postFetchRaw(path, data, contentType) {
           const headers = {
-            Authorization: this.token,
+            ...await this._authHeaders("POST", this.endpoint + path),
             Accept: "application/json"
           };
           if (contentType) {
@@ -7340,6 +7631,18 @@
           });
           const body = await response.json();
           return { response, body };
+        }
+        /**
+         * @protected
+         * Authentication headers for a request. The base Connection sends the
+         * bearer token as-is; {@link SignedConnection} overrides this to attach a
+         * per-request DPoP (RFC 9449) proof. Async because a proof requires signing.
+         * @param {string} method - HTTP method (informs the proof's `htm`)
+         * @param {string} url - full request URL WITHOUT query (informs `htu`)
+         * @returns {Promise<Object>} header map to merge into the request
+         */
+        async _authHeaders(method, url) {
+          return { Authorization: this.token };
         }
         /**
          * GET from API and return results
@@ -7368,7 +7671,7 @@
           }
           const response = await fetch(this.endpoint + path + queryStr, {
             headers: {
-              Authorization: this.token,
+              ...await this._authHeaders("GET", this.endpoint + path),
               Accept: "application/json"
             }
           });
@@ -7398,13 +7701,32 @@
          * Streamed get Event.
          * @see https://api.pryv.com/reference/#get-events
          * @param {Object} queryParams See `events.get` parameters
-         * @param {Function} forEachEvent Function taking one event as parameter. Will be called for each event
+         * @param {Function} forEachEvent Function taking one event as parameter. Will be called for each event.
+         *   May be async: the returned promise resolves once every callback's promise has settled, and rejects if one rejects.
          * @returns {Promise<Object>} Promise to result.body transformed with `eventsCount: {count}` replacing `events: [...]`
          */
         async getEventsStreamed(queryParams, forEachEvent) {
-          const myParser = jsonParser(forEachEvent, queryParams.includeDeletions);
+          let inFlight = 0;
+          let firstError = null;
+          let onIdle = null;
+          const onEvent = (event) => {
+            const result = forEachEvent(event);
+            if (result != null && typeof result.then === "function") {
+              inFlight++;
+              Promise.resolve(result).catch((err) => {
+                if (firstError == null) firstError = err;
+              }).finally(() => {
+                if (--inFlight === 0 && onIdle != null) onIdle();
+              });
+            }
+          };
+          const myParser = jsonParser(onEvent, queryParams.includeDeletions);
           const res = await libGetEventStreamed(this, queryParams, myParser);
           const now = getTimestamp();
+          if (inFlight > 0) await new Promise((resolve) => {
+            onIdle = resolve;
+          });
+          if (firstError != null) throw firstError;
           this._handleMeta(res.body, now);
           return res.body;
         }
@@ -7448,7 +7770,7 @@
         /**
          * Create an event with attached file
          * NODE.jS ONLY
-         * @param {Event} event
+         * @param {PryvEvent} event
          * @param {string} filePath
          */
         async createEventWithFile(event, filePath) {
@@ -7463,10 +7785,7 @@
           const formData = new FormData();
           formData.append("event", JSON.stringify(event));
           formData.append("file", fileBlob, fileName);
-          const now = getTimestamp();
-          const { body } = await this._postFetchRaw("events", formData);
-          this._handleMeta(body, now);
-          return body;
+          return this._postEventFormData(formData);
         }
         /**
          * Create an event from a Buffer
@@ -7485,12 +7804,25 @@
         /**
          * Create an event with attached formData
          * !! BROWSER ONLY
-         * @param {Event} event
+         * @param {PryvEvent} event
          * @param {FormData} formData https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData
          */
         async createEventWithFormData(event, formData) {
           formData.append("event", JSON.stringify(event));
+          return this._postEventFormData(formData);
+        }
+        /**
+         * @private
+         * Post a multipart event creation and refine `deltaTime` from the
+         * response's `meta`, like every other API call. Shared by the three
+         * attachment upload methods.
+         * @param {FormData} formData - carries the `event` field and the file(s)
+         * @returns {Promise<Object>} the response body
+         */
+        async _postEventFormData(formData) {
+          const now = getTimestamp();
           const { body } = await this._postFetchRaw("events", formData);
+          this._handleMeta(body, now);
           return body;
         }
         /**
@@ -7563,6 +7895,12 @@
       function getTimestamp() {
         return Date.now() / 1e3;
       }
+      function apiCallError(method, error, answer, reason) {
+        if (error) {
+          reason = [error.id, error.message].filter((v) => v != null && v !== "").join(": ") || "error answer";
+        }
+        return new PryvError(`Error for api method: "${method}" >> ${reason}`, error || answer);
+      }
       var MIME_TYPES = {
         ".png": "image/png",
         ".jpg": "image/jpeg",
@@ -7609,6 +7947,8 @@
       var utils = require_utils();
       var PryvError = require_PryvError();
       var MfaRequiredError = require_MfaRequiredError();
+      var handoff = require_handoff();
+      var pollUrls = require_pollUrls();
       var Assets = require_ServiceAssets();
       var Service = class _Service {
         constructor(serviceInfoUrl, serviceCustomizations) {
@@ -7757,9 +8097,7 @@
             throw new MfaRequiredError(body.mfaToken, response, body);
           }
           if (!body || !body.token) {
-            throw new PryvError(
-              "Invalid login response: " + JSON.stringify(body)
-            );
+            throw new PryvError("Invalid login response: no token", body);
           }
           return new Connection(
             _Service.buildAPIEndpoint(await this.info(), username, body.token),
@@ -7807,9 +8145,7 @@
           });
           if (!response.ok) throw PryvError.fromApiResponse(response, body);
           if (!body || !body.token) {
-            throw new PryvError(
-              "mfa.verify did not return a token: " + JSON.stringify(body)
-            );
+            throw new PryvError("mfa.verify did not return a token", body);
           }
           return new Connection(
             _Service.buildAPIEndpoint(await this.info(), userId, body.token),
@@ -7836,6 +8172,12 @@
          * Resolve an email address to a username on this service.
          * One round-trip via `GET <register>/<email>/uid`.
          *
+         * On multi-core services where the platform stores identifiers hashed,
+         * the queried node may not host the user and answers `307` with the
+         * home node's URL in `{ server }`. `fetch` follows the redirect
+         * transparently; for HTTP clients that do not auto-follow, this method
+         * also follows the `{ server }` hint once explicitly.
+         *
          * @param {string} email - The email to look up
          * @returns {Promise<string|null>} The username, or `null` if unknown
          * @throws {PryvError} on network errors or non-404 API errors
@@ -7843,7 +8185,12 @@
         async userIdForEmail(email) {
           const serviceInfo = await this.info();
           const url = serviceInfo.register + encodeURIComponent(email) + "/uid";
-          const { response, body } = await utils.fetchGet(url);
+          let { response, body } = await utils.fetchGet(url);
+          if (response.status === 307 && body && body.server) {
+            const home = body.server.endsWith("/") ? body.server : body.server + "/";
+            const homeUrl = home + "reg/" + encodeURIComponent(email) + "/uid";
+            ({ response, body } = await utils.fetchGet(homeUrl));
+          }
           if (response.ok) return body && (body.uid || body.username) || null;
           if (response.status === 404) return null;
           throw PryvError.fromApiResponse(response, body);
@@ -7951,9 +8298,9 @@
               email: opts.email,
               hosting,
               language,
-              invitationToken
+              invitationToken,
+              ...opts.referer != null && { referer: opts.referer }
             };
-            if (opts.referer != null) payload.referer = opts.referer;
           } else {
             url = serviceInfo.register + "user";
             payload = {
@@ -7963,9 +8310,9 @@
               email: opts.email,
               hosting,
               languageCode: language,
-              invitationtoken: invitationToken
+              invitationtoken: invitationToken,
+              ...opts.referer != null && { referer: opts.referer }
             };
-            if (opts.referer != null) payload.referer = opts.referer;
           }
           const { response, body } = await utils.fetchPost(url, payload);
           if (!response.ok) throw PryvError.fromApiResponse(response, body);
@@ -8004,13 +8351,33 @@
          * @param {Object} authRequest - The auth-request body
          * @param {string} authRequest.requestingAppId
          * @param {Array<{ streamId: string, level: string, defaultName: string }>} authRequest.requestedPermissions
+         * @param {Object} [authRequest.consent] - Says how the consent screen
+         *   should present each requested permission. `mandatory` and `optIn`
+         *   name permission ids (a stream permission's `streamId`, a feature
+         *   permission's `feature`); an id in neither list is optional and
+         *   shown pre-selected. Ignored by cores that predate it, so the flow
+         *   falls back to all-or-nothing rather than failing: the returned
+         *   `consent` tells you which happened.
+         * @param {boolean} [authRequest.consent.allowUserChoice=false] - false
+         *   means the user may only accept the whole set or deny.
+         * @param {string[]} [authRequest.consent.mandatory] - ids the user
+         *   cannot leave out.
+         * @param {string[]} [authRequest.consent.optIn] - ids offered NOT
+         *   pre-selected, so the user has to choose them.
          * @param {string} [authRequest.languageCode='en']
-         * @param {string|boolean} [authRequest.returnUrl]
+         * @param {string} [authRequest.returnURL] - URL the auth page returns
+         *   to after the decision, sent as is (the 'auto#' / 'self#' shortcuts
+         *   are resolved only by the sign-in button, not here).
          * @param {string} [authRequest.referer]
          * @param {Object} [authRequest.clientData]
          * @param {string} [authRequest.deviceName]
          * @param {number} [authRequest.expireAfter]
-         * @returns {Promise<{ key: string, authUrl: string, poll: string, pollRateMs: number }>}
+         * @param {boolean} [authRequest.actAsManagedOnly] - true: the access must
+         *   be granted for an account the user manages; requires `actAs: 'allow'`
+         *   or a username.
+         * @returns {Promise<{ key: string, authUrl: string, poll: string, pollRateMs: number, consent?: Object, cmcInvites?: Array<Object>, actAsManagedOnly?: true }>}
+         *   `consent`, `cmcInvites` and `actAsManagedOnly` are echoed back only by
+         *   a core that understood them, which is how you detect support.
          * @throws {PryvError} on non-2xx
          */
         async startAccessRequest(authRequest) {
@@ -8026,27 +8393,35 @@
           );
           if (!response.ok) throw PryvError.fromApiResponse(response, body);
           if (!body || !body.key || !body.poll) {
-            throw new PryvError(
-              "Invalid access-request response: " + JSON.stringify(body)
-            );
+            throw new PryvError("Invalid access-request response: no key or poll", body);
           }
-          return {
+          const envelope = {
             key: body.key,
             authUrl: body.authUrl || body.url,
             poll: body.poll,
             pollRateMs: body.poll_rate_ms != null ? body.poll_rate_ms : body.pollRateMs
           };
+          if (body.consent != null) envelope.consent = body.consent;
+          if (body.cmcInvites != null) envelope.cmcInvites = body.cmcInvites;
+          if (body.actAsManagedOnly === true) envelope.actAsManagedOnly = true;
+          pollUrls.remember(envelope.key, envelope.poll);
+          return envelope;
         }
         /**
          * Poll an in-progress access request once. Accepts either:
-         *   - a `key` returned by `startAccessRequest` (poll URL is built from
+         *   - a `key` returned by `startAccessRequest` (polls the poll URL the
+         *     server issued for it when this process started the request, else
          *     `serviceInfo.access + key`)
          *   - a full poll URL (use as-is — recommended, since the server-issued
-         *     URL is canonical and may include a different subdomain).
+         *     URL is canonical and may point at a specific core: on a multi-core
+         *     platform `access + key` can reach a core that does not know the
+         *     request).
          *
          * Returns the raw body. Inspect `body.status` to drive the flow:
          *   - `'NEED_SIGNIN'` → user has not interacted yet; keep polling.
-         *   - `'ACCEPTED'`    → `body.apiEndpoint` + `body.username` + `body.token` are set.
+         *   - `'ACCEPTED'`    → `body.apiEndpoint` + `body.username`, plus either
+         *     `body.token` (inline) or a one-time `body.handoff` key (shared-secret
+         *     delivery). Prefer `connectFromKey`, which handles both shapes.
          *   - `'REFUSED'`     → user declined.
          *
          * @param {string} keyOrPollUrl
@@ -8059,8 +8434,11 @@
           }
           let pollUrl = keyOrPollUrl;
           if (!/^https?:\/\//.test(keyOrPollUrl)) {
-            const serviceInfo = await this.info();
-            pollUrl = serviceInfo.access + keyOrPollUrl;
+            pollUrl = pollUrls.lookup(keyOrPollUrl);
+            if (pollUrl == null) {
+              const serviceInfo = await this.info();
+              pollUrl = serviceInfo.access + keyOrPollUrl;
+            }
           }
           const { response, body } = await utils.fetchGet(pollUrl);
           if (response.status === 403 && body && body.status === "REFUSED") {
@@ -8077,23 +8455,44 @@
          * `key` returned by the auth-flow (not the underlying token /
          * apiEndpoint), and uses this method to build a working `Connection`.
          *
-         * The implementation polls `<access>/<key>` once; the call MUST be
-         * made while the access is still in the ACCEPTED state (which
-         * persists until expiry — see `expireAfter` on the access request).
+         * The implementation polls the request once (at the server-issued poll
+         * URL when this process started it, else `<access>/<key>`, which may
+         * miss the request on a multi-core platform); the call MUST be
+         * made while the access request is still readable in the ACCEPTED
+         * state. Servers keep a decided request only for a short retention
+         * window after it is first polled (default 2 minutes, operator setting
+         * `access.terminalRetentionMs`), so call this promptly after the flow
+         * completes; afterwards the key is unknown. (`expireAfter` on the
+         * access request is the lifetime of the access created, not of the key.)
+         *
+         * When the request asked for shared-secret delivery the ACCEPTED body
+         * carries a one-time `handoff` key instead of the token; this redeems it
+         * exactly once and caches the result keyed by `key`, so it is safe to call
+         * more than once for the same key (the second call reuses the cache rather
+         * than hitting the already-consumed one-time secret). A retrieve that finds
+         * the secret gone throws a `PryvError` (id `credential-handoff-failed`);
+         * restart the auth request.
          *
          * @param {string} key - polling key from `startAccessRequest`
          * @returns {Promise<Connection>}
          * @throws {PryvError} if the key is not ACCEPTED (NEED_SIGNIN, REFUSED, ERROR)
+         *   or the hand-off secret could not be retrieved
          */
         async connectFromKey(key) {
           if (!key) {
             throw new PryvError("connectFromKey requires a key");
           }
+          const cached = handoff.cacheGet(key);
+          if (cached != null) return new Connection(cached.apiEndpoint, this);
           const body = await this.pollAccessRequest(key);
           if (body.status !== "ACCEPTED") {
             throw new PryvError(
               "connectFromKey: access is not ACCEPTED (status=" + body.status + ")"
             );
+          }
+          if (handoff.isHandoffBody(body)) {
+            const entry = await handoff.resolveHandoff(body, key);
+            return new Connection(entry.apiEndpoint, this);
           }
           if (!body.apiEndpoint) {
             throw new PryvError(
@@ -8144,6 +8543,94 @@
     }
   });
 
+  // node_modules/pryv/src/dpopProof.js
+  var require_dpopProof = __commonJS({
+    "node_modules/pryv/src/dpopProof.js"(exports, module) {
+      var subtle = globalThis.crypto.subtle;
+      var textEncoder = new TextEncoder();
+      function base64url(bytes) {
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        return btoa(binary).replace(/=+$/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      }
+      async function sha256base64url(str) {
+        const digest = await subtle.digest("SHA-256", textEncoder.encode(str));
+        return base64url(new Uint8Array(digest));
+      }
+      function stripQuery(url) {
+        const parsed = new URL(url);
+        return parsed.origin + parsed.pathname;
+      }
+      async function createDPoPProof({ keyPair, htm, htu, accessToken }) {
+        const jwk = await subtle.exportKey("jwk", keyPair.publicKey);
+        const header = {
+          typ: "dpop+jwt",
+          alg: "ES256",
+          jwk: { kty: jwk.kty, crv: jwk.crv, x: jwk.x, y: jwk.y }
+        };
+        const payload = {
+          jti: globalThis.crypto.randomUUID(),
+          htm,
+          htu: stripQuery(htu),
+          iat: Math.floor(Date.now() / 1e3)
+        };
+        if (accessToken != null) payload.ath = await sha256base64url(accessToken);
+        const signingInput = base64url(textEncoder.encode(JSON.stringify(header))) + "." + base64url(textEncoder.encode(JSON.stringify(payload)));
+        const signature = await subtle.sign(
+          { name: "ECDSA", hash: "SHA-256" },
+          keyPair.privateKey,
+          textEncoder.encode(signingInput)
+        );
+        return signingInput + "." + base64url(new Uint8Array(signature));
+      }
+      module.exports = { createDPoPProof };
+    }
+  });
+
+  // node_modules/pryv/src/SignedConnection.js
+  var require_SignedConnection = __commonJS({
+    "node_modules/pryv/src/SignedConnection.js"(exports, module) {
+      var Connection = require_Connection();
+      var { createDPoPProof } = require_dpopProof();
+      var SignedConnection = class extends Connection {
+        /**
+         * @param {string} apiEndpoint - Pryv API endpoint carrying the DPoP-bound token
+         * @param {CryptoKeyPair} keyPair - the ES256 key the token is bound to
+         * @param {Service} [service] - optional pre-built Service
+         */
+        constructor(apiEndpoint, keyPair, service) {
+          super(apiEndpoint, service);
+          if (keyPair == null || keyPair.privateKey == null || keyPair.publicKey == null) {
+            throw new Error("SignedConnection: an ES256 CryptoKeyPair ({ publicKey, privateKey }) is required");
+          }
+          this._dpopKeyPair = keyPair;
+        }
+        /**
+         * @protected
+         * @override
+         * Attach a per-request DPoP proof and present the token under the DPoP
+         * scheme. `url` is the request URL without query — the proof's `htu`.
+         * @param {string} method
+         * @param {string} url
+         * @returns {Promise<Object>}
+         */
+        async _authHeaders(method, url) {
+          const proof = await createDPoPProof({
+            keyPair: this._dpopKeyPair,
+            htm: method,
+            htu: url,
+            accessToken: this.token
+          });
+          return {
+            Authorization: "DPoP " + this.token,
+            DPoP: proof
+          };
+        }
+      };
+      module.exports = SignedConnection;
+    }
+  });
+
   // node_modules/pryv/src/Auth/AuthStates.js
   var require_AuthStates = __commonJS({
     "node_modules/pryv/src/Auth/AuthStates.js"(exports, module) {
@@ -8154,7 +8641,8 @@
         NEED_SIGNIN: "NEED_SIGNIN",
         AUTHORIZED: "ACCEPTED",
         SIGNOUT: "SIGNOUT",
-        REFUSED: "REFUSED"
+        REFUSED: "REFUSED",
+        SWITCHING: "SWITCHING"
       };
     }
   });
@@ -8178,15 +8666,277 @@
         SIGNOUT_CONFIRM: {
           en: "Logout?",
           fr: "Se d\xE9connecter ?"
+        },
+        MENU_TITLE: {
+          en: "Account",
+          fr: "Compte"
+        },
+        LOGOUT: {
+          en: "Log out",
+          fr: "Se d\xE9connecter"
+        },
+        MANAGE_ACCOUNT: {
+          en: "Manage my account",
+          fr: "G\xE9rer mon compte"
+        },
+        APP: {
+          en: "app",
+          fr: "app"
+        },
+        CLOSE: {
+          en: "Close",
+          fr: "Fermer"
+        },
+        CANCEL: {
+          en: "Cancel",
+          fr: "Annuler"
+        },
+        LOGOUT_ALL: {
+          en: "Log out of all accounts",
+          fr: "Se d\xE9connecter de tous les comptes"
+        },
+        MANAGE_ACCOUNT_OF: {
+          en: "Manage {username}'s account",
+          fr: "G\xE9rer le compte de {username}"
+        },
+        USE_FOR: {
+          en: "Use this app for",
+          fr: "Utiliser cette app pour"
+        },
+        ME: {
+          en: "me",
+          fr: "moi"
+        },
+        VIA: {
+          en: "via",
+          fr: "via"
+        },
+        ACTING_AS: {
+          en: "acting as",
+          fr: "pour le compte"
+        },
+        SWITCH_BACK: {
+          en: "Switch back to {username}",
+          fr: "Revenir \xE0 {username}"
+        },
+        SWITCHING: {
+          en: "Switching...",
+          fr: "Changement..."
+        },
+        OTHER_ACCOUNT: {
+          en: "Another account...",
+          fr: "Un autre compte..."
+        },
+        UNAVAILABLE: {
+          en: "no longer available",
+          fr: "plus disponible"
         }
       };
       function get(languageCode, definitions) {
-        const myMessages = definitions || Messages;
+        const myMessages = Object.assign({}, Messages, definitions || {});
+        if (definitions?.LOGOUT_CONFIRM && !definitions.SIGNOUT_CONFIRM) myMessages.SIGNOUT_CONFIRM = definitions.LOGOUT_CONFIRM;
         const res = {};
         Object.keys(myMessages).forEach((key) => {
           res[key] = myMessages[key][languageCode] || myMessages[key].en;
         });
         return res;
+      }
+    }
+  });
+
+  // node_modules/pryv/src/Auth/ProfileStore.js
+  var require_ProfileStore = __commonJS({
+    "node_modules/pryv/src/Auth/ProfileStore.js"(exports, module) {
+      module.exports = {
+        DEFAULT_LIMIT: 5,
+        read,
+        write,
+        activate,
+        remove,
+        markUnavailable,
+        profileOf,
+        fromAccepted,
+        carriesToken,
+        platformOf,
+        normalizedUrl,
+        forPlatform
+      };
+      var utils = require_utils();
+      function carriesToken(apiEndpoint) {
+        try {
+          return Boolean(utils.extractTokenAndAPIEndpoint(apiEndpoint).token);
+        } catch (e) {
+          return false;
+        }
+      }
+      function platformOf(service) {
+        const url = service?._serviceInfoUrl;
+        if (url) return normalizedUrl(String(url));
+        return "inline:" + (service?.infoSync?.()?.access ?? "");
+      }
+      function normalizedUrl(url) {
+        try {
+          const normalized = new URL(url, globalThis.document?.baseURI ?? globalThis.location?.href);
+          normalized.hash = "";
+          return normalized.href;
+        } catch (e) {
+          return url;
+        }
+      }
+      function forPlatform(stored, platform, adoptUnbound) {
+        if (stored == null || typeof stored !== "object") return null;
+        if (stored.platform != null) return stored.platform === platform ? stored : null;
+        return adoptUnbound ? stored : null;
+      }
+      function read(stored) {
+        const store = { active: null, profiles: [], authUrl: void 0 };
+        if (stored == null || typeof stored !== "object" || stored.deleted === true) return store;
+        if (typeof stored.authUrl === "string") store.authUrl = stored.authUrl;
+        if (typeof stored.platform === "string") store.platform = stored.platform;
+        if (Array.isArray(stored.profiles)) {
+          store.profiles = stored.profiles.filter(isProfile).map(profileOf);
+        }
+        if (isProfile(stored)) {
+          const active = profileOf(stored);
+          store.profiles = [active].concat(store.profiles.filter((p) => p.username !== active.username));
+          store.active = active;
+        }
+        return store;
+      }
+      function write(store) {
+        if (store.profiles.length === 0) return null;
+        const data = {};
+        if (store.active != null) {
+          data.apiEndpoint = store.active.apiEndpoint;
+          data.username = store.active.username;
+          if (store.active.actingAs != null) data.actingAs = store.active.actingAs;
+          if (store.active.permissionsFingerprint != null) data.permissionsFingerprint = store.active.permissionsFingerprint;
+        }
+        if (store.authUrl != null) data.authUrl = store.authUrl;
+        if (store.platform != null) data.platform = store.platform;
+        data.profiles = store.profiles.map(profileOf);
+        return data;
+      }
+      function activate(store, profile, limit) {
+        const max = Math.max(1, limit || module.exports.DEFAULT_LIMIT);
+        const active = profileOf(profile);
+        const profiles = [active].concat(store.profiles.filter((p) => p.username !== active.username));
+        return Object.assign({}, store, { active, profiles: profiles.slice(0, max) });
+      }
+      function remove(store, username) {
+        const profiles = store.profiles.filter((p) => p.username !== username);
+        const active = store.active != null && store.active.username !== username ? store.active : null;
+        return Object.assign({}, store, { active, profiles });
+      }
+      function markUnavailable(store, username) {
+        const mark = (p) => p.username === username ? Object.assign(profileOf(p), { unavailable: true }) : p;
+        const profiles = store.profiles.map(mark);
+        const active = store.active != null && store.active.username === username ? null : store.active;
+        return Object.assign({}, store, { active, profiles });
+      }
+      function profileOf(p) {
+        const profile = { username: p.username, apiEndpoint: p.apiEndpoint };
+        if (p.actingAs != null && typeof p.actingAs.delegate === "string") {
+          profile.actingAs = { username: p.username, delegate: p.actingAs.delegate };
+        }
+        if (p.unavailable === true) profile.unavailable = true;
+        if (typeof p.permissionsFingerprint === "string") profile.permissionsFingerprint = p.permissionsFingerprint;
+        return profile;
+      }
+      function isProfile(p) {
+        return p != null && typeof p.username === "string" && typeof p.apiEndpoint === "string";
+      }
+      function fromAccepted(body, permissionsFingerprint) {
+        const profile = { username: body.username, apiEndpoint: body.apiEndpoint };
+        if (typeof permissionsFingerprint === "string") profile.permissionsFingerprint = permissionsFingerprint;
+        const d = body.delegation;
+        if (d != null && d.isDelegatedAccess === true && d.controlledUsername === body.username && typeof d.delegate?.username === "string") {
+          profile.actingAs = { username: body.username, delegate: d.delegate.username };
+        }
+        return profile;
+      }
+    }
+  });
+
+  // node_modules/pryv/src/Auth/pollOutcome.js
+  var require_pollOutcome = __commonJS({
+    "node_modules/pryv/src/Auth/pollOutcome.js"(exports, module) {
+      var AuthStates = require_AuthStates();
+      module.exports = {
+        invalidAuthUrlError,
+        invalidAuthUrlState,
+        refusedState,
+        unreadableAnswerState
+      };
+      function refusedState(body, serviceInfo) {
+        return { status: AuthStates.REFUSED, reasonId: body?.reasonId, message: body?.message, serviceInfo };
+      }
+      function unreadableAnswerState(body) {
+        return { status: AuthStates.ERROR, message: "Cannot fetch result", error: body?.error ?? body };
+      }
+      function invalidAuthUrlError() {
+        return Object.assign(new Error("Invalid auth URL"), { id: "invalid-auth-url" });
+      }
+      function invalidAuthUrlState() {
+        const error = invalidAuthUrlError();
+        return { status: AuthStates.ERROR, message: error.message, error };
+      }
+    }
+  });
+
+  // node_modules/pryv/src/Auth/permissionsCoverage.js
+  var require_permissionsCoverage = __commonJS({
+    "node_modules/pryv/src/Auth/permissionsCoverage.js"(exports, module) {
+      module.exports = {
+        missingPermissions,
+        permissionsFingerprint
+      };
+      var COVERED_BY = {
+        read: ["read", "contribute", "manage"],
+        "create-only": ["create-only", "contribute", "manage"],
+        contribute: ["contribute", "manage"],
+        manage: ["manage"]
+      };
+      function missingPermissions(requestedPermissions, accessInfo) {
+        const requested = streamPermissions(requestedPermissions).filter((p) => p.level !== "none");
+        if (accessInfo?.type === "personal") return [];
+        const granted = streamPermissions(accessInfo?.permissions);
+        return requested.filter((r) => {
+          const id = withoutLocalPrefix(r.streamId);
+          return !granted.some((g) => {
+            const grantedId = withoutLocalPrefix(g.streamId);
+            return (grantedId === id || grantedId === "*") && covers(g.level, r.level);
+          });
+        }).map((r) => Object.assign({}, r));
+      }
+      function permissionsFingerprint(requestedPermissions) {
+        const entries = streamPermissions(requestedPermissions).map((p) => JSON.stringify([p.streamId, p.level])).sort();
+        return fnv1a(entries.join(","));
+      }
+      function withoutLocalPrefix(streamId) {
+        const PREFIX = ":local:";
+        let id = streamId;
+        for (let i = 0; i < 8 && id.startsWith(PREFIX); i++) {
+          id = id.slice(PREFIX.length);
+          if (id === "") return "*";
+        }
+        return id;
+      }
+      function covers(grantedLevel, requestedLevel) {
+        const coveredBy = COVERED_BY[requestedLevel] ?? [requestedLevel];
+        return coveredBy.includes(grantedLevel);
+      }
+      function streamPermissions(permissions) {
+        if (!Array.isArray(permissions)) return [];
+        return permissions.filter((p) => p != null && typeof p === "object" && p.feature == null && typeof p.streamId === "string");
+      }
+      function fnv1a(str) {
+        let hash = 2166136261;
+        for (let i = 0; i < str.length; i++) {
+          hash ^= str.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        return (hash >>> 0).toString(16).padStart(8, "0");
       }
     }
   });
@@ -8197,6 +8947,12 @@
       var utils = require_utils();
       var AuthStates = require_AuthStates();
       var Messages = require_LoginMessages();
+      var ProfileStore = require_ProfileStore();
+      var handoff = require_handoff();
+      var pollUrls = require_pollUrls();
+      var PryvError = require_PryvError();
+      var { invalidAuthUrlError, refusedState, unreadableAnswerState } = require_pollOutcome();
+      var { missingPermissions, permissionsFingerprint } = require_permissionsCoverage();
       var AuthController = class {
         /**
          * Create an AuthController
@@ -8215,9 +8971,13 @@
             });
           }
           this.service = service;
+          this.platform = ProfileStore.platformOf(service);
+          this._adoptUnbound = !pageNamesAPlatform();
           this.languageCode = this.settings.authRequest.languageCode || "en";
           this.messages = Messages(this.languageCode);
           this.loginButton = loginButton;
+          this._authFlowId = 0;
+          this._switchPrevious = null;
           function validateSettings(settings2) {
             if (!settings2) {
               throw new Error("settings cannot be null");
@@ -8232,6 +8992,11 @@
             if (!settings2.authRequest.requestedPermissions) {
               throw new Error("Missing settings.authRequest.requestedPermissions");
             }
+            if (settings2.authRequest.credentialHandoff === "inline") {
+              delete settings2.authRequest.credentialHandoff;
+            } else if (settings2.authRequest.credentialHandoff == null) {
+              settings2.authRequest.credentialHandoff = "shared-secret";
+            }
           }
         }
         /**
@@ -8239,16 +9004,23 @@
          * @returns {Promise<Service>} Promise resolving to the Service instance
          */
         async init() {
+          cancelAuthFlow(this);
+          const flowId = this._authFlowId;
           this.serviceInfo = this.service.infoSync();
           this.state = { status: AuthStates.LOADING };
           this.assets = await loadAssets(this);
           const loginButton = this.loginButton;
+          let notSignedIn = null;
           if (loginButton != null) {
-            this.stateChangeListeners.push(loginButton.onStateChange.bind(loginButton));
-            await checkAutoLogin(this);
+            if (!this._loginButtonListenerRegistered) {
+              this.stateChangeListeners.push(loginButton.onStateChange.bind(loginButton));
+              this._loginButtonListenerRegistered = true;
+            }
+            notSignedIn = await checkAutoLogin(this);
+            if (this._authFlowId !== flowId) return this.service;
           }
           if (this.state.status !== AuthStates.AUTHORIZED) {
-            this.state = { status: AuthStates.INITIALIZED, serviceInfo: this.serviceInfo };
+            this.state = Object.assign({ status: AuthStates.INITIALIZED, serviceInfo: this.serviceInfo }, notSignedIn);
           }
           if (loginButton != null && loginButton.finishAuthProcessAfterRedirection != null) {
             await loginButton.finishAuthProcessAfterRedirection(this);
@@ -8259,6 +9031,7 @@
          * Stops poll for auth request
          */
         stopAuthRequest(msg) {
+          cancelAuthFlow(this);
           this.state = { status: AuthStates.ERROR, message: msg };
         }
         /**
@@ -8267,9 +9040,32 @@
          */
         async handleClick() {
           if (isAuthorized.call(this)) {
+            const loginButton = this.loginButton;
+            if (loginButton != null && typeof loginButton.showMenu === "function" && loginButton.showMenu() !== false) {
+              return;
+            }
             this.state = { status: AuthStates.SIGNOUT };
           } else if (isInitialized.call(this)) {
-            this.startAuthRequest();
+            const started = this.startAuthRequest();
+            const flowId = this._authFlowId;
+            started.catch((e) => {
+              const status = this.state?.status;
+              if (status === AuthStates.NEED_SIGNIN && this._authFlowId === flowId) {
+                this.state = { status: AuthStates.ERROR, message: "Error while polling for auth request", error: e };
+              } else if (status !== AuthStates.ERROR && status !== AuthStates.AUTHORIZED) {
+                console.warn("pryv: sign-in request failed", e);
+              }
+            });
+          } else if (this.state.status === AuthStates.SWITCHING) {
+          } else if (this.state.status === AuthStates.ERROR) {
+            try {
+              await this.init();
+            } catch (e) {
+              if (this.state.status === AuthStates.LOADING) {
+                this.state = { status: AuthStates.ERROR, message: "Initializing", error: e };
+              }
+              throw e;
+            }
           } else if (isNeedSignIn.call(this)) {
             this.state = this._state;
           } else {
@@ -8279,30 +9075,227 @@
             return this.state.status === AuthStates.AUTHORIZED;
           }
           function isInitialized() {
-            return this.state.status === AuthStates.INITIALIZED;
+            return this.state.status === AuthStates.INITIALIZED || this.state.status === AuthStates.REFUSED;
           }
           function isNeedSignIn() {
             return this.state.status === AuthStates.NEED_SIGNIN;
           }
         }
         /**
+         * Log out: emit SIGNOUT once, forget the active account and return to
+         * INITIALIZED. The other remembered accounts are kept (`all` forgets them
+         * too). This is the confirmed logout (no further confirmation).
+         * @param {Object} [options]
+         * @param {boolean} [options.all] - forget every remembered account
+         * @returns {Promise<void>}
+         */
+        async signOut(options) {
+          const all = options?.all === true;
+          cancelAuthFlow(this);
+          const store = this._readProfiles();
+          const loginButton = this.loginButton;
+          const stored = loginButton?.getAuthorizationData?.();
+          const current = this.state?.username ?? this.state?.from;
+          this._signingOut = true;
+          try {
+            this.state = { status: AuthStates.SIGNOUT };
+          } finally {
+            this._signingOut = false;
+          }
+          if (this._authFlowKey != null) handoff.cacheClear(this._authFlowKey);
+          const others = current == null ? store.profiles : ProfileStore.remove(store, current).profiles;
+          if (!all && others.length > 0 && loginButton != null && typeof loginButton.saveAuthorizationData === "function") {
+            this._saveProfiles(Object.assign({}, store, { active: null, profiles: others }));
+          } else if (loginButton != null && typeof loginButton.deleteAuthorizationData === "function") {
+            const raw = await stored;
+            if (this._isOurs(raw) || current != null && raw.platform == null) await loginButton.deleteAuthorizationData();
+          }
+          await this.init();
+        }
+        /**
+         * The accounts remembered for this app, most recently used first.
+         * @returns {Array<{username: string, actingAs?: {username: string, delegate: string}, active: boolean, available: boolean}>}
+         */
+        profiles() {
+          const current = this.currentProfile();
+          return this._readProfiles().profiles.map((p) => {
+            const out = { username: p.username, active: current != null && current.username === p.username, available: p.unavailable !== true };
+            if (p.actingAs != null) out.actingAs = p.actingAs;
+            return out;
+          });
+        }
+        /**
+         * The signed-in account, or null.
+         * @returns {{username: string, actingAs?: {username: string, delegate: string}}|null}
+         */
+        currentProfile() {
+          if (this.state?.status !== AuthStates.AUTHORIZED || this.state.profile == null) return null;
+          const out = { username: this.state.profile.username };
+          if (this.state.profile.actingAs != null) out.actingAs = this.state.profile.actingAs;
+          return out;
+        }
+        /**
+         * Switch to another account. `username` null means the signed-in person's
+         * own account (switch back). A remembered account whose access is still
+         * valid is activated without a sign-in; otherwise the auth request runs
+         * again, asking for that account (`actAs`). Emits SWITCHING first; ends in
+         * AUTHORIZED, or back on the previous account when the sign-in is refused.
+         * @param {string|null} username
+         * @returns {Promise<void>}
+         */
+        async switchTo(username) {
+          const store = this._readProfiles();
+          const current = this.currentProfile();
+          let target;
+          if (username == null) {
+            if (current != null && current.actingAs == null) return;
+            const delegate = current?.actingAs?.delegate;
+            target = delegate != null ? store.profiles.find((p) => p.username === delegate && p.actingAs == null) : store.profiles.find((p) => p.actingAs == null);
+          } else {
+            if (current != null && current.username === username) return;
+            target = store.profiles.find((p) => p.username === username);
+          }
+          const toUsername = target?.username ?? username ?? null;
+          const previous = restorableState(this.state);
+          cancelAuthFlow(this);
+          const flowId = this._authFlowId;
+          this.state = { status: AuthStates.SWITCHING, from: current?.username ?? null, to: toUsername };
+          if (target != null && target.unavailable !== true) {
+            let info;
+            try {
+              info = await this._accessInfo(target.apiEndpoint);
+            } catch (e) {
+              if (this._authFlowId !== flowId) throw e;
+              this.state = previous ?? { status: AuthStates.INITIALIZED, serviceInfo: this.serviceInfo };
+              throw e;
+            }
+            if (this._authFlowId !== flowId) return;
+            if (info != null && info.error == null) {
+              const profile = profileFromAccessInfo(target, info);
+              const state = { status: AuthStates.AUTHORIZED, username: profile.username, apiEndpoint: profile.apiEndpoint, profile };
+              const missing = missingPermissions(this.settings.authRequest.requestedPermissions, info);
+              if (missing.length > 0) state.missingPermissions = missing;
+              this.state = state;
+              return;
+            }
+            if (!ACCESS_GONE_ERRORS.includes(info?.error?.id)) {
+              this.state = previous ?? { status: AuthStates.INITIALIZED, serviceInfo: this.serviceInfo };
+              throw new PryvError("Cannot check the access of " + target.username + ": " + (info?.error?.id ?? "unexpected answer"), info?.error);
+            }
+            this._saveProfiles(ProfileStore.markUnavailable(this._readProfiles(), target.username));
+          }
+          await this.startAuthRequest({ actAs: username == null ? "deny" : username }, previous);
+        }
+        /**
+         * Sign in to one more account (the popup may offer the accounts the person
+         * can act for); the remembered accounts are kept.
+         * @returns {Promise<void>}
+         */
+        async addAccount() {
+          const current = this.currentProfile();
+          const previous = restorableState(this.state);
+          this.state = { status: AuthStates.SWITCHING, from: current?.username ?? null, to: null };
+          await this.startAuthRequest({ actAs: "allow" }, previous);
+        }
+        /**
+         * The requested stream permissions that an access does not cover (empty
+         * when it covers them all): see `pryv.Auth.missingPermissions`.
+         * @param {Object} accessInfo - as `connection.accessInfo()` returns it
+         * @returns {Array<Object>}
+         */
+        missingPermissions(accessInfo) {
+          return missingPermissions(this.settings.authRequest.requestedPermissions, accessInfo);
+        }
+        /**
+         * @private Fingerprint of this app's requested stream permissions, stored with each
+         * sign-in made through the auth request.
+         * @returns {string}
+         */
+        _requestedPermissionsFingerprint() {
+          return permissionsFingerprint(this.settings.authRequest.requestedPermissions);
+        }
+        /**
+         * @private The access-info of a stored account (`{ error }` when refused).
+         * @param {string} apiEndpoint
+         */
+        async _accessInfo(apiEndpoint) {
+          const Connection = require_Connection();
+          try {
+            return await new Connection(apiEndpoint).accessInfo(true);
+          } catch (e) {
+            if (e instanceof PryvError && e.innerObject != null) return { error: e.innerObject };
+            throw e;
+          }
+        }
+        /** @internal The remembered accounts of this platform. */
+        _readProfiles() {
+          const loginButton = this.loginButton;
+          if (loginButton == null || typeof loginButton.getAuthorizationData !== "function") return ProfileStore.read(null);
+          return ProfileStore.read(this._stored(loginButton.getAuthorizationData()));
+        }
+        /** @private What the storage holds, when it belongs to this platform (else null). */
+        _stored(raw) {
+          return ProfileStore.forPlatform(raw, this.platform, this._adoptUnbound);
+        }
+        /** @private False when the storage holds (`raw`) the sign-in of another platform, or may. */
+        _isOurs(raw) {
+          if (raw == null || typeof raw !== "object" || raw.deleted === true) return true;
+          return this._stored(raw) != null;
+        }
+        /** @private */
+        _saveProfiles(store) {
+          const loginButton = this.loginButton;
+          if (loginButton == null || typeof loginButton.saveAuthorizationData !== "function") return;
+          const data = ProfileStore.write(Object.assign({}, store, { platform: this.platform }));
+          if (data == null && typeof loginButton.deleteAuthorizationData === "function") {
+            const raw = loginButton.getAuthorizationData();
+            if (typeof raw?.then !== "function" && this._isOurs(raw)) loginButton.deleteAuthorizationData();
+          } else if (data != null) {
+            loginButton.saveAuthorizationData(data);
+          }
+        }
+        /**
+         * URL of the account app (profile page) for this platform, or null when
+         * it cannot be determined. Resolution order: `settings.accountUrl`, then
+         * the service's `account`, then the auth page URL of the last auth
+         * request with its trailing `/auth` removed.
+         * @returns {string|null}
+         */
+        accountUrl() {
+          let base = this.settings.accountUrl || this.serviceInfo?.account || accountUrlFromAuthUrl(this._authUrl);
+          if (!utils.isHttpUrl(base)) return null;
+          base = base.replace(/\/+$/, "");
+          const serviceInfoUrl = this.service?._serviceInfoUrl;
+          return base + "/account/profile" + (serviceInfoUrl ? "?pryvServiceInfoUrl=" + encodeURIComponent(serviceInfoUrl) : "");
+        }
+        /**
+         * Open the account app in a new tab.
+         * @returns {string|null} the URL opened, or null when unknown
+         */
+        openAccountApp() {
+          const url = this.accountUrl();
+          if (url != null) window.open(url, "_blank", "noopener");
+          return url;
+        }
+        /**
          * Compute the return URL for authentication redirect.
          * Used only in browser environments.
-         * @param {string} [returnURL] - The return URL setting ('auto#', 'self#', or custom URL)
+         * @param {string|false} [returnURL] - The return URL setting ('auto#', 'self#', or custom URL)
          * @param {string} [windowLocationForTest] - Mock window.location.href for testing
-         * @param {string|Navigator} [navigatorForTests] - Mock navigator for testing
+         * @param {string|Navigator} [navigatorForTests] - Mock navigator for testing (defaults to the browser's own)
          * @returns {string|boolean} The computed return URL, or false if using popup mode
          */
         getReturnURL(returnURL2, windowLocationForTest, navigatorForTests) {
           const RETURN_URL_AUTO = "auto";
+          const nav = navigatorForTests ?? globalThis.navigator;
           returnURL2 = returnURL2 || RETURN_URL_AUTO + "#";
           const trailer = returnURL2.slice(-1);
           if ("#&?".indexOf(trailer) < 0) {
             throw new Error('Pryv access: Last character of --returnURL setting-- is not "?", "&" or "#": ' + returnURL2);
           }
-          if (returnUrlIsAuto(returnURL2) && !utils.browserIsMobileOrTablet(navigatorForTests)) {
+          if (returnUrlIsAuto(returnURL2) && !utils.browserIsMobileOrTablet(nav)) {
             return false;
-          } else if (returnUrlIsAuto(returnURL2) && utils.browserIsMobileOrTablet(navigatorForTests) || returnURL2.indexOf("self") === 0) {
+          } else if (returnUrlIsAuto(returnURL2) && utils.browserIsMobileOrTablet(nav) || returnURL2.indexOf("self") === 0) {
             const locationHref = windowLocationForTest || window.location.href;
             returnURL2 = locationHref + returnURL2.substring(4);
           }
@@ -8313,53 +9306,109 @@
         }
         /**
          * Start the authentication request and polling process
+         * @param {Object} [overrides] - auth request fields for this request only (e.g. `actAs`)
+         * @param {Object} [previous] - AUTHORIZED state to return to when this
+         *   request (an account switch) does not end in AUTHORIZED
          * @returns {Promise<void>}
          * @see https://pryv.github.io/reference/#auth-request
          */
-        async startAuthRequest() {
-          this.state = await postAccess.call(this);
+        async startAuthRequest(overrides, previous) {
+          cancelAuthFlow(this);
+          const flowId = this._authFlowId;
+          this._switchPrevious = previous ?? null;
+          const requested = await postAccess.call(this);
+          if (this._authFlowId !== flowId) return;
+          this.state = requested;
           this._authFlowKey = this.state?.key;
+          pollUrls.remember(this.state?.key, this.state?.poll);
+          if (this.state?.authUrl) this._authUrl = this.state.authUrl;
           await doPolling.call(this);
           async function postAccess() {
             try {
+              const request = Object.assign({}, this.settings.authRequest, overrides);
+              if (request.actAs === "deny") delete request.actAsManagedOnly;
               const { response, body } = await utils.fetchPost(
                 // @ts-ignore - this is bound via .call()
                 this.serviceInfo.access,
-                // @ts-ignore - this is bound via .call()
-                this.settings.authRequest
+                request
               );
               if (!response.ok) {
-                throw new Error("Access request failed: " + JSON.stringify(body));
+                throw PryvError.fromApiResponse(response, body);
+              }
+              const authUrl = body?.authUrl || body?.url;
+              if (authUrl != null && !utils.isHttpUrl(authUrl)) {
+                throw invalidAuthUrlError();
               }
               return body;
             } catch (e) {
-              this.state = {
+              if (this._authFlowId !== flowId) throw e;
+              const previous2 = this._switchPrevious;
+              this._switchPrevious = null;
+              this.state = previous2 ?? {
                 status: AuthStates.ERROR,
-                message: "Requesting access",
+                message: e.id === "invalid-auth-url" ? e.message : "Requesting access",
                 error: e
               };
               throw e;
             }
           }
           async function doPolling() {
-            if (this.state?.status !== AuthStates.NEED_SIGNIN) {
+            if (this._authFlowId !== flowId || this.state?.status !== AuthStates.NEED_SIGNIN) {
               return;
             }
             const pollResponse = await pollAccess(this.state?.poll);
+            if (this._authFlowId !== flowId) return;
             if (pollResponse.status === AuthStates.NEED_SIGNIN) {
-              setTimeout(await doPolling.bind(this), this.state?.poll_rate_ms);
+              setTimeout(() => {
+                doPolling.call(this).catch((e) => {
+                  if (this._authFlowId !== flowId) return;
+                  const previous2 = this._switchPrevious;
+                  this._switchPrevious = null;
+                  if (previous2 != null) console.warn("pryv: account switch did not complete (polling failed); keeping the previous account");
+                  this.state = previous2 ?? { status: AuthStates.ERROR, message: "Error while polling for auth request", error: e };
+                });
+              }, this.state?.poll_rate_ms);
             } else {
+              if (handoff.isHandoffBody(pollResponse)) {
+                try {
+                  const entry = await handoff.resolveHandoff(pollResponse, this._authFlowKey);
+                  pollResponse.apiEndpoint = entry.apiEndpoint;
+                  pollResponse.token = entry.token;
+                  pollResponse.username = entry.username;
+                  delete pollResponse.handoff;
+                } catch (e) {
+                  if (this._authFlowId !== flowId) return;
+                  const previous3 = this._switchPrevious;
+                  this._switchPrevious = null;
+                  if (previous3 != null) console.warn("pryv: account switch did not complete (credential hand-off failed); keeping the previous account");
+                  this.state = previous3 ?? { status: AuthStates.ERROR, message: "Credential hand-off failed", error: e };
+                  return;
+                }
+                if (this._authFlowId !== flowId) return;
+              }
               if (this._authFlowKey != null && pollResponse.key == null) {
                 pollResponse.key = this._authFlowKey;
+              }
+              const previous2 = this._switchPrevious;
+              this._switchPrevious = null;
+              if (pollResponse.status === AuthStates.AUTHORIZED) {
+                pollResponse.profile = ProfileStore.fromAccepted(pollResponse, this._requestedPermissionsFingerprint());
+              } else if (previous2 != null) {
+                console.warn("pryv: account switch did not complete (" + (pollResponse?.error?.id ?? pollResponse?.message ?? pollResponse?.status) + "); keeping the previous account");
+                this.state = previous2;
+                return;
+              } else if (pollResponse.status === AuthStates.REFUSED) {
+                this.state = refusedState(pollResponse, this.serviceInfo);
+                if (this._authFlowId !== flowId) return;
+                this.state = { status: AuthStates.INITIALIZED, serviceInfo: this.serviceInfo };
+                return;
               }
               this.state = pollResponse;
             }
             async function pollAccess(pollUrl) {
               try {
-                const { response, body } = await utils.fetchGet(pollUrl);
-                if (response.status === 403 && body?.status === "REFUSED") {
-                  return { status: AuthStates.INITIALIZED };
-                }
+                const { body } = await utils.fetchGet(pollUrl);
+                if (body?.status == null) return unreadableAnswerState(body);
                 return body;
               } catch (e) {
                 return { status: AuthStates.ERROR, message: "Error while polling for auth request", error: e };
@@ -8373,7 +9422,7 @@
           this._state = newState;
           this.stateChangeListeners.forEach((listener) => {
             try {
-              listener(this.state);
+              listener(newState);
             } catch (e) {
               console.log("Error during set state ()", e);
             }
@@ -8392,17 +9441,119 @@
         }
         const out = { status: state.status, id: state.id, key: state.key };
         if (state.serviceInfo != null) out.serviceInfo = state.serviceInfo;
+        if (state.cmcInvites != null) out.cmcInvites = state.cmcInvites;
+        if (state.delegation != null) out.delegation = state.delegation;
         return out;
+      }
+      function accountUrlFromAuthUrl(authUrl) {
+        if (typeof authUrl !== "string") return null;
+        let url;
+        try {
+          url = new URL(authUrl);
+        } catch (e) {
+          return null;
+        }
+        const path = url.pathname.replace(/\/+$/, "");
+        if (!path.endsWith("/auth")) return null;
+        return url.origin + path.slice(0, -"/auth".length);
+      }
+      function pageNamesAPlatform() {
+        const href = globalThis.location?.href;
+        if (typeof href !== "string") return false;
+        const unescaped = href.replace(/%([0-9a-f]{2})/gi, (m, hex) => String.fromCharCode(parseInt(hex, 16)));
+        return /pryvServiceInfoUrl/i.test(href) || /pryvServiceInfoUrl/i.test(unescaped);
       }
       async function checkAutoLogin(authController) {
         const loginButton = authController.loginButton;
         if (loginButton == null) {
           return;
         }
-        const storedCredentials = await loginButton.getAuthorizationData();
-        if (storedCredentials != null) {
-          authController.state = Object.assign({}, { status: AuthStates.AUTHORIZED }, storedCredentials);
+        let storedCredentials = authController._stored(await loginButton.getAuthorizationData());
+        if (storedCredentials == null) return;
+        const stored = ProfileStore.read(storedCredentials);
+        const tokenless = stored.profiles.filter((p) => !ProfileStore.carriesToken(p.apiEndpoint));
+        if (tokenless.length > 0) {
+          authController._saveProfiles(tokenless.reduce((s, p) => ProfileStore.remove(s, p.username), stored));
+          storedCredentials = authController._stored(await loginButton.getAuthorizationData());
+          if (storedCredentials == null) return;
         }
+        if (typeof storedCredentials.authUrl === "string") authController._authUrl = storedCredentials.authUrl;
+        if (Array.isArray(storedCredentials.profiles)) {
+          const store = ProfileStore.read(storedCredentials);
+          if (store.active == null || !ProfileStore.carriesToken(store.active.apiEndpoint)) return;
+          const state2 = { status: AuthStates.AUTHORIZED, username: store.active.username, apiEndpoint: store.active.apiEndpoint, profile: store.active };
+          if (store.authUrl != null) state2.authUrl = store.authUrl;
+          return await signInIfPermitted(authController, state2);
+        }
+        if (typeof storedCredentials.apiEndpoint === "string" && !ProfileStore.carriesToken(storedCredentials.apiEndpoint)) return;
+        const state = Object.assign({}, { status: AuthStates.AUTHORIZED }, storedCredentials);
+        if (typeof state.username === "string" && typeof state.apiEndpoint === "string") {
+          state.profile = ProfileStore.profileOf(state);
+          delete state.permissionsFingerprint;
+        }
+        delete state.platform;
+        return await signInIfPermitted(authController, state);
+      }
+      async function signInIfPermitted(authController, state) {
+        const requested = authController.settings.authRequest.requestedPermissions;
+        const asksForStreams = missingPermissions(requested, null).length > 0;
+        const loginButton = authController.loginButton;
+        const returning = typeof loginButton?.hasAuthReturn === "function" && loginButton.hasAuthReturn() === true;
+        if (!asksForStreams || returning || typeof state.apiEndpoint !== "string") {
+          authController.state = state;
+          return;
+        }
+        const flowId = authController._authFlowId;
+        let info;
+        try {
+          info = await authController._accessInfo(state.apiEndpoint);
+        } catch (e) {
+          info = null;
+        }
+        if (authController._authFlowId !== flowId) return;
+        if (info != null && info.error != null) {
+          if (ACCESS_GONE_ERRORS.includes(info.error.id)) {
+            if (typeof state.username === "string") {
+              authController._saveProfiles(ProfileStore.markUnavailable(authController._readProfiles(), state.username));
+            }
+            return { reasonId: "STORED_ACCESS_REFUSED" };
+          }
+          info = null;
+        }
+        if (info != null) {
+          const missing = missingPermissions(requested, info);
+          if (missing.length > 0) {
+            const delegated = info.delegation?.isDelegatedAccess === true;
+            const storedFingerprint = state.profile?.permissionsFingerprint ?? state.permissionsFingerprint;
+            const askedAlready = storedFingerprint === authController._requestedPermissionsFingerprint();
+            if (!delegated && !askedAlready) {
+              return { reasonId: "MISSING_PERMISSIONS", missingPermissions: missing };
+            }
+            state.missingPermissions = missing;
+          }
+        }
+        authController.state = state;
+      }
+      function profileFromAccessInfo(stored, info) {
+        const profile = { username: stored.username, apiEndpoint: stored.apiEndpoint };
+        if (stored.permissionsFingerprint != null) profile.permissionsFingerprint = stored.permissionsFingerprint;
+        const d = info.delegation;
+        if (d != null && d.isDelegatedAccess === true && typeof d.delegate?.username === "string") {
+          profile.actingAs = { username: stored.username, delegate: d.delegate.username };
+        }
+        return profile;
+      }
+      var ACCESS_GONE_ERRORS = ["invalid-access-token", "forbidden"];
+      function restorableState(state) {
+        if (state?.status !== AuthStates.AUTHORIZED) return null;
+        const restored = { status: AuthStates.AUTHORIZED, username: state.username, apiEndpoint: state.apiEndpoint };
+        if (state.profile != null) restored.profile = state.profile;
+        if (state.authUrl != null) restored.authUrl = state.authUrl;
+        return restored;
+      }
+      function cancelAuthFlow(authController) {
+        authController._authFlowId = (authController._authFlowId || 0) + 1;
+        authController._switchPrevious = null;
       }
       async function loadAssets(authController) {
         let loadedAssets = {};
@@ -8440,26 +9591,122 @@
         set,
         del
       };
-      function set(cookieKey, value, expireInDays) {
+      var EXPIRED = ";expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0";
+      function set(cookieKey, value, expireInDays, options) {
         if (!utils.isBrowser()) return;
         expireInDays = expireInDays || 365;
+        const opts = withDefaults(options);
+        const name = encodeURIComponent(cookieKey);
+        removeCopies(name, opts, opts.path);
         const myDate = /* @__PURE__ */ new Date();
-        const hostName = window.location.hostname;
-        const path = window.location.pathname;
         myDate.setDate(myDate.getDate() + expireInDays);
-        let cookieStr = encodeURIComponent(cookieKey) + "=" + encodeURIComponent(JSON.stringify(value)) + ";expires=" + myDate.toUTCString() + ";domain=." + hostName + ";path=" + path;
-        if (expireInDays >= 0) cookieStr += ";SameSite=Strict";
-        document.cookie = cookieStr;
+        document.cookie = name + "=" + encodeURIComponent(JSON.stringify(value)) + ";expires=" + myDate.toUTCString() + attributes(opts, opts.path, opts.domain);
       }
       function get(cookieKey) {
         const name = encodeURIComponent(cookieKey);
         if (!utils.isBrowser()) return;
-        const value = "; " + document.cookie;
-        const parts = value.split("; " + name + "=");
-        if (parts.length === 2) return JSON.parse(decodeURIComponent(parts.pop().split(";").shift()));
+        const parts = ("; " + document.cookie).split("; " + name + "=");
+        if (parts.length < 2) return;
+        try {
+          return JSON.parse(decodeURIComponent(parts[parts.length - 1].split(";").shift()));
+        } catch (e) {
+          return void 0;
+        }
       }
-      function del(cookieKey) {
-        set(cookieKey, { deleted: true }, -1);
+      function del(cookieKey, options) {
+        if (!utils.isBrowser()) return;
+        removeCopies(encodeURIComponent(cookieKey), withDefaults(options), null);
+      }
+      function withDefaults(options) {
+        const opts = Object.assign({}, options);
+        if (opts.path == null) opts.path = "/";
+        if (opts.secure == null) opts.secure = window.location.protocol === "https:";
+        if (opts.sameSite == null) opts.sameSite = "Strict";
+        return opts;
+      }
+      function attributes(opts, path, domain) {
+        return (domain != null ? ";domain=" + domain : "") + ";path=" + path + ";SameSite=" + opts.sameSite + (opts.secure ? ";Secure" : "");
+      }
+      function removeCopies(name, opts, keepPath) {
+        const legacyDomain = "." + window.location.hostname;
+        const paths = candidatePaths(window.location.pathname);
+        if (!paths.includes(opts.path)) paths.push(opts.path);
+        for (const path of paths) {
+          document.cookie = name + "=" + EXPIRED + attributes(opts, path, legacyDomain);
+          if (opts.domain != null && opts.domain !== legacyDomain) {
+            document.cookie = name + "=" + EXPIRED + attributes(opts, path, opts.domain);
+          }
+          if (path !== keepPath || opts.domain != null) document.cookie = name + "=" + EXPIRED + attributes(opts, path, null);
+        }
+      }
+      function candidatePaths(pathname) {
+        const paths = ["/"];
+        let path = "";
+        for (const segment of pathname.split("/").filter(Boolean)) {
+          path += "/" + segment;
+          paths.push(path, path + "/");
+        }
+        return paths;
+      }
+    }
+  });
+
+  // node_modules/pryv/src/Browser/buttonHtml.js
+  var require_buttonHtml = __commonJS({
+    "node_modules/pryv/src/Browser/buttonHtml.js"(exports, module) {
+      var utils = require_utils();
+      module.exports = { buildButton };
+      var TEXT_ID = "pryv-access-btn-text";
+      var ELEMENTS = ["div", "span", "p", "br", "b", "i", "strong", "em", "small", "img", "a", "button"];
+      var ATTRIBUTES = ["class", "title", "alt", "role", "dir", "lang", "style", "width", "height"];
+      var FALLBACK_HTML = '<div id="pryv-access-btn" class="pryv-access-btn-signin"><span class="pryv-access-btn pryv-access-btn-pryv-access-color"><span id="' + TEXT_ID + '"></span></span></div>';
+      function buildButton(html, doc) {
+        const dropped = /* @__PURE__ */ new Set();
+        let fragment = rebuild(html, doc, dropped);
+        if (!canShowText(fragment.querySelector("#" + TEXT_ID))) {
+          console.warn("pryv: the sign-in button HTML of the service has no usable #" + TEXT_ID + ", using the built-in button");
+          fragment = rebuild(FALLBACK_HTML, doc, /* @__PURE__ */ new Set());
+        }
+        if (dropped.size > 0) {
+          console.warn("pryv: removed from the sign-in button HTML of the service: " + Array.from(dropped).join(", "));
+        }
+        return { fragment, textHolder: fragment.querySelector("#" + TEXT_ID) };
+      }
+      function canShowText(element) {
+        return element != null && !["img", "br"].includes(element.localName);
+      }
+      function rebuild(html, doc, dropped) {
+        const template = doc.createElement("template");
+        template.innerHTML = html;
+        const fragment = doc.createDocumentFragment();
+        copyChildren(template.content, fragment, doc, dropped);
+        return fragment;
+      }
+      function copyChildren(from, to, doc, dropped) {
+        for (const node of Array.from(from.childNodes)) {
+          if (node.nodeType === 3) {
+            to.appendChild(doc.createTextNode(node.nodeValue));
+          } else if (node.nodeType === 1) {
+            const name = node.localName;
+            if (node.namespaceURI !== "http://www.w3.org/1999/xhtml" || !ELEMENTS.includes(name)) {
+              dropped.add("<" + name + ">");
+              continue;
+            }
+            const element = doc.createElement(name);
+            for (const attribute of Array.from(node.attributes)) {
+              if (isAllowed(name, attribute)) element.setAttribute(attribute.name, attribute.value);
+              else dropped.add(attribute.name);
+            }
+            if (name === "button") element.setAttribute("type", "button");
+            copyChildren(node, element, doc, dropped);
+            to.appendChild(element);
+          }
+        }
+      }
+      function isAllowed(elementName, { name, value }) {
+        if (name === "id") return value.startsWith("pryv-access-btn");
+        if (name === "src") return elementName === "img" && utils.isHttpUrl(value, "");
+        return ATTRIBUTES.includes(name) || /^aria-[a-z]+$/.test(name);
       }
     }
   });
@@ -8470,13 +9717,21 @@
       var Cookies = require_CookieUtils();
       var AuthStates = require_AuthStates();
       var AuthController = require_AuthController();
+      var ProfileStore = require_ProfileStore();
+      var { invalidAuthUrlState, refusedState, unreadableAnswerState } = require_pollOutcome();
       var Messages = require_LoginMessages();
+      var handoff = require_handoff();
+      var pollUrls = require_pollUrls();
       var utils = require_utils();
+      var { buildButton } = require_buttonHtml();
+      var PROFILES_COOKIE_SUFFIX = "-profiles";
+      var PROFILES_COOKIE_MAX_LENGTH = 3500;
       var LoginButton = class {
         constructor(authSettings, service) {
           this.authSettings = authSettings;
           this.service = service;
           this.serviceInfo = service.infoSync();
+          this._cookieOptions = cookieOptions(authSettings);
         }
         /**
          * setup button and load assets
@@ -8494,7 +9749,9 @@
           return this.service;
         }
         onClick() {
-          this.auth.handleClick();
+          Promise.resolve(this.auth.handleClick()).catch((e) => {
+            if (this.auth.state?.status !== AuthStates.ERROR) console.warn("pryv: sign-in button click failed", e);
+          });
         }
         async onStateChange(state) {
           switch (state.status) {
@@ -8506,7 +9763,12 @@
               break;
             case AuthStates.NEED_SIGNIN: {
               const loginUrl = state.authUrl || state.url;
+              if (!utils.isHttpUrl(loginUrl)) {
+                this.auth.state = invalidAuthUrlState();
+                return;
+              }
               if (this.authSettings.authRequest.returnURL) {
+                writeAuthFlow(this._cookieKey, { key: state.key, poll: state.poll, authUrl: loginUrl, platform: this.auth?.platform });
                 location.href = loginUrl;
                 return;
               } else {
@@ -8514,39 +9776,141 @@
               }
               break;
             }
-            case AuthStates.AUTHORIZED:
-              this.text = state.username;
-              this.saveAuthorizationData({
-                apiEndpoint: state.apiEndpoint,
-                username: state.username
-              });
+            case AuthStates.AUTHORIZED: {
+              const profile = state.profile || ProfileStore.fromAccepted(state);
+              this.text = profileLabel(this, profile);
+              if (!ProfileStore.carriesToken(profile?.apiEndpoint)) break;
+              const store = this.auth != null ? this.auth._readProfiles() : ProfileStore.read(this.getAuthorizationData());
+              const authUrl = withoutQuery(state.authUrl || this.auth?._authUrl) || store.authUrl;
+              this.saveAuthorizationData(ProfileStore.write(Object.assign(
+                ProfileStore.activate(store, profile, this.authSettings.maxProfiles),
+                { authUrl, platform: this.auth?.platform }
+              )));
+              break;
+            }
+            case AuthStates.SWITCHING:
+              this.text = messagesOf(this).SWITCHING || "...";
               break;
             case AuthStates.SIGNOUT: {
-              const message = this.messages.SIGNOUT_CONFIRM ? this.messages.SIGNOUT_CONFIRM : "Logout ?";
-              if (confirm(message)) {
-                this.deleteAuthorizationData();
-                this.auth.init();
-              }
+              if (this.auth?._signingOut) break;
+              this.openMenu({ confirmLogout: true });
               break;
             }
             case AuthStates.ERROR:
               this.text = getErrorMessage(this, state.message);
               break;
+            case AuthStates.REFUSED:
+              break;
             default:
               console.log("WARNING Unhandled state for Login: " + state.status);
           }
           if (this.loginButtonText) {
-            this.loginButtonText.innerHTML = this.text;
+            this.loginButtonText.textContent = this.text;
           }
         }
-        getAuthorizationData() {
-          return Cookies.get(this._cookieKey);
+        /**
+         * Open the account menu (signed-in account, "Manage my account",
+         * "Log out"). Returns false, and opens nothing, when the menu is disabled
+         * with `settings.menu: false`: the caller then falls back to the logout
+         * confirmation.
+         * @returns {boolean}
+         */
+        showMenu() {
+          if (this.authSettings.menu === false) return false;
+          return this.openMenu({ confirmLogout: false });
         }
+        /**
+         * @private Open the account menu, or (`confirmLogout`) the plain "Log out?"
+         * confirmation used when the menu is disabled.
+         */
+        openMenu({ confirmLogout }) {
+          if (typeof document === "undefined") return false;
+          this.closeMenu();
+          this.menu = buildMenu(this, confirmLogout);
+          document.body.appendChild(this.menu.overlay);
+          this.menu.focusables()[0]?.focus();
+          return true;
+        }
+        /**
+         * Close the account menu if it is open. Dismissing the "Log out?" question
+         * (anything but "Log out") returns to the signed-in state: SIGNOUT was
+         * already emitted by the click, and the button would otherwise stay inert.
+         * @param {boolean} [loggingOut] - closed by the "Log out" action
+         * @returns {Promise<void>} resolves when any re-init it started is done
+         */
+        closeMenu(loggingOut) {
+          if (this.menu == null) return Promise.resolve();
+          const menu = this.menu;
+          this.menu = null;
+          document.removeEventListener("keydown", menu.onKeyDown, true);
+          if (menu.overlay.parentNode != null) menu.overlay.parentNode.removeChild(menu.overlay);
+          const previousFocus = (
+            /** @type {HTMLElement|null} */
+            menu.previousFocus
+          );
+          if (previousFocus != null && typeof previousFocus.focus === "function") {
+            previousFocus.focus();
+          }
+          if (menu.confirmLogout && !loggingOut) {
+            this.pending = this.auth.init().then(() => {
+            }, (e) => {
+              console.log("Error while re-initializing", e);
+            });
+            return this.pending;
+          }
+          return Promise.resolve();
+        }
+        /**
+         * The stored sign-in: the active account from the main cookie (the only
+         * cookie versions without account switching read) and the remembered
+         * accounts from a second one.
+         */
+        getAuthorizationData() {
+          const active = Cookies.get(this._cookieKey);
+          const remembered = Cookies.get(this._cookieKey + PROFILES_COOKIE_SUFFIX);
+          if (remembered == null || !Array.isArray(remembered.profiles)) return active;
+          const signedIn = active != null && active.deleted !== true;
+          if (signedIn && active.platform !== remembered.platform) return active;
+          const data = Object.assign({}, signedIn ? active : {}, { profiles: remembered.profiles });
+          if (!signedIn && remembered.platform != null) data.platform = remembered.platform;
+          if (data.authUrl == null && remembered.authUrl != null) data.authUrl = remembered.authUrl;
+          return data;
+        }
+        /**
+         * Store the sign-in. The main cookie holds the active account only (or is
+         * removed when none is active), so an older version never reads a list of
+         * remembered accounts as a signed-in one.
+         */
         saveAuthorizationData(authData) {
-          Cookies.set(this._cookieKey, authData);
+          const options = this._cookieOptions;
+          if (authData == null) {
+            Cookies.del(this._cookieKey, options);
+            Cookies.del(this._cookieKey + PROFILES_COOKIE_SUFFIX, options);
+            return;
+          }
+          const { profiles, ...active } = authData;
+          if (typeof active.username === "string" && typeof active.apiEndpoint === "string") {
+            Cookies.set(this._cookieKey, active, void 0, options);
+          } else {
+            Cookies.del(this._cookieKey, options);
+          }
+          if (Array.isArray(profiles)) {
+            const remembered = Object.assign(
+              { profiles: profiles.slice() },
+              active.authUrl != null ? { authUrl: active.authUrl } : {},
+              active.platform != null ? { platform: active.platform } : {}
+            );
+            while (remembered.profiles.length > 1 && encodeURIComponent(JSON.stringify(remembered)).length > PROFILES_COOKIE_MAX_LENGTH) {
+              remembered.profiles.pop();
+            }
+            Cookies.set(this._cookieKey + PROFILES_COOKIE_SUFFIX, remembered, void 0, options);
+          } else {
+            Cookies.del(this._cookieKey + PROFILES_COOKIE_SUFFIX, options);
+          }
         }
         async deleteAuthorizationData() {
-          Cookies.del(this._cookieKey);
+          Cookies.del(this._cookieKey, this._cookieOptions);
+          Cookies.del(this._cookieKey + PROFILES_COOKIE_SUFFIX, this._cookieOptions);
         }
         /**
          * not mandatory to implement as non-browsers don't have this behaviour
@@ -8555,32 +9919,125 @@
         async finishAuthProcessAfterRedirection(authController) {
           if (!utils.isBrowser()) return;
           const url = window.location.href;
-          const pollUrl = retrievePollUrl(url);
-          if (pollUrl !== null) {
+          const key = retrieveKey(url);
+          if (key !== null) {
+            const signedIn = authController.state?.status === AuthStates.AUTHORIZED;
+            const flow = readAuthFlow(this._cookieKey);
+            if (flow == null || flow.key !== key || typeof flow.poll !== "string" || typeof flow.platform !== "string" || flow.platform !== authController.platform) {
+              console.warn("pryv: ignoring a sign-in return for a request this page did not start");
+              if (!signedIn) {
+                authController.state = {
+                  status: AuthStates.ERROR,
+                  message: "Sign-in return does not match a sign-in started on this page",
+                  error: { id: "unexpected-auth-return" }
+                };
+              }
+              cleanUrl();
+              return;
+            }
+            clearAuthFlow(this._cookieKey);
+            const pollUrl = flow.poll;
+            pollUrls.remember(key, pollUrl);
+            authController._authFlowKey = key;
+            let body;
             try {
-              const { body } = await utils.fetchGet(pollUrl);
-              authController.state = body;
+              ({ body } = await utils.fetchGet(pollUrl));
             } catch (e) {
-              authController.state = {
+              body = {
                 status: AuthStates.ERROR,
                 message: "Cannot fetch result",
                 error: e
               };
             }
+            if (body?.status === AuthStates.REFUSED && !signedIn) {
+              const flowId = authController._authFlowId;
+              authController.state = refusedState(body, authController.serviceInfo);
+              if (authController._authFlowId === flowId) {
+                authController.state = { status: AuthStates.INITIALIZED, serviceInfo: authController.serviceInfo };
+              }
+              cleanUrl();
+              return;
+            }
+            if (body?.status == null) {
+              body = unreadableAnswerState(body);
+            }
+            if (handoff.isHandoffBody(body)) {
+              try {
+                const entry = await handoff.resolveHandoff(body, key);
+                body.apiEndpoint = entry.apiEndpoint;
+                body.token = entry.token;
+                body.username = entry.username;
+                delete body.handoff;
+              } catch (e) {
+                body = { status: AuthStates.ERROR, message: "Credential hand-off failed", error: e };
+              }
+            }
+            if (body?.status === AuthStates.AUTHORIZED && typeof body.username === "string") {
+              body.profile = ProfileStore.fromAccepted(body, typeof authController._requestedPermissionsFingerprint === "function" ? authController._requestedPermissionsFingerprint() : void 0);
+              if (typeof flow.authUrl === "string") authController._authUrl = flow.authUrl;
+            } else if (signedIn) {
+              console.warn("pryv: sign-in by redirection did not complete (" + (body?.error?.id ?? body?.message ?? body?.status) + "); keeping the signed-in account");
+              cleanUrl();
+              return;
+            }
+            authController.state = body;
+            cleanUrl();
+          } else if (utils.cleanURLFromPrYvParams(url) !== url) {
+            cleanUrl();
           }
-          function retrievePollUrl(url2) {
-            const params = utils.getQueryParamsFromURL(url2);
-            let pollUrl2 = null;
-            if (params.prYvkey) {
-              pollUrl2 = authController.serviceInfo.access + params.prYvkey;
+          function cleanUrl() {
+            if (window.history && typeof window.history.replaceState === "function") {
+              window.history.replaceState(null, "", utils.cleanURLFromPrYvParams(url));
             }
-            if (params.prYvpoll) {
-              pollUrl2 = params.prYvpoll;
-            }
-            return pollUrl2;
           }
         }
+        /**
+         * Whether this page is the return of a sign-in by redirection that this
+         * page started (its key matches the stored flow): the auth controller then
+         * leaves the stored sign-in unchecked, `finishAuthProcessAfterRedirection`
+         * replaces it.
+         * @returns {boolean}
+         */
+        hasAuthReturn() {
+          if (!utils.isBrowser()) return false;
+          const key = retrieveKey(window.location.href);
+          if (key == null) return false;
+          const flow = readAuthFlow(this._cookieKey);
+          return flow != null && flow.key === key && typeof flow.platform === "string" && flow.platform === this.auth?.platform;
+        }
       };
+      function retrieveKey(url) {
+        const params = utils.getQueryParamsFromURL(url);
+        const key = params.pryvKey || params.prYvkey;
+        if (key) return key;
+        const poll = params.pryvPoll || params.prYvpoll;
+        if (poll) return poll.split(/[?#]/)[0].split("/").filter(Boolean).pop() || null;
+        return null;
+      }
+      function authFlowStorageKey(cookieKey) {
+        return cookieKey + "-authflow";
+      }
+      function writeAuthFlow(cookieKey, flow) {
+        try {
+          window.sessionStorage.setItem(authFlowStorageKey(cookieKey), JSON.stringify(flow));
+        } catch (e) {
+        }
+      }
+      function readAuthFlow(cookieKey) {
+        try {
+          const raw = window.sessionStorage.getItem(authFlowStorageKey(cookieKey));
+          const flow = raw == null ? null : JSON.parse(raw);
+          return flow != null && typeof flow === "object" ? flow : null;
+        } catch (e) {
+          return null;
+        }
+      }
+      function clearAuthFlow(cookieKey) {
+        try {
+          window.sessionStorage.removeItem(authFlowStorageKey(cookieKey));
+        } catch (e) {
+        }
+      }
       module.exports = LoginButton;
       async function startLoginScreen(loginButton, authUrl) {
         const screenX = typeof window.screenX !== "undefined" ? window.screenX : window.screenLeft;
@@ -8599,6 +10056,242 @@
           loginButton.popup.focus();
         }
       }
+      var MENU_OPTIONS = ["logout", "account", "switch", "info"];
+      function profileLabel(loginButton, profile) {
+        if (profile?.actingAs == null) return profile?.username;
+        return profile.username + " (" + messagesOf(loginButton).VIA + " " + profile.actingAs.delegate + ")";
+      }
+      function withoutQuery(url) {
+        if (typeof url !== "string") return void 0;
+        try {
+          const u = new URL(url);
+          return u.origin + u.pathname;
+        } catch (e) {
+          return void 0;
+        }
+      }
+      function cookieOptions(settings) {
+        const path = settings?.cookiePath;
+        if (path == null) return { path: "/" };
+        if (typeof path !== "string" || !path.startsWith("/")) {
+          throw new Error('authSettings.cookiePath must be a path starting with "/", got: ' + JSON.stringify(path));
+        }
+        return { path };
+      }
+      function menuOptions(menuSettings) {
+        const options = {};
+        MENU_OPTIONS.forEach((o) => {
+          options[o] = true;
+        });
+        if (menuSettings != null && typeof menuSettings === "object") {
+          MENU_OPTIONS.forEach((o) => {
+            if (menuSettings[o] === false) options[o] = false;
+          });
+          if (Array.isArray(menuSettings.hide)) {
+            menuSettings.hide.forEach((o) => {
+              if (o in options) options[o] = false;
+            });
+          }
+        }
+        return options;
+      }
+      var MENU_CSS = `
+.pryv-menu-overlay { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 2147483000; display: flex;
+  align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.35); }
+.pryv-menu { background: #fff; color: #222; min-width: 280px; max-width: 90vw; border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); font: 14px/1.4 system-ui, sans-serif; }
+.pryv-menu-header { display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; padding: 16px 16px 8px; }
+.pryv-menu-username { font-weight: 600; font-size: 16px; overflow-wrap: anywhere; }
+.pryv-menu-info { color: #666; font-size: 13px; padding: 0 16px 12px; overflow-wrap: anywhere; }
+.pryv-menu-close { border: 0; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: #666; }
+.pryv-menu-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end;
+  padding: 12px 16px 16px; border-top: 1px solid #eee; }
+.pryv-menu-actions button { padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc;
+  background: #f7f7f7; cursor: pointer; font: inherit; }
+.pryv-menu-actions button:focus-visible, .pryv-menu-close:focus-visible,
+.pryv-menu-switch button:focus-visible { outline: 2px solid #4a90d9; }
+.pryv-menu-acting { font-weight: 400; color: #666; font-size: 13px; }
+.pryv-menu-switch { padding: 8px 16px 12px; border-top: 1px solid #eee; }
+.pryv-menu-switch-title { color: #666; font-size: 13px; margin-bottom: 4px; }
+.pryv-menu-switch button { display: block; width: 100%; text-align: left; padding: 6px 8px; border: 0;
+  border-radius: 4px; background: none; cursor: pointer; font: inherit; color: inherit; }
+.pryv-menu-switch button:hover { background: #f2f2f2; }
+.pryv-menu-switch button[aria-current="true"] { font-weight: 600; cursor: default; }
+.pryv-menu-switch .pryv-menu-note { color: #888; font-size: 12px; }
+`;
+      function ensureMenuStyle() {
+        if (document.getElementById("pryv-menu-style") != null) return;
+        const style = document.createElement("style");
+        style.id = "pryv-menu-style";
+        style.textContent = MENU_CSS;
+        document.head.insertBefore(style, document.head.firstChild);
+      }
+      function menuElement(tag, className, text) {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (text != null) el.textContent = text;
+        return el;
+      }
+      function buildMenu(loginBtn, confirmLogout) {
+        ensureMenuStyle();
+        const auth = loginBtn.auth;
+        const messages = messagesOf(loginBtn);
+        const options = confirmLogout ? { logout: true, account: false, info: false } : menuOptions(loginBtn.authSettings.menu);
+        const username = confirmLogout ? messages.SIGNOUT_CONFIRM || "Logout?" : auth.state?.username || "";
+        const overlay = menuElement("div", "pryv-menu-overlay");
+        const dialog = menuElement("div", "pryv-menu");
+        dialog.setAttribute("role", confirmLogout ? "alertdialog" : "dialog");
+        dialog.setAttribute("aria-modal", "true");
+        dialog.setAttribute("aria-labelledby", "pryv-menu-username");
+        overlay.appendChild(dialog);
+        const header = menuElement("div", "pryv-menu-header");
+        const title = menuElement("div", "pryv-menu-username", username || messages.MENU_TITLE);
+        title.id = "pryv-menu-username";
+        const current = confirmLogout ? null : auth.currentProfile();
+        const actingAs = current?.actingAs;
+        if (actingAs != null) {
+          title.appendChild(menuElement(
+            "span",
+            "pryv-menu-acting",
+            " (" + messages.ACTING_AS + ", " + messages.VIA + " " + actingAs.delegate + ")"
+          ));
+        }
+        header.appendChild(title);
+        const close = menuElement("button", "pryv-menu-close", "\xD7");
+        close.type = "button";
+        close.setAttribute("aria-label", messages.CLOSE);
+        close.addEventListener("click", () => loginBtn.closeMenu());
+        header.appendChild(close);
+        dialog.appendChild(header);
+        if (options.info) {
+          const serviceName = loginBtn.serviceInfo?.name || "";
+          const appId = loginBtn.authSettings.authRequest.requestingAppId;
+          dialog.appendChild(menuElement("div", "pryv-menu-info", serviceName + " \xB7 " + messages.APP + ": " + appId));
+        }
+        const profiles = confirmLogout ? [] : auth.profiles();
+        if (options.switch) {
+          const section = switchSection(loginBtn, messages, current, profiles);
+          if (section != null) dialog.appendChild(section);
+        }
+        const actions = menuElement("div", "pryv-menu-actions");
+        if (options.account && auth.accountUrl() != null) {
+          const manageText = actingAs != null ? (messages.MANAGE_ACCOUNT_OF || "").replace("{username}", current.username) : messages.MANAGE_ACCOUNT;
+          const manage = menuElement("button", "pryv-menu-account", manageText + " ");
+          const arrow = menuElement("span", null, "\u2197");
+          arrow.setAttribute("aria-hidden", "true");
+          manage.appendChild(arrow);
+          manage.type = "button";
+          manage.addEventListener("click", () => {
+            auth.openAccountApp();
+            loginBtn.closeMenu();
+          });
+          actions.appendChild(manage);
+        }
+        if (options.logout) {
+          const logout = menuElement("button", "pryv-menu-logout", messages.LOGOUT);
+          logout.type = "button";
+          logout.addEventListener("click", () => {
+            loginBtn.closeMenu(true);
+            loginBtn.pending = confirmLogout ? loginBtn.deleteAuthorizationData().then(() => auth.init()).then(() => {
+            }) : auth.signOut();
+          });
+          if (confirmLogout) {
+            const cancel = menuElement("button", "pryv-menu-cancel", messages.CANCEL);
+            cancel.type = "button";
+            cancel.addEventListener("click", () => loginBtn.closeMenu());
+            actions.appendChild(cancel);
+          }
+          actions.appendChild(logout);
+          if (profiles.length > 1) {
+            const logoutAll = menuElement("button", "pryv-menu-logout-all", messages.LOGOUT_ALL);
+            logoutAll.type = "button";
+            logoutAll.addEventListener("click", () => {
+              loginBtn.closeMenu(true);
+              loginBtn.pending = auth.signOut({ all: true });
+            });
+            actions.appendChild(logoutAll);
+          }
+        }
+        dialog.appendChild(actions);
+        let pressedOutside = false;
+        overlay.addEventListener("mousedown", (event) => {
+          pressedOutside = event.target === overlay;
+        });
+        overlay.addEventListener("click", (event) => {
+          if (event.target === overlay && pressedOutside) loginBtn.closeMenu();
+          pressedOutside = false;
+        });
+        const focusables = () => Array.from(dialog.querySelectorAll("button"));
+        const onKeyDown = (event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            loginBtn.closeMenu();
+          } else if (event.key === "Tab") {
+            const list = focusables();
+            if (list.length === 0) return;
+            const first = list[0];
+            const last = list[list.length - 1];
+            const active = document.activeElement;
+            if (event.shiftKey && (active === first || !dialog.contains(active))) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && (active === last || !dialog.contains(active))) {
+              event.preventDefault();
+              first.focus();
+            }
+          }
+        };
+        document.addEventListener("keydown", onKeyDown, true);
+        return { overlay, dialog, onKeyDown, focusables, previousFocus: document.activeElement, confirmLogout };
+      }
+      function switchSection(loginBtn, messages, current, profiles) {
+        const auth = loginBtn.auth;
+        const run = (action) => {
+          loginBtn.closeMenu();
+          loginBtn.pending = action().catch((e) => {
+            console.log("Error while switching account", e);
+          });
+        };
+        const section = menuElement("div", "pryv-menu-switch");
+        if (current?.actingAs != null) {
+          const back = menuElement(
+            "button",
+            "pryv-menu-switch-back",
+            (messages.SWITCH_BACK || "").replace("{username}", current.actingAs.delegate)
+          );
+          back.type = "button";
+          back.addEventListener("click", () => run(() => auth.switchTo(null)));
+          section.appendChild(back);
+          return section;
+        }
+        const delegation = loginBtn.serviceInfo?.features?.delegation === true;
+        if (profiles.length < 2 && !delegation) return null;
+        section.appendChild(menuElement("div", "pryv-menu-switch-title", messages.USE_FOR));
+        profiles.forEach((p) => {
+          const item = menuElement("button", "pryv-menu-profile", p.username + " ");
+          item.type = "button";
+          const note = p.actingAs != null ? messages.VIA + " " + p.actingAs.delegate : "(" + messages.ME + ")";
+          item.appendChild(menuElement(
+            "span",
+            "pryv-menu-note",
+            note + (p.available ? "" : " \xB7 " + messages.UNAVAILABLE)
+          ));
+          if (p.active) {
+            item.setAttribute("aria-current", "true");
+          } else {
+            item.addEventListener("click", () => run(() => auth.switchTo(p.username)));
+          }
+          section.appendChild(item);
+        });
+        if (delegation) {
+          const other = menuElement("button", "pryv-menu-add-account", messages.OTHER_ACCOUNT);
+          other.type = "button";
+          other.addEventListener("click", () => run(() => auth.addAccount()));
+          section.appendChild(other);
+        }
+        return section;
+      }
       function setupButton(loginBtn) {
         loginBtn.loginButtonSpan = document.getElementById(loginBtn.authSettings.spanButtonID);
         if (!loginBtn.loginButtonSpan) {
@@ -8610,17 +10303,22 @@
       }
       async function loadAssets(loginBtn) {
         const assets = await loginBtn.service.assets();
-        loginBtn.loginButtonSpan.innerHTML = await assets.loginButtonGetHTML();
-        loginBtn.loginButtonText = document.getElementById("pryv-access-btn-text");
+        const { fragment, textHolder } = buildButton(await assets.loginButtonGetHTML(), document);
+        loginBtn.loginButtonSpan.textContent = "";
+        loginBtn.loginButtonSpan.appendChild(fragment);
+        loginBtn.loginButtonText = textHolder;
+      }
+      function messagesOf(loginButton) {
+        return Object.assign({}, loginButton.messages, loginButton.auth?.messages);
       }
       function getErrorMessage(loginButton, message) {
-        return loginButton.messages.ERROR + ": " + message;
+        return messagesOf(loginButton).ERROR + ": " + message;
       }
       function getLoadingMessage(loginButton) {
-        return loginButton.messages.LOADING;
+        return messagesOf(loginButton).LOADING;
       }
       function getInitializedMessage(loginButton, serviceName) {
-        return loginButton.messages.LOGIN + ": " + serviceName;
+        return messagesOf(loginButton).LOGIN + ": " + serviceName;
       }
     }
   });
@@ -8632,10 +10330,12 @@
       var AuthStates = require_AuthStates();
       var LoginButton = require_LoginButton();
       var Service = require_Service();
+      var { missingPermissions } = require_permissionsCoverage();
       module.exports = {
         setupAuth,
         AuthStates,
-        AuthController
+        AuthController,
+        missingPermissions
       };
       async function setupAuth(settings, serviceInfoUrl, serviceCustomizations, HumanInteraction = LoginButton) {
         const service = new Service(serviceInfoUrl, serviceCustomizations);
@@ -8661,10 +10361,2842 @@
         setupAuth: require_Auth().setupAuth,
         serviceInfoFromUrl: getServiceInfoFromURL
       };
-      function getServiceInfoFromURL(url) {
-        const queryParams = utils.getQueryParamsFromURL(url || window.location.href);
-        return queryParams.pryvServiceInfoUrl;
+      function isAbsoluteHttpUrl(value) {
+        return utils.isHttpUrl(value, "");
       }
+      function getServiceInfoFromURL(url, options) {
+        const value = utils.getQueryParamsFromURL(url || window.location.href).pryvServiceInfoUrl;
+        if (!isAbsoluteHttpUrl(value)) return void 0;
+        const allowed = options?.allowedServiceInfoUrls;
+        if (allowed != null && !allowed.some((a) => isAbsoluteHttpUrl(a) && new URL(a).href === new URL(value).href)) {
+          console.warn("pryv: the pryvServiceInfoUrl of the page address is not an allowed service");
+          return void 0;
+        }
+        return value;
+      }
+    }
+  });
+
+  // node_modules/oauth4webapi/build/index.js
+  var build_exports = {};
+  __export(build_exports, {
+    AUTHORIZATION_RESPONSE_ERROR: () => AUTHORIZATION_RESPONSE_ERROR,
+    AuthorizationResponseError: () => AuthorizationResponseError,
+    ClientSecretBasic: () => ClientSecretBasic,
+    ClientSecretJwt: () => ClientSecretJwt,
+    ClientSecretPost: () => ClientSecretPost,
+    DPoP: () => DPoP,
+    HTTP_REQUEST_FORBIDDEN: () => HTTP_REQUEST_FORBIDDEN,
+    INVALID_REQUEST: () => INVALID_REQUEST,
+    INVALID_RESPONSE: () => INVALID_RESPONSE,
+    INVALID_SERVER_METADATA: () => INVALID_SERVER_METADATA,
+    JSON_ATTRIBUTE_COMPARISON: () => JSON_ATTRIBUTE_COMPARISON,
+    JWT_CLAIM_COMPARISON: () => JWT_CLAIM_COMPARISON,
+    JWT_TIMESTAMP_CHECK: () => JWT_TIMESTAMP_CHECK,
+    JWT_USERINFO_EXPECTED: () => JWT_USERINFO_EXPECTED,
+    KEY_SELECTION: () => KEY_SELECTION,
+    MISSING_SERVER_METADATA: () => MISSING_SERVER_METADATA,
+    None: () => None,
+    OperationProcessingError: () => OperationProcessingError,
+    PARSE_ERROR: () => PARSE_ERROR,
+    PrivateKeyJwt: () => PrivateKeyJwt,
+    REQUEST_PROTOCOL_FORBIDDEN: () => REQUEST_PROTOCOL_FORBIDDEN,
+    RESPONSE_BODY_ERROR: () => RESPONSE_BODY_ERROR,
+    RESPONSE_IS_NOT_CONFORM: () => RESPONSE_IS_NOT_CONFORM,
+    RESPONSE_IS_NOT_JSON: () => RESPONSE_IS_NOT_JSON,
+    ResponseBodyError: () => ResponseBodyError,
+    TlsClientAuth: () => TlsClientAuth,
+    UNSUPPORTED_OPERATION: () => UNSUPPORTED_OPERATION,
+    UnsupportedOperationError: () => UnsupportedOperationError,
+    WWWAuthenticateChallengeError: () => WWWAuthenticateChallengeError,
+    WWW_AUTHENTICATE_CHALLENGE: () => WWW_AUTHENTICATE_CHALLENGE,
+    _expectedIssuer: () => _expectedIssuer,
+    _nodiscoverycheck: () => _nodiscoverycheck,
+    _nopkce: () => _nopkce,
+    allowInsecureRequests: () => allowInsecureRequests,
+    authorizationCodeGrantRequest: () => authorizationCodeGrantRequest,
+    backchannelAuthenticationGrantRequest: () => backchannelAuthenticationGrantRequest,
+    backchannelAuthenticationRequest: () => backchannelAuthenticationRequest,
+    calculatePKCECodeChallenge: () => calculatePKCECodeChallenge,
+    checkProtocol: () => checkProtocol,
+    clientCredentialsGrantRequest: () => clientCredentialsGrantRequest,
+    clockSkew: () => clockSkew,
+    clockTolerance: () => clockTolerance,
+    customFetch: () => customFetch,
+    deviceAuthorizationRequest: () => deviceAuthorizationRequest,
+    deviceCodeGrantRequest: () => deviceCodeGrantRequest,
+    discoveryRequest: () => discoveryRequest,
+    dynamicClientRegistrationRequest: () => dynamicClientRegistrationRequest,
+    expectNoNonce: () => expectNoNonce,
+    expectNoState: () => expectNoState,
+    formPostResponse: () => formPostResponse,
+    generateKeyPair: () => generateKeyPair,
+    generateRandomCodeVerifier: () => generateRandomCodeVerifier,
+    generateRandomNonce: () => generateRandomNonce,
+    generateRandomState: () => generateRandomState,
+    genericTokenEndpointRequest: () => genericTokenEndpointRequest,
+    getContentType: () => getContentType,
+    getValidatedIdTokenClaims: () => getValidatedIdTokenClaims,
+    introspectionRequest: () => introspectionRequest,
+    isDPoPNonceError: () => isDPoPNonceError,
+    issueRequestObject: () => issueRequestObject,
+    jweDecrypt: () => jweDecrypt,
+    jwksCache: () => jwksCache,
+    modifyAssertion: () => modifyAssertion,
+    nopkce: () => nopkce,
+    processAuthorizationCodeResponse: () => processAuthorizationCodeResponse,
+    processBackchannelAuthenticationGrantResponse: () => processBackchannelAuthenticationGrantResponse,
+    processBackchannelAuthenticationResponse: () => processBackchannelAuthenticationResponse,
+    processClientCredentialsResponse: () => processClientCredentialsResponse,
+    processDeviceAuthorizationResponse: () => processDeviceAuthorizationResponse,
+    processDeviceCodeResponse: () => processDeviceCodeResponse,
+    processDiscoveryResponse: () => processDiscoveryResponse,
+    processDynamicClientRegistrationResponse: () => processDynamicClientRegistrationResponse,
+    processGenericTokenEndpointResponse: () => processGenericTokenEndpointResponse,
+    processIntrospectionResponse: () => processIntrospectionResponse,
+    processPushedAuthorizationResponse: () => processPushedAuthorizationResponse,
+    processRefreshTokenResponse: () => processRefreshTokenResponse,
+    processResourceDiscoveryResponse: () => processResourceDiscoveryResponse,
+    processRevocationResponse: () => processRevocationResponse,
+    processUserInfoResponse: () => processUserInfoResponse,
+    protectedResourceRequest: () => protectedResourceRequest,
+    pushedAuthorizationRequest: () => pushedAuthorizationRequest,
+    refreshTokenGrantRequest: () => refreshTokenGrantRequest,
+    resolveEndpoint: () => resolveEndpoint,
+    resourceDiscoveryRequest: () => resourceDiscoveryRequest,
+    revocationRequest: () => revocationRequest,
+    skipAuthTimeCheck: () => skipAuthTimeCheck,
+    skipStateCheck: () => skipStateCheck,
+    skipSubjectCheck: () => skipSubjectCheck,
+    userInfoRequest: () => userInfoRequest,
+    validateApplicationLevelSignature: () => validateApplicationLevelSignature,
+    validateAuthResponse: () => validateAuthResponse,
+    validateCodeIdTokenResponse: () => validateCodeIdTokenResponse,
+    validateDetachedSignatureResponse: () => validateDetachedSignatureResponse,
+    validateJwtAccessToken: () => validateJwtAccessToken,
+    validateJwtAuthResponse: () => validateJwtAuthResponse
+  });
+  function looseInstanceOf(input, expected) {
+    if (input == null) {
+      return false;
+    }
+    try {
+      return input instanceof expected || Object.getPrototypeOf(input)[Symbol.toStringTag] === expected.prototype[Symbol.toStringTag];
+    } catch {
+      return false;
+    }
+  }
+  function CodedTypeError(message, code, cause) {
+    const err = new TypeError(message, { cause });
+    Object.assign(err, { code });
+    return err;
+  }
+  function buf(input) {
+    if (typeof input === "string") {
+      return encoder.encode(input);
+    }
+    return decoder.decode(input);
+  }
+  function b64u(input) {
+    if (typeof input === "string") {
+      return decodeBase64Url(input);
+    }
+    return encodeBase64Url(input);
+  }
+  function OPE(message, code, cause) {
+    return new OperationProcessingError(message, { code, cause });
+  }
+  async function calculateJwkThumbprint(jwk) {
+    let components;
+    switch (jwk.kty) {
+      case "EC":
+        components = {
+          crv: jwk.crv,
+          kty: jwk.kty,
+          x: jwk.x,
+          y: jwk.y
+        };
+        break;
+      case "OKP":
+        components = {
+          crv: jwk.crv,
+          kty: jwk.kty,
+          x: jwk.x
+        };
+        break;
+      case "AKP":
+        components = {
+          alg: jwk.alg,
+          kty: jwk.kty,
+          pub: jwk.pub
+        };
+        break;
+      case "RSA":
+        components = {
+          e: jwk.e,
+          kty: jwk.kty,
+          n: jwk.n
+        };
+        break;
+      default:
+        throw new UnsupportedOperationError("unsupported JWK key type", { cause: jwk });
+    }
+    return b64u(await crypto.subtle.digest("SHA-256", buf(JSON.stringify(components))));
+  }
+  function assertCryptoKey(key, it) {
+    if (!(key instanceof CryptoKey)) {
+      throw CodedTypeError(`${it} must be a CryptoKey`, ERR_INVALID_ARG_TYPE);
+    }
+  }
+  function assertPrivateKey(key, it) {
+    assertCryptoKey(key, it);
+    if (key.type !== "private") {
+      throw CodedTypeError(`${it} must be a private CryptoKey`, ERR_INVALID_ARG_VALUE);
+    }
+  }
+  function assertPublicKey(key, it) {
+    assertCryptoKey(key, it);
+    if (key.type !== "public") {
+      throw CodedTypeError(`${it} must be a public CryptoKey`, ERR_INVALID_ARG_VALUE);
+    }
+  }
+  function normalizeTyp(value) {
+    return value.toLowerCase().replace(/^application\//, "");
+  }
+  function isJsonObject(input) {
+    if (input === null || typeof input !== "object" || Array.isArray(input)) {
+      return false;
+    }
+    return true;
+  }
+  function prepareHeaders(input) {
+    if (looseInstanceOf(input, Headers)) {
+      input = Object.fromEntries(input.entries());
+    }
+    const headers = new Headers(input ?? {});
+    if (USER_AGENT && !headers.has("user-agent")) {
+      headers.set("user-agent", USER_AGENT);
+    }
+    if (headers.has("authorization")) {
+      throw CodedTypeError('"options.headers" must not include the "authorization" header name', ERR_INVALID_ARG_VALUE);
+    }
+    return headers;
+  }
+  function signal(url, value) {
+    if (value !== void 0) {
+      if (typeof value === "function") {
+        value = value(url.href);
+      }
+      if (!(value instanceof AbortSignal)) {
+        throw CodedTypeError('"options.signal" must return or be an instance of AbortSignal', ERR_INVALID_ARG_TYPE);
+      }
+      return value;
+    }
+    return void 0;
+  }
+  function prependWellKnown(url, wellKnown, allowTerminatingSlash = false) {
+    if (url.pathname === "/") {
+      url.pathname = wellKnown;
+    } else {
+      const pathname = allowTerminatingSlash ? url.pathname : url.pathname.replace(/\/$/, "");
+      url.pathname = `${wellKnown}${pathname}`;
+    }
+    return url;
+  }
+  function appendWellKnown(url, wellKnown) {
+    url.pathname = `${url.pathname.replace(/\/$/, "")}/${wellKnown}`;
+    return url;
+  }
+  async function performDiscovery(input, urlName, transform, options) {
+    if (!(input instanceof URL)) {
+      throw CodedTypeError(`"${urlName}" must be an instance of URL`, ERR_INVALID_ARG_TYPE);
+    }
+    checkProtocol(input, options?.[allowInsecureRequests] !== true);
+    const url = transform(new URL(input.href));
+    const headers = prepareHeaders(options?.headers);
+    headers.set("accept", "application/json");
+    return (options?.[customFetch] || fetch)(url.href, {
+      body: void 0,
+      headers: Object.fromEntries(headers.entries()),
+      method: "GET",
+      redirect: "manual",
+      signal: signal(url, options?.signal)
+    });
+  }
+  async function discoveryRequest(issuerIdentifier, options) {
+    return performDiscovery(issuerIdentifier, "issuerIdentifier", (url) => {
+      switch (options?.algorithm) {
+        case void 0:
+        case "oidc":
+          appendWellKnown(url, ".well-known/openid-configuration");
+          break;
+        case "oauth2":
+          prependWellKnown(url, ".well-known/oauth-authorization-server");
+          break;
+        default:
+          throw CodedTypeError('"options.algorithm" must be "oidc" (default), or "oauth2"', ERR_INVALID_ARG_VALUE);
+      }
+      return url;
+    }, options);
+  }
+  function assertNumber(input, allow0, it, code, cause) {
+    try {
+      if (typeof input !== "number" || !Number.isFinite(input)) {
+        throw CodedTypeError(`${it} must be a number`, ERR_INVALID_ARG_TYPE, cause);
+      }
+      if (input > 0)
+        return;
+      if (allow0) {
+        if (input !== 0) {
+          throw CodedTypeError(`${it} must be a non-negative number`, ERR_INVALID_ARG_VALUE, cause);
+        }
+        return;
+      }
+      throw CodedTypeError(`${it} must be a positive number`, ERR_INVALID_ARG_VALUE, cause);
+    } catch (err) {
+      if (code) {
+        throw OPE(err.message, code, cause);
+      }
+      throw err;
+    }
+  }
+  function assertString(input, it, code, cause) {
+    try {
+      if (typeof input !== "string") {
+        throw CodedTypeError(`${it} must be a string`, ERR_INVALID_ARG_TYPE, cause);
+      }
+      if (input.length === 0) {
+        throw CodedTypeError(`${it} must not be empty`, ERR_INVALID_ARG_VALUE, cause);
+      }
+    } catch (err) {
+      if (code) {
+        throw OPE(err.message, code, cause);
+      }
+      throw err;
+    }
+  }
+  async function processDiscoveryResponse(expectedIssuerIdentifier, response) {
+    const expected = expectedIssuerIdentifier;
+    if (!(expected instanceof URL) && expected !== _nodiscoverycheck) {
+      throw CodedTypeError('"expectedIssuerIdentifier" must be an instance of URL', ERR_INVALID_ARG_TYPE);
+    }
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    if (response.status !== 200) {
+      throw OPE('"response" is not a conform Authorization Server Metadata response (unexpected HTTP status code)', RESPONSE_IS_NOT_CONFORM, response);
+    }
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response);
+    assertString(json.issuer, '"response" body "issuer" property', INVALID_RESPONSE, { body: json });
+    if (expected !== _nodiscoverycheck && new URL(json.issuer).href !== expected.href) {
+      throw OPE('"response" body "issuer" property does not match the expected value', JSON_ATTRIBUTE_COMPARISON, { expected: expected.href, body: json, attribute: "issuer" });
+    }
+    return json;
+  }
+  function assertApplicationJson(response) {
+    assertContentType(response, "application/json");
+  }
+  function notJson(response, ...types) {
+    let msg = '"response" content-type must be ';
+    if (types.length > 2) {
+      const last = types.pop();
+      msg += `${types.join(", ")}, or ${last}`;
+    } else if (types.length === 2) {
+      msg += `${types[0]} or ${types[1]}`;
+    } else {
+      msg += types[0];
+    }
+    return OPE(msg, RESPONSE_IS_NOT_JSON, response);
+  }
+  function assertContentTypes(response, ...types) {
+    if (!types.includes(getContentType(response))) {
+      throw notJson(response, ...types);
+    }
+  }
+  function assertContentType(response, contentType) {
+    if (getContentType(response) !== contentType) {
+      throw notJson(response, contentType);
+    }
+  }
+  function randomBytes() {
+    return b64u(crypto.getRandomValues(new Uint8Array(32)));
+  }
+  function generateRandomCodeVerifier() {
+    return randomBytes();
+  }
+  function generateRandomState() {
+    return randomBytes();
+  }
+  function generateRandomNonce() {
+    return randomBytes();
+  }
+  async function calculatePKCECodeChallenge(codeVerifier) {
+    assertString(codeVerifier, "codeVerifier");
+    return b64u(await crypto.subtle.digest("SHA-256", buf(codeVerifier)));
+  }
+  function getKeyAndKid(input) {
+    if (input instanceof CryptoKey) {
+      return { key: input };
+    }
+    if (!(input?.key instanceof CryptoKey)) {
+      return {};
+    }
+    if (input.kid !== void 0) {
+      assertString(input.kid, '"kid"');
+    }
+    return {
+      key: input.key,
+      kid: input.kid
+    };
+  }
+  function psAlg(key) {
+    switch (key.algorithm.hash.name) {
+      case "SHA-256":
+        return "PS256";
+      case "SHA-384":
+        return "PS384";
+      case "SHA-512":
+        return "PS512";
+      default:
+        throw new UnsupportedOperationError("unsupported RsaHashedKeyAlgorithm hash name", {
+          cause: key
+        });
+    }
+  }
+  function rsAlg(key) {
+    switch (key.algorithm.hash.name) {
+      case "SHA-256":
+        return "RS256";
+      case "SHA-384":
+        return "RS384";
+      case "SHA-512":
+        return "RS512";
+      default:
+        throw new UnsupportedOperationError("unsupported RsaHashedKeyAlgorithm hash name", {
+          cause: key
+        });
+    }
+  }
+  function esAlg(key) {
+    switch (key.algorithm.namedCurve) {
+      case "P-256":
+        return "ES256";
+      case "P-384":
+        return "ES384";
+      case "P-521":
+        return "ES512";
+      default:
+        throw new UnsupportedOperationError("unsupported EcKeyAlgorithm namedCurve", { cause: key });
+    }
+  }
+  function keyToJws(key) {
+    switch (key.algorithm.name) {
+      case "RSA-PSS":
+        return psAlg(key);
+      case "RSASSA-PKCS1-v1_5":
+        return rsAlg(key);
+      case "ECDSA":
+        return esAlg(key);
+      case "Ed25519":
+      case "ML-DSA-44":
+      case "ML-DSA-65":
+      case "ML-DSA-87":
+        return key.algorithm.name;
+      case "EdDSA":
+        return "Ed25519";
+      default:
+        throw new UnsupportedOperationError("unsupported CryptoKey algorithm name", { cause: key });
+    }
+  }
+  function getClockSkew(client) {
+    const skew = client?.[clockSkew];
+    return typeof skew === "number" && Number.isFinite(skew) ? skew : 0;
+  }
+  function getClockTolerance(client) {
+    const tolerance = client?.[clockTolerance];
+    return typeof tolerance === "number" && Number.isFinite(tolerance) && Math.sign(tolerance) !== -1 ? tolerance : 30;
+  }
+  function epochTime() {
+    return Math.floor(Date.now() / 1e3);
+  }
+  function assertAs(as) {
+    if (typeof as !== "object" || as === null) {
+      throw CodedTypeError('"as" must be an object', ERR_INVALID_ARG_TYPE);
+    }
+    assertString(as.issuer, '"as.issuer"');
+  }
+  function assertClient(client) {
+    if (typeof client !== "object" || client === null) {
+      throw CodedTypeError('"client" must be an object', ERR_INVALID_ARG_TYPE);
+    }
+    assertString(client.client_id, '"client.client_id"');
+  }
+  function formUrlEncode(token) {
+    return encodeURIComponent(token).replace(/(?:[-_.!~*'()]|%20)/g, (substring) => {
+      switch (substring) {
+        case "-":
+        case "_":
+        case ".":
+        case "!":
+        case "~":
+        case "*":
+        case "'":
+        case "(":
+        case ")":
+          return `%${substring.charCodeAt(0).toString(16).toUpperCase()}`;
+        case "%20":
+          return "+";
+        default:
+          throw new Error();
+      }
+    });
+  }
+  function ClientSecretPost(clientSecret) {
+    assertString(clientSecret, '"clientSecret"');
+    return (_as, client, body, _headers) => {
+      body.set("client_id", client.client_id);
+      body.set("client_secret", clientSecret);
+    };
+  }
+  function ClientSecretBasic(clientSecret) {
+    assertString(clientSecret, '"clientSecret"');
+    return (_as, client, _body, headers) => {
+      const username = formUrlEncode(client.client_id);
+      const password = formUrlEncode(clientSecret);
+      const credentials = btoa(`${username}:${password}`);
+      headers.set("authorization", `Basic ${credentials}`);
+    };
+  }
+  function clientAssertionPayload(as, client) {
+    const now = epochTime() + getClockSkew(client);
+    return {
+      jti: randomBytes(),
+      aud: as.issuer,
+      exp: now + 60,
+      iat: now,
+      nbf: now,
+      iss: client.client_id,
+      sub: client.client_id
+    };
+  }
+  function PrivateKeyJwt(clientPrivateKey, options) {
+    const { key, kid } = getKeyAndKid(clientPrivateKey);
+    assertPrivateKey(key, '"clientPrivateKey.key"');
+    return async (as, client, body, _headers) => {
+      const header = { alg: keyToJws(key), kid };
+      const payload = clientAssertionPayload(as, client);
+      options?.[modifyAssertion]?.(header, payload);
+      body.set("client_id", client.client_id);
+      body.set("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
+      body.set("client_assertion", await signJwt(header, payload, key));
+    };
+  }
+  function ClientSecretJwt(clientSecret, options) {
+    assertString(clientSecret, '"clientSecret"');
+    const modify = options?.[modifyAssertion];
+    let key;
+    return async (as, client, body, _headers) => {
+      key ||= await crypto.subtle.importKey("raw", buf(clientSecret), { hash: "SHA-256", name: "HMAC" }, false, ["sign"]);
+      const header = { alg: "HS256" };
+      const payload = clientAssertionPayload(as, client);
+      modify?.(header, payload);
+      const data = `${b64u(buf(JSON.stringify(header)))}.${b64u(buf(JSON.stringify(payload)))}`;
+      const hmac = await crypto.subtle.sign(key.algorithm, key, buf(data));
+      body.set("client_id", client.client_id);
+      body.set("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
+      body.set("client_assertion", `${data}.${b64u(new Uint8Array(hmac))}`);
+    };
+  }
+  function None() {
+    return (_as, client, body, _headers) => {
+      body.set("client_id", client.client_id);
+    };
+  }
+  function TlsClientAuth() {
+    return None();
+  }
+  async function signJwt(header, payload, key) {
+    if (!key.usages.includes("sign")) {
+      throw CodedTypeError('CryptoKey instances used for signing assertions must include "sign" in their "usages"', ERR_INVALID_ARG_VALUE);
+    }
+    const input = `${b64u(buf(JSON.stringify(header)))}.${b64u(buf(JSON.stringify(payload)))}`;
+    const signature = b64u(await crypto.subtle.sign(keyToSubtle(key), key, buf(input)));
+    return `${input}.${signature}`;
+  }
+  async function issueRequestObject(as, client, parameters, privateKey, options) {
+    assertAs(as);
+    assertClient(client);
+    parameters = new URLSearchParams(parameters);
+    const { key, kid } = getKeyAndKid(privateKey);
+    assertPrivateKey(key, '"privateKey.key"');
+    parameters.set("client_id", client.client_id);
+    const now = epochTime() + getClockSkew(client);
+    const claims = {
+      ...Object.fromEntries(parameters.entries()),
+      jti: randomBytes(),
+      aud: as.issuer,
+      exp: now + 60,
+      iat: now,
+      nbf: now,
+      iss: client.client_id
+    };
+    let resource;
+    if (parameters.has("resource") && (resource = parameters.getAll("resource")) && resource.length > 1) {
+      claims.resource = resource;
+    }
+    {
+      let value = parameters.get("max_age");
+      if (value !== null) {
+        claims.max_age = parseInt(value, 10);
+        assertNumber(claims.max_age, true, '"max_age" parameter');
+      }
+    }
+    {
+      let value = parameters.get("claims");
+      if (value !== null) {
+        try {
+          claims.claims = JSON.parse(value);
+        } catch (cause) {
+          throw OPE('failed to parse the "claims" parameter as JSON', PARSE_ERROR, cause);
+        }
+        if (!isJsonObject(claims.claims)) {
+          throw CodedTypeError('"claims" parameter must be a JSON with a top level object', ERR_INVALID_ARG_VALUE);
+        }
+      }
+    }
+    {
+      let value = parameters.get("authorization_details");
+      if (value !== null) {
+        try {
+          claims.authorization_details = JSON.parse(value);
+        } catch (cause) {
+          throw OPE('failed to parse the "authorization_details" parameter as JSON', PARSE_ERROR, cause);
+        }
+        if (!Array.isArray(claims.authorization_details)) {
+          throw CodedTypeError('"authorization_details" parameter must be a JSON with a top level array', ERR_INVALID_ARG_VALUE);
+        }
+      }
+    }
+    const header = {
+      alg: keyToJws(key),
+      typ: "oauth-authz-req+jwt",
+      kid
+    };
+    options?.[modifyAssertion]?.(header, claims);
+    return signJwt(header, claims, key);
+  }
+  async function getSetPublicJwkCache(key, alg) {
+    const { kty, e, n, x, y, crv, pub } = await crypto.subtle.exportKey("jwk", key);
+    const jwk = { kty, e, n, x, y, crv, pub };
+    if (kty === "AKP")
+      jwk.alg = alg;
+    jwkCache.set(key, jwk);
+    return jwk;
+  }
+  async function publicJwk(key, alg) {
+    jwkCache ||= /* @__PURE__ */ new WeakMap();
+    return jwkCache.get(key) || getSetPublicJwkCache(key, alg);
+  }
+  function checkProtocol(url, enforceHttps) {
+    if (enforceHttps && url.protocol !== "https:") {
+      throw OPE("only requests to HTTPS are allowed", HTTP_REQUEST_FORBIDDEN, url);
+    }
+    if (url.protocol !== "https:" && url.protocol !== "http:") {
+      throw OPE("only HTTP and HTTPS requests are allowed", REQUEST_PROTOCOL_FORBIDDEN, url);
+    }
+  }
+  function validateEndpoint(value, endpoint, useMtlsAlias, enforceHttps) {
+    let url;
+    if (typeof value !== "string" || !(url = URLParse(value))) {
+      throw OPE(`authorization server metadata does not contain a valid ${useMtlsAlias ? `"as.mtls_endpoint_aliases.${endpoint}"` : `"as.${endpoint}"`}`, value === void 0 ? MISSING_SERVER_METADATA : INVALID_SERVER_METADATA, { attribute: useMtlsAlias ? `mtls_endpoint_aliases.${endpoint}` : endpoint });
+    }
+    checkProtocol(url, enforceHttps);
+    return url;
+  }
+  function resolveEndpoint(as, endpoint, useMtlsAlias, enforceHttps) {
+    if (useMtlsAlias && as.mtls_endpoint_aliases && endpoint in as.mtls_endpoint_aliases) {
+      return validateEndpoint(as.mtls_endpoint_aliases[endpoint], endpoint, useMtlsAlias, enforceHttps);
+    }
+    return validateEndpoint(as[endpoint], endpoint, useMtlsAlias, enforceHttps);
+  }
+  async function pushedAuthorizationRequest(as, client, clientAuthentication, parameters, options) {
+    assertAs(as);
+    assertClient(client);
+    const url = resolveEndpoint(as, "pushed_authorization_request_endpoint", client.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    const body = new URLSearchParams(parameters);
+    body.set("client_id", client.client_id);
+    const headers = prepareHeaders(options?.headers);
+    headers.set("accept", "application/json");
+    if (options?.DPoP !== void 0) {
+      assertDPoP(options.DPoP);
+      await options.DPoP.addProof(url, headers, "POST");
+    }
+    const response = await authenticatedRequest(as, client, clientAuthentication, url, body, headers, options);
+    options?.DPoP?.cacheNonce(response, url);
+    return response;
+  }
+  function isDPoPNonceError(err) {
+    if (err instanceof WWWAuthenticateChallengeError) {
+      return err.cause.some((challenge) => challenge.scheme === "dpop" && challenge.parameters.error === "use_dpop_nonce");
+    }
+    if (err instanceof ResponseBodyError) {
+      return err.error === "use_dpop_nonce";
+    }
+    return false;
+  }
+  function DPoP(client, keyPair, options) {
+    return new DPoPHandler(client, keyPair, options);
+  }
+  function parseWwwAuthenticateChallenges(response) {
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    const header = response.headers.get("www-authenticate");
+    if (header === null) {
+      return void 0;
+    }
+    const challenges = [];
+    let rest = header;
+    while (rest) {
+      let match = rest.match(schemeRE);
+      const scheme = match?.["1"].toLowerCase();
+      if (!scheme) {
+        if (/^[, \t]+$/.test(rest)) {
+          break;
+        }
+        return void 0;
+      }
+      const afterScheme = rest.substring(match[0].length);
+      if (afterScheme && !afterScheme.match(/^[\s,]/)) {
+        return void 0;
+      }
+      const spaceMatch = afterScheme.match(/^\s+(.*)$/);
+      const hasParameters = !!spaceMatch;
+      rest = spaceMatch ? spaceMatch[1] : void 0;
+      const parameters = {};
+      let token68;
+      if (hasParameters) {
+        while (rest) {
+          let key;
+          let value;
+          if (match = rest.match(quotedParamRE)) {
+            ;
+            [, key, value, rest] = match;
+            if (value.includes("\\")) {
+              value = value.replace(/\\([\s\S])/g, "$1");
+            }
+            parameters[key.toLowerCase()] = value;
+            continue;
+          }
+          if (match = rest.match(unquotedParamRE)) {
+            ;
+            [, key, value, rest] = match;
+            parameters[key.toLowerCase()] = value;
+            continue;
+          }
+          if (rest.startsWith(",")) {
+            break;
+          }
+          if (match = rest.match(token68ParamRE)) {
+            if (Object.keys(parameters).length) {
+              break;
+            }
+            ;
+            [, token68, rest] = match;
+            break;
+          }
+          return void 0;
+        }
+      } else {
+        rest = afterScheme || void 0;
+      }
+      const challenge = { scheme, parameters };
+      if (token68) {
+        challenge.token68 = token68;
+      }
+      challenges.push(challenge);
+    }
+    if (!challenges.length) {
+      return void 0;
+    }
+    return challenges;
+  }
+  async function processPushedAuthorizationResponse(as, client, response) {
+    assertAs(as);
+    assertClient(client);
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    await checkOAuthBodyError(response, 201, "Pushed Authorization Request Endpoint");
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response);
+    assertString(json.request_uri, '"response" body "request_uri" property', INVALID_RESPONSE, {
+      body: json
+    });
+    let expiresIn = typeof json.expires_in !== "number" ? parseFloat(json.expires_in) : json.expires_in;
+    assertNumber(expiresIn, true, '"response" body "expires_in" property', INVALID_RESPONSE, {
+      body: json
+    });
+    json.expires_in = expiresIn;
+    return json;
+  }
+  async function parseOAuthResponseErrorBody(response) {
+    if (response.status > 399 && response.status < 500) {
+      assertReadableResponse(response);
+      assertApplicationJson(response);
+      try {
+        const json = await response.clone().json();
+        if (isJsonObject(json) && typeof json.error === "string" && json.error.length) {
+          return json;
+        }
+      } catch {
+      }
+    }
+    return void 0;
+  }
+  async function checkOAuthBodyError(response, expected, label) {
+    if (response.status !== expected) {
+      checkAuthenticationChallenges(response);
+      let err;
+      if (err = await parseOAuthResponseErrorBody(response)) {
+        await response.body?.cancel();
+        throw new ResponseBodyError("server responded with an error in the response body", {
+          cause: err,
+          response
+        });
+      }
+      throw OPE(`"response" is not a conform ${label} response (unexpected HTTP status code)`, RESPONSE_IS_NOT_CONFORM, response);
+    }
+  }
+  function assertDPoP(option) {
+    if (!branded.has(option)) {
+      throw CodedTypeError('"options.DPoP" is not a valid DPoPHandle', ERR_INVALID_ARG_VALUE);
+    }
+  }
+  async function resourceRequest(accessToken, method, url, headers, body, options) {
+    assertString(accessToken, '"accessToken"');
+    if (!(url instanceof URL)) {
+      throw CodedTypeError('"url" must be an instance of URL', ERR_INVALID_ARG_TYPE);
+    }
+    checkProtocol(url, options?.[allowInsecureRequests] !== true);
+    headers = prepareHeaders(headers);
+    if (options?.DPoP) {
+      assertDPoP(options.DPoP);
+      await options.DPoP.addProof(url, headers, method.toUpperCase(), accessToken);
+    }
+    headers.set("authorization", `${headers.has("dpop") ? "DPoP" : "Bearer"} ${accessToken}`);
+    const response = await (options?.[customFetch] || fetch)(url.href, {
+      duplex: looseInstanceOf(body, ReadableStream) ? "half" : void 0,
+      body,
+      headers: Object.fromEntries(headers.entries()),
+      method,
+      redirect: "manual",
+      signal: signal(url, options?.signal)
+    });
+    options?.DPoP?.cacheNonce(response, url);
+    return response;
+  }
+  async function protectedResourceRequest(accessToken, method, url, headers, body, options) {
+    const response = await resourceRequest(accessToken, method, url, headers, body, options);
+    checkAuthenticationChallenges(response);
+    return response;
+  }
+  async function userInfoRequest(as, client, accessToken, options) {
+    assertAs(as);
+    assertClient(client);
+    const url = resolveEndpoint(as, "userinfo_endpoint", client.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    const headers = prepareHeaders(options?.headers);
+    if (client.userinfo_signed_response_alg) {
+      headers.set("accept", "application/jwt");
+    } else {
+      headers.set("accept", "application/json");
+      headers.append("accept", "application/jwt");
+    }
+    return resourceRequest(accessToken, "GET", url, headers, null, {
+      ...options,
+      [clockSkew]: getClockSkew(client)
+    });
+  }
+  function setJwksCache(as, jwks, uat, cache) {
+    jwksMap ||= /* @__PURE__ */ new WeakMap();
+    jwksMap.set(as, {
+      jwks,
+      uat,
+      get age() {
+        return epochTime() - this.uat;
+      }
+    });
+    if (cache) {
+      Object.assign(cache, { jwks: structuredClone(jwks), uat });
+    }
+  }
+  function isFreshJwksCache(input) {
+    if (typeof input !== "object" || input === null) {
+      return false;
+    }
+    if (!("uat" in input) || typeof input.uat !== "number" || epochTime() - input.uat >= 300) {
+      return false;
+    }
+    if (!("jwks" in input) || !isJsonObject(input.jwks) || !Array.isArray(input.jwks.keys) || !Array.prototype.every.call(input.jwks.keys, isJsonObject)) {
+      return false;
+    }
+    return true;
+  }
+  function clearJwksCache(as, cache) {
+    jwksMap?.delete(as);
+    delete cache?.jwks;
+    delete cache?.uat;
+  }
+  async function getPublicSigKeyFromIssuerJwksUri(as, options, header) {
+    const { alg, kid } = header;
+    checkSupportedJwsAlg(header);
+    if (!jwksMap?.has(as) && isFreshJwksCache(options?.[jwksCache])) {
+      setJwksCache(as, options?.[jwksCache].jwks, options?.[jwksCache].uat);
+    }
+    let jwks;
+    let age;
+    if (jwksMap?.has(as)) {
+      ;
+      ({ jwks, age } = jwksMap.get(as));
+      if (age >= 300) {
+        clearJwksCache(as, options?.[jwksCache]);
+        return getPublicSigKeyFromIssuerJwksUri(as, options, header);
+      }
+    } else {
+      const downloaded = await jwksRequest(as, options);
+      jwks = downloaded.jwks;
+      age = epochTime() - downloaded.uat;
+      setJwksCache(as, jwks, downloaded.uat, options?.[jwksCache]);
+    }
+    let kty;
+    switch (alg.slice(0, 2)) {
+      case "RS":
+      case "PS":
+        kty = "RSA";
+        break;
+      case "ES":
+        kty = "EC";
+        break;
+      case "Ed":
+        kty = "OKP";
+        break;
+      case "ML":
+        kty = "AKP";
+        break;
+      default:
+        throw new UnsupportedOperationError("unsupported JWS algorithm", { cause: { alg } });
+    }
+    const candidates = jwks.keys.filter((jwk2) => {
+      if (jwk2.kty !== kty) {
+        return false;
+      }
+      if (kid !== void 0 && kid !== jwk2.kid) {
+        return false;
+      }
+      if (jwk2.alg !== void 0 && alg !== jwk2.alg) {
+        return false;
+      }
+      if (jwk2.use !== void 0 && jwk2.use !== "sig") {
+        return false;
+      }
+      if (jwk2.key_ops?.includes("verify") === false) {
+        return false;
+      }
+      switch (true) {
+        case (alg === "ES256" && jwk2.crv !== "P-256"):
+        case (alg === "ES384" && jwk2.crv !== "P-384"):
+        case (alg === "ES512" && jwk2.crv !== "P-521"):
+        case (alg === "Ed25519" && jwk2.crv !== "Ed25519"):
+        case (alg === "EdDSA" && jwk2.crv !== "Ed25519"):
+          return false;
+      }
+      return true;
+    });
+    const { 0: jwk, length } = candidates;
+    if (!length) {
+      if (age >= 60) {
+        clearJwksCache(as, options?.[jwksCache]);
+        return getPublicSigKeyFromIssuerJwksUri(as, options, header);
+      }
+      throw OPE("error when selecting a JWT verification key, no applicable keys found", KEY_SELECTION, { header, candidates, jwks_uri: new URL(as.jwks_uri) });
+    }
+    if (length !== 1) {
+      throw OPE('error when selecting a JWT verification key, multiple applicable keys found, a "kid" JWT Header Parameter is required', KEY_SELECTION, { header, candidates, jwks_uri: new URL(as.jwks_uri) });
+    }
+    jwksKeys ||= /* @__PURE__ */ new WeakMap();
+    let keys = jwksKeys.get(jwk);
+    if (!keys) {
+      keys = /* @__PURE__ */ new Map();
+      jwksKeys.set(jwk, keys);
+    }
+    let key = keys.get(alg);
+    if (!key) {
+      key = importJwk(alg, jwk).catch((cause) => {
+        keys.delete(alg);
+        throw cause;
+      });
+      keys.set(alg, key);
+    }
+    return key;
+  }
+  function getContentType(input) {
+    return input.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
+  }
+  async function processUserInfoResponse(as, client, expectedSubject, response, options) {
+    assertAs(as);
+    assertClient(client);
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    checkAuthenticationChallenges(response);
+    if (response.status !== 200) {
+      throw OPE('"response" is not a conform UserInfo Endpoint response (unexpected HTTP status code)', RESPONSE_IS_NOT_CONFORM, response);
+    }
+    assertReadableResponse(response);
+    let json;
+    if (getContentType(response) === "application/jwt") {
+      const { claims, jwt } = await validateJwt(await response.text(), checkSigningAlgorithm.bind(void 0, client.userinfo_signed_response_alg, as.userinfo_signing_alg_values_supported, void 0), getClockSkew(client), getClockTolerance(client), options?.[jweDecrypt]).then(validateOptionalAudience.bind(void 0, client.client_id)).then(validateOptionalIssuer.bind(void 0, as));
+      jwtRefs.set(response, jwt);
+      json = claims;
+    } else {
+      if (client.userinfo_signed_response_alg) {
+        throw OPE("JWT UserInfo Response expected", JWT_USERINFO_EXPECTED, response);
+      }
+      json = await getResponseJsonBody(response);
+    }
+    assertString(json.sub, '"response" body "sub" property', INVALID_RESPONSE, { body: json });
+    switch (expectedSubject) {
+      case skipSubjectCheck:
+        break;
+      default:
+        assertString(expectedSubject, '"expectedSubject"');
+        if (json.sub !== expectedSubject) {
+          throw OPE('unexpected "response" body "sub" property value', JSON_ATTRIBUTE_COMPARISON, {
+            expected: expectedSubject,
+            body: json,
+            attribute: "sub"
+          });
+        }
+    }
+    return json;
+  }
+  async function authenticatedRequest(as, client, clientAuthentication, url, body, headers, options) {
+    await clientAuthentication(as, client, body, headers);
+    headers.set("content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+    return (options?.[customFetch] || fetch)(url.href, {
+      body,
+      headers: Object.fromEntries(headers.entries()),
+      method: "POST",
+      redirect: "manual",
+      signal: signal(url, options?.signal)
+    });
+  }
+  async function tokenEndpointRequest(as, client, clientAuthentication, grantType, parameters, options) {
+    const url = resolveEndpoint(as, "token_endpoint", client.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    parameters.set("grant_type", grantType);
+    const headers = prepareHeaders(options?.headers);
+    headers.set("accept", "application/json");
+    if (options?.DPoP !== void 0) {
+      assertDPoP(options.DPoP);
+      await options.DPoP.addProof(url, headers, "POST");
+    }
+    const response = await authenticatedRequest(as, client, clientAuthentication, url, parameters, headers, options);
+    options?.DPoP?.cacheNonce(response, url);
+    return response;
+  }
+  async function refreshTokenGrantRequest(as, client, clientAuthentication, refreshToken, options) {
+    assertAs(as);
+    assertClient(client);
+    assertString(refreshToken, '"refreshToken"');
+    const parameters = new URLSearchParams(options?.additionalParameters);
+    parameters.set("refresh_token", refreshToken);
+    return tokenEndpointRequest(as, client, clientAuthentication, "refresh_token", parameters, options);
+  }
+  function getValidatedIdTokenClaims(ref) {
+    if (!ref.id_token) {
+      return void 0;
+    }
+    const claims = idTokenClaims.get(ref);
+    if (!claims) {
+      throw CodedTypeError('"ref" was already garbage collected or did not resolve from the proper sources', ERR_INVALID_ARG_VALUE);
+    }
+    return claims;
+  }
+  async function validateApplicationLevelSignature(as, ref, options) {
+    assertAs(as);
+    if (!jwtRefs.has(ref)) {
+      throw CodedTypeError('"ref" does not contain a processed JWT Response to verify the signature of', ERR_INVALID_ARG_VALUE);
+    }
+    const { 0: protectedHeader, 1: payload, 2: encodedSignature } = jwtRefs.get(ref).split(".");
+    const header = JSON.parse(buf(b64u(protectedHeader)));
+    if (header.alg.startsWith("HS")) {
+      throw new UnsupportedOperationError("unsupported JWS algorithm", { cause: { alg: header.alg } });
+    }
+    let key;
+    key = await getPublicSigKeyFromIssuerJwksUri(as, options, header);
+    await validateJwsSignature(protectedHeader, payload, key, b64u(encodedSignature));
+  }
+  async function processGenericAccessTokenResponse(as, client, response, additionalRequiredIdTokenClaims, decryptFn, recognizedTokenTypes) {
+    assertAs(as);
+    assertClient(client);
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    await checkOAuthBodyError(response, 200, "Token Endpoint");
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response);
+    assertString(json.access_token, '"response" body "access_token" property', INVALID_RESPONSE, {
+      body: json
+    });
+    assertString(json.token_type, '"response" body "token_type" property', INVALID_RESPONSE, {
+      body: json
+    });
+    json.token_type = json.token_type.toLowerCase();
+    if (json.expires_in !== void 0) {
+      let expiresIn = typeof json.expires_in !== "number" ? parseFloat(json.expires_in) : json.expires_in;
+      assertNumber(expiresIn, true, '"response" body "expires_in" property', INVALID_RESPONSE, {
+        body: json
+      });
+      json.expires_in = expiresIn;
+    }
+    if (json.refresh_token !== void 0) {
+      assertString(json.refresh_token, '"response" body "refresh_token" property', INVALID_RESPONSE, {
+        body: json
+      });
+    }
+    if (json.scope !== void 0 && typeof json.scope !== "string") {
+      throw OPE('"response" body "scope" property must be a string', INVALID_RESPONSE, { body: json });
+    }
+    if (json.id_token !== void 0) {
+      assertString(json.id_token, '"response" body "id_token" property', INVALID_RESPONSE, {
+        body: json
+      });
+      const requiredClaims = [];
+      if (client.require_auth_time === true) {
+        requiredClaims.push("auth_time");
+      }
+      if (client.default_max_age !== void 0) {
+        assertNumber(client.default_max_age, true, '"client.default_max_age"');
+        requiredClaims.push("auth_time");
+      }
+      if (additionalRequiredIdTokenClaims?.length) {
+        requiredClaims.push(...additionalRequiredIdTokenClaims);
+      }
+      const { claims, jwt } = await validateIdTokenClaims(as, client, json.id_token, requiredClaims, decryptFn);
+      validateIdTokenAuthorizedParty(client, claims);
+      validateIdTokenAuthTimeClaim(claims);
+      jwtRefs.set(response, jwt);
+      idTokenClaims.set(json, claims);
+    }
+    if (recognizedTokenTypes?.[json.token_type] !== void 0) {
+      recognizedTokenTypes[json.token_type](response, json);
+    } else if (json.token_type !== "dpop" && json.token_type !== "bearer") {
+      throw new UnsupportedOperationError("unsupported `token_type` value", { cause: { body: json } });
+    }
+    return json;
+  }
+  function checkAuthenticationChallenges(response) {
+    let challenges;
+    if (challenges = parseWwwAuthenticateChallenges(response)) {
+      throw new WWWAuthenticateChallengeError("server responded with a challenge in the WWW-Authenticate HTTP Header", { cause: challenges, response });
+    }
+  }
+  async function processRefreshTokenResponse(as, client, response, options) {
+    return processGenericAccessTokenResponse(as, client, response, void 0, options?.[jweDecrypt], options?.recognizedTokenTypes);
+  }
+  function validateOptionalAudience(expected, result) {
+    if (result.claims.aud !== void 0) {
+      return validateAudience(expected, result);
+    }
+    return result;
+  }
+  function validateAudience(expected, result) {
+    if (Array.isArray(result.claims.aud)) {
+      if (!result.claims.aud.includes(expected)) {
+        throw OPE('unexpected JWT "aud" (audience) claim value', JWT_CLAIM_COMPARISON, {
+          expected,
+          claims: result.claims,
+          claim: "aud"
+        });
+      }
+    } else if (result.claims.aud !== expected) {
+      throw OPE('unexpected JWT "aud" (audience) claim value', JWT_CLAIM_COMPARISON, {
+        expected,
+        claims: result.claims,
+        claim: "aud"
+      });
+    }
+    return result;
+  }
+  function validateOptionalIssuer(as, result) {
+    if (result.claims.iss !== void 0) {
+      return validateIssuer(as, result);
+    }
+    return result;
+  }
+  function validateIssuer(as, result) {
+    const expected = as[_expectedIssuer]?.(result) ?? as.issuer;
+    if (result.claims.iss !== expected) {
+      throw OPE('unexpected JWT "iss" (issuer) claim value', JWT_CLAIM_COMPARISON, {
+        expected,
+        claims: result.claims,
+        claim: "iss"
+      });
+    }
+    return result;
+  }
+  function brand(searchParams) {
+    branded.add(searchParams);
+    return searchParams;
+  }
+  async function authorizationCodeGrantRequest(as, client, clientAuthentication, callbackParameters, redirectUri, codeVerifier, options) {
+    assertAs(as);
+    assertClient(client);
+    if (!branded.has(callbackParameters)) {
+      throw CodedTypeError('"callbackParameters" must be an instance of URLSearchParams obtained from "validateAuthResponse()", or "validateJwtAuthResponse()', ERR_INVALID_ARG_VALUE);
+    }
+    assertString(redirectUri, '"redirectUri"');
+    const code = getURLSearchParameter(callbackParameters, "code");
+    if (!code) {
+      throw OPE('no authorization code in "callbackParameters"', INVALID_RESPONSE);
+    }
+    const parameters = new URLSearchParams(options?.additionalParameters);
+    parameters.set("redirect_uri", redirectUri);
+    parameters.set("code", code);
+    if (codeVerifier !== nopkce) {
+      assertString(codeVerifier, '"codeVerifier"');
+      parameters.set("code_verifier", codeVerifier);
+    }
+    return tokenEndpointRequest(as, client, clientAuthentication, "authorization_code", parameters, options);
+  }
+  function validatePresence(required, result) {
+    for (const claim of required) {
+      if (result.claims[claim] === void 0) {
+        throw OPE(`JWT "${claim}" (${jwtClaimNames[claim]}) claim missing`, INVALID_RESPONSE, {
+          claims: result.claims
+        });
+      }
+    }
+    return result;
+  }
+  function validateStringClaim(claim, result) {
+    if (typeof result.claims[claim] !== "string") {
+      throw OPE(`unexpected JWT "${claim}" (${jwtClaimNames[claim]}) claim type`, INVALID_RESPONSE, {
+        claims: result.claims
+      });
+    }
+    return result;
+  }
+  function validateIdTokenClaims(as, client, idToken, requiredClaims, decryptFn) {
+    return validateJwt(idToken, checkSigningAlgorithm.bind(void 0, client.id_token_signed_response_alg, as.id_token_signing_alg_values_supported, "RS256"), getClockSkew(client), getClockTolerance(client), decryptFn).then(validatePresence.bind(void 0, ["aud", "exp", "iat", "iss", "sub", ...requiredClaims])).then(validateIssuer.bind(void 0, as)).then(validateAudience.bind(void 0, client.client_id)).then(validateStringClaim.bind(void 0, "sub"));
+  }
+  function resolveIdTokenMaxAge(client, maxAge) {
+    if (maxAge === skipAuthTimeCheck) {
+      return maxAge;
+    }
+    const fromClient = maxAge === void 0;
+    if (fromClient) {
+      maxAge = client.default_max_age;
+    }
+    if (maxAge === void 0) {
+      return skipAuthTimeCheck;
+    }
+    assertNumber(maxAge, true, fromClient ? '"client.default_max_age"' : '"maxAge" argument');
+    return maxAge;
+  }
+  function validateIdTokenAuthTimeClaim(claims) {
+    if (claims.auth_time !== void 0) {
+      assertNumber(claims.auth_time, true, 'ID Token "auth_time" (authentication time)', INVALID_RESPONSE, { claims });
+    }
+  }
+  function validateIdTokenAuthTime(client, claims, maxAge) {
+    if (maxAge === skipAuthTimeCheck) {
+      return;
+    }
+    const now = epochTime() + getClockSkew(client);
+    const tolerance = getClockTolerance(client);
+    if (claims.auth_time + maxAge < now - tolerance) {
+      throw OPE("too much time has elapsed since the last End-User authentication", JWT_TIMESTAMP_CHECK, { claims, now, tolerance, claim: "auth_time" });
+    }
+  }
+  function validateIdTokenNonce(claims, expectedNonce) {
+    const expected = expectedNonce === expectNoNonce ? void 0 : expectedNonce;
+    if (claims.nonce !== expected) {
+      throw OPE('unexpected ID Token "nonce" claim value', JWT_CLAIM_COMPARISON, {
+        expected,
+        claims,
+        claim: "nonce"
+      });
+    }
+  }
+  function validateIdTokenAuthorizedParty(client, claims) {
+    if (Array.isArray(claims.aud) && claims.aud.length !== 1) {
+      if (claims.azp === void 0) {
+        throw OPE('ID Token "aud" (audience) claim includes additional untrusted audiences', JWT_CLAIM_COMPARISON, { claims, claim: "aud" });
+      }
+      if (claims.azp !== client.client_id) {
+        throw OPE('unexpected ID Token "azp" (authorized party) claim value', JWT_CLAIM_COMPARISON, {
+          expected: client.client_id,
+          claims,
+          claim: "azp"
+        });
+      }
+    }
+  }
+  async function processAuthorizationCodeResponse(as, client, response, options) {
+    if (typeof options?.expectedNonce === "string" || typeof options?.maxAge === "number" || options?.requireIdToken) {
+      return processAuthorizationCodeOpenIDResponse(as, client, response, options.expectedNonce, options.maxAge, options[jweDecrypt], options.recognizedTokenTypes);
+    }
+    return processAuthorizationCodeOAuth2Response(as, client, response, options?.maxAge, options?.[jweDecrypt], options?.recognizedTokenTypes);
+  }
+  async function processAuthorizationCodeOpenIDResponse(as, client, response, expectedNonce, maxAge, decryptFn, recognizedTokenTypes) {
+    const additionalRequiredClaims = [];
+    switch (expectedNonce) {
+      case void 0:
+        expectedNonce = expectNoNonce;
+        break;
+      case expectNoNonce:
+        break;
+      default:
+        assertString(expectedNonce, '"expectedNonce" argument');
+        additionalRequiredClaims.push("nonce");
+    }
+    maxAge = resolveIdTokenMaxAge(client, maxAge);
+    if (maxAge !== skipAuthTimeCheck) {
+      additionalRequiredClaims.push("auth_time");
+    }
+    const result = await processGenericAccessTokenResponse(as, client, response, additionalRequiredClaims, decryptFn, recognizedTokenTypes);
+    assertString(result.id_token, '"response" body "id_token" property', INVALID_RESPONSE, {
+      body: result
+    });
+    const claims = getValidatedIdTokenClaims(result);
+    validateIdTokenAuthTime(client, claims, maxAge);
+    validateIdTokenNonce(claims, expectedNonce);
+    return result;
+  }
+  async function processAuthorizationCodeOAuth2Response(as, client, response, maxAge, decryptFn, recognizedTokenTypes) {
+    const result = await processGenericAccessTokenResponse(as, client, response, void 0, decryptFn, recognizedTokenTypes);
+    const claims = getValidatedIdTokenClaims(result);
+    if (claims) {
+      validateIdTokenAuthTime(client, claims, resolveIdTokenMaxAge(client, maxAge));
+      validateIdTokenNonce(claims, expectNoNonce);
+    }
+    return result;
+  }
+  function checkJwtType(expected, result) {
+    if (typeof result.header.typ !== "string" || normalizeTyp(result.header.typ) !== expected) {
+      throw OPE('unexpected JWT "typ" header parameter value', INVALID_RESPONSE, {
+        header: result.header
+      });
+    }
+    return result;
+  }
+  async function clientCredentialsGrantRequest(as, client, clientAuthentication, parameters, options) {
+    assertAs(as);
+    assertClient(client);
+    return tokenEndpointRequest(as, client, clientAuthentication, "client_credentials", new URLSearchParams(parameters), options);
+  }
+  async function genericTokenEndpointRequest(as, client, clientAuthentication, grantType, parameters, options) {
+    assertAs(as);
+    assertClient(client);
+    assertString(grantType, '"grantType"');
+    return tokenEndpointRequest(as, client, clientAuthentication, grantType, new URLSearchParams(parameters), options);
+  }
+  async function processGenericTokenEndpointResponse(as, client, response, options) {
+    return processGenericAccessTokenResponse(as, client, response, void 0, options?.[jweDecrypt], options?.recognizedTokenTypes);
+  }
+  async function processClientCredentialsResponse(as, client, response, options) {
+    return processGenericAccessTokenResponse(as, client, response, void 0, options?.[jweDecrypt], options?.recognizedTokenTypes);
+  }
+  async function revocationRequest(as, client, clientAuthentication, token, options) {
+    assertAs(as);
+    assertClient(client);
+    assertString(token, '"token"');
+    const url = resolveEndpoint(as, "revocation_endpoint", client.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    const body = new URLSearchParams(options?.additionalParameters);
+    body.set("token", token);
+    const headers = prepareHeaders(options?.headers);
+    headers.delete("accept");
+    return authenticatedRequest(as, client, clientAuthentication, url, body, headers, options);
+  }
+  async function processRevocationResponse(response) {
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    await checkOAuthBodyError(response, 200, "Revocation Endpoint");
+    return void 0;
+  }
+  function assertReadableResponse(response) {
+    if (response.bodyUsed) {
+      throw CodedTypeError('"response" body has been used already', ERR_INVALID_ARG_VALUE);
+    }
+  }
+  async function introspectionRequest(as, client, clientAuthentication, token, options) {
+    assertAs(as);
+    assertClient(client);
+    assertString(token, '"token"');
+    const url = resolveEndpoint(as, "introspection_endpoint", client.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    const body = new URLSearchParams(options?.additionalParameters);
+    body.set("token", token);
+    const headers = prepareHeaders(options?.headers);
+    if (options?.requestJwtResponse ?? client.introspection_signed_response_alg) {
+      headers.set("accept", "application/token-introspection+jwt");
+    } else {
+      headers.set("accept", "application/json");
+    }
+    return authenticatedRequest(as, client, clientAuthentication, url, body, headers, options);
+  }
+  async function processIntrospectionResponse(as, client, response, options) {
+    assertAs(as);
+    assertClient(client);
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    await checkOAuthBodyError(response, 200, "Introspection Endpoint");
+    let json;
+    if (getContentType(response) === "application/token-introspection+jwt") {
+      assertReadableResponse(response);
+      const { claims, jwt } = await validateJwt(await response.text(), checkSigningAlgorithm.bind(void 0, client.introspection_signed_response_alg, as.introspection_signing_alg_values_supported, "RS256"), getClockSkew(client), getClockTolerance(client), options?.[jweDecrypt]).then(checkJwtType.bind(void 0, "token-introspection+jwt")).then(validatePresence.bind(void 0, ["aud", "iat", "iss"])).then(validateIssuer.bind(void 0, as)).then(validateAudience.bind(void 0, client.client_id));
+      jwtRefs.set(response, jwt);
+      if (!isJsonObject(claims.token_introspection)) {
+        throw OPE('JWT "token_introspection" claim must be a JSON object', INVALID_RESPONSE, {
+          claims
+        });
+      }
+      json = claims.token_introspection;
+    } else {
+      assertReadableResponse(response);
+      json = await getResponseJsonBody(response);
+    }
+    if (typeof json.active !== "boolean") {
+      throw OPE('"response" body "active" property must be a boolean', INVALID_RESPONSE, {
+        body: json
+      });
+    }
+    return json;
+  }
+  async function jwksRequest(as, options) {
+    assertAs(as);
+    const url = resolveEndpoint(as, "jwks_uri", false, options?.[allowInsecureRequests] !== true);
+    const headers = prepareHeaders(options?.headers);
+    headers.set("accept", "application/json");
+    headers.append("accept", "application/jwk-set+json");
+    const requestHeaders = Object.fromEntries(headers.entries());
+    const headersKey = JSON.stringify(requestHeaders);
+    const fetcher = options?.[customFetch] || fetch;
+    const requestSignal = signal(url, options?.signal);
+    jwksRequests ||= /* @__PURE__ */ new WeakMap();
+    const requests = jwksRequests.get(as) ?? /* @__PURE__ */ new Set();
+    for (const pending2 of requests) {
+      if (pending2.url === url.href && pending2.headers === headersKey && pending2.fetch === fetcher && pending2.signal === requestSignal) {
+        return pending2.promise;
+      }
+    }
+    const pending = {
+      url: url.href,
+      headers: headersKey,
+      fetch: fetcher,
+      signal: requestSignal,
+      promise: Promise.resolve().then(() => fetcher(url.href, {
+        body: void 0,
+        headers: requestHeaders,
+        method: "GET",
+        redirect: "manual",
+        signal: requestSignal
+      })).then(processJwksResponse).then((jwks) => {
+        const uat = epochTime();
+        setJwksCache(as, jwks, uat);
+        return { jwks, uat };
+      }).finally(() => {
+        requests.delete(pending);
+        if (!requests.size) {
+          jwksRequests.delete(as);
+        }
+      })
+    };
+    requests.add(pending);
+    jwksRequests.set(as, requests);
+    return pending.promise;
+  }
+  async function processJwksResponse(response) {
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    if (response.status !== 200) {
+      throw OPE('"response" is not a conform JSON Web Key Set response (unexpected HTTP status code)', RESPONSE_IS_NOT_CONFORM, response);
+    }
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response, (response2) => assertContentTypes(response2, "application/json", "application/jwk-set+json"));
+    if (!Array.isArray(json.keys)) {
+      throw OPE('"response" body "keys" property must be an array', INVALID_RESPONSE, { body: json });
+    }
+    if (!Array.prototype.every.call(json.keys, isJsonObject)) {
+      throw OPE('"response" body "keys" property members must be JWK formatted objects', INVALID_RESPONSE, { body: json });
+    }
+    return json;
+  }
+  function supported(alg) {
+    switch (alg) {
+      case "PS256":
+      case "ES256":
+      case "RS256":
+      case "PS384":
+      case "ES384":
+      case "RS384":
+      case "PS512":
+      case "ES512":
+      case "RS512":
+      case "Ed25519":
+      case "EdDSA":
+      case "ML-DSA-44":
+      case "ML-DSA-65":
+      case "ML-DSA-87":
+        return true;
+      default:
+        return false;
+    }
+  }
+  function checkSupportedJwsAlg(header) {
+    if (!supported(header.alg)) {
+      throw new UnsupportedOperationError('unsupported JWS "alg" identifier', {
+        cause: { alg: header.alg }
+      });
+    }
+  }
+  function checkRsaKeyAlgorithm(key) {
+    const { algorithm } = key;
+    if (typeof algorithm.modulusLength !== "number" || algorithm.modulusLength < 2048) {
+      throw new UnsupportedOperationError(`unsupported ${algorithm.name} modulusLength`, {
+        cause: key
+      });
+    }
+  }
+  function ecdsaHashName(key) {
+    const { algorithm } = key;
+    switch (algorithm.namedCurve) {
+      case "P-256":
+        return "SHA-256";
+      case "P-384":
+        return "SHA-384";
+      case "P-521":
+        return "SHA-512";
+      default:
+        throw new UnsupportedOperationError("unsupported ECDSA namedCurve", { cause: key });
+    }
+  }
+  function keyToSubtle(key) {
+    switch (key.algorithm.name) {
+      case "ECDSA":
+        return {
+          name: key.algorithm.name,
+          hash: ecdsaHashName(key)
+        };
+      case "RSA-PSS": {
+        checkRsaKeyAlgorithm(key);
+        switch (key.algorithm.hash.name) {
+          case "SHA-256":
+          case "SHA-384":
+          case "SHA-512":
+            return {
+              name: key.algorithm.name,
+              saltLength: parseInt(key.algorithm.hash.name.slice(-3), 10) >> 3
+            };
+          default:
+            throw new UnsupportedOperationError("unsupported RSA-PSS hash name", { cause: key });
+        }
+      }
+      case "RSASSA-PKCS1-v1_5":
+        checkRsaKeyAlgorithm(key);
+        return key.algorithm.name;
+      case "ML-DSA-44":
+      case "ML-DSA-65":
+      case "ML-DSA-87":
+      case "Ed25519":
+        return key.algorithm.name;
+    }
+    throw new UnsupportedOperationError("unsupported CryptoKey algorithm name", { cause: key });
+  }
+  async function validateJwsSignature(protectedHeader, payload, key, signature) {
+    const data = buf(`${protectedHeader}.${payload}`);
+    const algorithm = keyToSubtle(key);
+    const verified = await crypto.subtle.verify(algorithm, key, signature, data);
+    if (!verified) {
+      throw OPE("JWT signature verification failed", INVALID_RESPONSE, {
+        key,
+        data,
+        signature,
+        algorithm
+      });
+    }
+  }
+  async function validateJwt(jws, checkAlg, clockSkew2, clockTolerance2, decryptJwt) {
+    let { 0: protectedHeader, 1: payload, length } = jws.split(".");
+    if (length === 5) {
+      if (decryptJwt !== void 0) {
+        jws = await decryptJwt(jws);
+        ({ 0: protectedHeader, 1: payload, length } = jws.split("."));
+      } else {
+        throw new UnsupportedOperationError("JWE decryption is not configured", { cause: jws });
+      }
+    }
+    if (length !== 3) {
+      throw OPE("Invalid JWT", INVALID_RESPONSE, jws);
+    }
+    let header;
+    try {
+      header = JSON.parse(buf(b64u(protectedHeader)));
+    } catch (cause) {
+      throw OPE("failed to parse JWT Header body as base64url encoded JSON", PARSE_ERROR, cause);
+    }
+    if (!isJsonObject(header)) {
+      throw OPE("JWT Header must be a top level object", INVALID_RESPONSE, jws);
+    }
+    checkAlg(header);
+    if (header.crit !== void 0) {
+      throw new UnsupportedOperationError('no JWT "crit" header parameter extensions are supported', {
+        cause: { header }
+      });
+    }
+    let claims;
+    try {
+      claims = JSON.parse(buf(b64u(payload)));
+    } catch (cause) {
+      throw OPE("failed to parse JWT Payload body as base64url encoded JSON", PARSE_ERROR, cause);
+    }
+    if (!isJsonObject(claims)) {
+      throw OPE("JWT Payload must be a top level object", INVALID_RESPONSE, jws);
+    }
+    const now = epochTime() + clockSkew2;
+    if (claims.exp !== void 0) {
+      if (typeof claims.exp !== "number") {
+        throw OPE('unexpected JWT "exp" (expiration time) claim type', INVALID_RESPONSE, { claims });
+      }
+      if (claims.exp <= now - clockTolerance2) {
+        throw OPE('unexpected JWT "exp" (expiration time) claim value, expiration is past current timestamp', JWT_TIMESTAMP_CHECK, { claims, now, tolerance: clockTolerance2, claim: "exp" });
+      }
+    }
+    if (claims.iat !== void 0) {
+      if (typeof claims.iat !== "number") {
+        throw OPE('unexpected JWT "iat" (issued at) claim type', INVALID_RESPONSE, { claims });
+      }
+    }
+    if (claims.iss !== void 0) {
+      if (typeof claims.iss !== "string") {
+        throw OPE('unexpected JWT "iss" (issuer) claim type', INVALID_RESPONSE, { claims });
+      }
+    }
+    if (claims.nbf !== void 0) {
+      if (typeof claims.nbf !== "number") {
+        throw OPE('unexpected JWT "nbf" (not before) claim type', INVALID_RESPONSE, { claims });
+      }
+      if (claims.nbf > now + clockTolerance2) {
+        throw OPE('unexpected JWT "nbf" (not before) claim value', JWT_TIMESTAMP_CHECK, {
+          claims,
+          now,
+          tolerance: clockTolerance2,
+          claim: "nbf"
+        });
+      }
+    }
+    if (claims.aud !== void 0) {
+      if (typeof claims.aud !== "string" && !Array.isArray(claims.aud)) {
+        throw OPE('unexpected JWT "aud" (audience) claim type', INVALID_RESPONSE, { claims });
+      }
+    }
+    return { header, claims, jwt: jws };
+  }
+  async function validateJwtAuthResponse(as, client, parameters, expectedState, options) {
+    assertAs(as);
+    assertClient(client);
+    if (parameters instanceof URL) {
+      parameters = parameters.searchParams;
+    }
+    if (!(parameters instanceof URLSearchParams)) {
+      throw CodedTypeError('"parameters" must be an instance of URLSearchParams, or URL', ERR_INVALID_ARG_TYPE);
+    }
+    const response = getURLSearchParameter(parameters, "response");
+    if (!response) {
+      throw OPE('"parameters" does not contain a JARM response', INVALID_RESPONSE);
+    }
+    const { claims, header, jwt } = await validateJwt(response, checkSigningAlgorithm.bind(void 0, client.authorization_signed_response_alg, as.authorization_signing_alg_values_supported, "RS256"), getClockSkew(client), getClockTolerance(client), options?.[jweDecrypt]).then(validatePresence.bind(void 0, ["aud", "exp", "iss"])).then(validateIssuer.bind(void 0, as)).then(validateAudience.bind(void 0, client.client_id));
+    const { 0: protectedHeader, 1: payload, 2: encodedSignature } = jwt.split(".");
+    const signature = b64u(encodedSignature);
+    const key = await getPublicSigKeyFromIssuerJwksUri(as, options, header);
+    await validateJwsSignature(protectedHeader, payload, key, signature);
+    const result = new URLSearchParams();
+    for (const [key2, value] of Object.entries(claims)) {
+      if (typeof value === "string" && key2 !== "aud") {
+        result.set(key2, value);
+      }
+    }
+    return validateAuthResponse(as, client, result, expectedState);
+  }
+  async function idTokenHash(data, header, claimName) {
+    let algorithm;
+    switch (header.alg) {
+      case "RS256":
+      case "PS256":
+      case "ES256":
+        algorithm = "SHA-256";
+        break;
+      case "RS384":
+      case "PS384":
+      case "ES384":
+        algorithm = "SHA-384";
+        break;
+      case "RS512":
+      case "PS512":
+      case "ES512":
+      case "Ed25519":
+      case "EdDSA":
+        algorithm = "SHA-512";
+        break;
+      case "ML-DSA-44":
+      case "ML-DSA-65":
+      case "ML-DSA-87":
+        algorithm = { name: "cSHAKE256", length: 512, outputLength: 512 };
+        break;
+      default:
+        throw new UnsupportedOperationError(`unsupported JWS algorithm for ${claimName} calculation`, { cause: { alg: header.alg } });
+    }
+    const digest = await crypto.subtle.digest(algorithm, buf(data));
+    return b64u(digest.slice(0, digest.byteLength / 2));
+  }
+  async function idTokenHashMatches(data, actual, header, claimName) {
+    const expected = await idTokenHash(data, header, claimName);
+    return actual === expected;
+  }
+  async function validateDetachedSignatureResponse(as, client, parameters, expectedNonce, expectedState, maxAge, options) {
+    return validateHybridResponse(as, client, parameters, expectedNonce, expectedState, maxAge, options, true);
+  }
+  async function validateCodeIdTokenResponse(as, client, parameters, expectedNonce, expectedState, maxAge, options) {
+    return validateHybridResponse(as, client, parameters, expectedNonce, expectedState, maxAge, options, false);
+  }
+  async function consumeStream(request) {
+    if (request.bodyUsed) {
+      throw CodedTypeError("form_post Request instances must contain a readable body", ERR_INVALID_ARG_VALUE, { cause: request });
+    }
+    return request.text();
+  }
+  async function formPostResponse(request) {
+    if (request.method !== "POST") {
+      throw CodedTypeError("form_post responses are expected to use the POST method", ERR_INVALID_ARG_VALUE, { cause: request });
+    }
+    if (getContentType(request) !== "application/x-www-form-urlencoded") {
+      throw CodedTypeError("form_post responses are expected to use the application/x-www-form-urlencoded content-type", ERR_INVALID_ARG_VALUE, { cause: request });
+    }
+    return consumeStream(request);
+  }
+  async function validateHybridResponse(as, client, parameters, expectedNonce, expectedState, maxAge, options, fapi) {
+    assertAs(as);
+    assertClient(client);
+    if (parameters instanceof URL) {
+      if (!parameters.hash.length) {
+        throw CodedTypeError('"parameters" as an instance of URL must contain a hash (fragment) with the Authorization Response parameters', ERR_INVALID_ARG_VALUE);
+      }
+      parameters = new URLSearchParams(parameters.hash.slice(1));
+    } else if (looseInstanceOf(parameters, Request)) {
+      parameters = new URLSearchParams(await formPostResponse(parameters));
+    } else if (parameters instanceof URLSearchParams) {
+      parameters = new URLSearchParams(parameters);
+    } else {
+      throw CodedTypeError('"parameters" must be an instance of URLSearchParams, URL, or Response', ERR_INVALID_ARG_TYPE);
+    }
+    const id_token = getURLSearchParameter(parameters, "id_token");
+    parameters.delete("id_token");
+    switch (expectedState) {
+      case void 0:
+      case expectNoState:
+        break;
+      default:
+        assertString(expectedState, '"expectedState" argument');
+    }
+    const result = validateAuthResponse({
+      ...as,
+      authorization_response_iss_parameter_supported: false
+    }, client, parameters, expectedState);
+    if (!id_token) {
+      throw OPE('"parameters" does not contain an ID Token', INVALID_RESPONSE);
+    }
+    const code = getURLSearchParameter(parameters, "code");
+    if (!code) {
+      throw OPE('"parameters" does not contain an Authorization Code', INVALID_RESPONSE);
+    }
+    const requiredClaims = ["nonce", "c_hash"];
+    const state = parameters.get("state");
+    if (fapi && (typeof expectedState === "string" || state !== null)) {
+      requiredClaims.push("s_hash");
+    }
+    maxAge = resolveIdTokenMaxAge(client, maxAge);
+    if (client.require_auth_time || maxAge !== skipAuthTimeCheck) {
+      requiredClaims.push("auth_time");
+    }
+    const { claims, header, jwt } = await validateIdTokenClaims(as, client, id_token, requiredClaims, options?.[jweDecrypt]);
+    const clockSkew2 = getClockSkew(client);
+    const now = epochTime() + clockSkew2;
+    if (claims.iat < now - 3600) {
+      throw OPE('unexpected JWT "iat" (issued at) claim value, it is too far in the past', JWT_TIMESTAMP_CHECK, { now, claims, claim: "iat" });
+    }
+    assertString(claims.c_hash, 'ID Token "c_hash" (code hash) claim value', INVALID_RESPONSE, {
+      claims
+    });
+    validateIdTokenAuthTimeClaim(claims);
+    validateIdTokenAuthTime(client, claims, maxAge);
+    assertString(expectedNonce, '"expectedNonce" argument');
+    validateIdTokenNonce(claims, expectedNonce);
+    validateIdTokenAuthorizedParty(client, claims);
+    const { 0: protectedHeader, 1: payload, 2: encodedSignature } = jwt.split(".");
+    const signature = b64u(encodedSignature);
+    const key = await getPublicSigKeyFromIssuerJwksUri(as, options, header);
+    await validateJwsSignature(protectedHeader, payload, key, signature);
+    if (await idTokenHashMatches(code, claims.c_hash, header, "c_hash") !== true) {
+      throw OPE('invalid ID Token "c_hash" (code hash) claim value', JWT_CLAIM_COMPARISON, {
+        code,
+        alg: header.alg,
+        claim: "c_hash",
+        claims
+      });
+    }
+    if (fapi && state !== null || claims.s_hash !== void 0) {
+      assertString(claims.s_hash, 'ID Token "s_hash" (state hash) claim value', INVALID_RESPONSE, {
+        claims
+      });
+      assertString(state, '"state" response parameter', INVALID_RESPONSE, { parameters });
+      if (await idTokenHashMatches(state, claims.s_hash, header, "s_hash") !== true) {
+        throw OPE('invalid ID Token "s_hash" (state hash) claim value', JWT_CLAIM_COMPARISON, {
+          state,
+          alg: header.alg,
+          claim: "s_hash",
+          claims
+        });
+      }
+    }
+    return result;
+  }
+  function checkSigningAlgorithm(client, issuer, fallback, header) {
+    if (client !== void 0) {
+      if (typeof client === "string" ? header.alg !== client : !client.includes(header.alg)) {
+        throw OPE('unexpected JWT "alg" header parameter', INVALID_RESPONSE, {
+          header,
+          expected: client,
+          reason: "client configuration"
+        });
+      }
+      return;
+    }
+    if (Array.isArray(issuer)) {
+      if (!issuer.includes(header.alg)) {
+        throw OPE('unexpected JWT "alg" header parameter', INVALID_RESPONSE, {
+          header,
+          expected: issuer,
+          reason: "authorization server metadata"
+        });
+      }
+      return;
+    }
+    if (fallback !== void 0) {
+      if (typeof fallback === "string" ? header.alg !== fallback : typeof fallback === "function" ? !fallback(header.alg) : !fallback.includes(header.alg)) {
+        throw OPE('unexpected JWT "alg" header parameter', INVALID_RESPONSE, {
+          header,
+          expected: fallback,
+          reason: "default value"
+        });
+      }
+      return;
+    }
+    throw OPE('missing client or server configuration to verify used JWT "alg" header parameter', void 0, { client, issuer, fallback });
+  }
+  function getURLSearchParameter(parameters, name) {
+    const { 0: value, length } = parameters.getAll(name);
+    if (length > 1) {
+      throw OPE(`"${name}" parameter must be provided only once`, INVALID_RESPONSE);
+    }
+    return value;
+  }
+  function validateAuthResponse(as, client, parameters, expectedState) {
+    assertAs(as);
+    assertClient(client);
+    if (parameters instanceof URL) {
+      parameters = parameters.searchParams;
+    }
+    if (!(parameters instanceof URLSearchParams)) {
+      throw CodedTypeError('"parameters" must be an instance of URLSearchParams, or URL', ERR_INVALID_ARG_TYPE);
+    }
+    if (getURLSearchParameter(parameters, "response")) {
+      throw OPE('"parameters" contains a JARM response, use validateJwtAuthResponse() instead of validateAuthResponse()', INVALID_RESPONSE, { parameters });
+    }
+    const iss = getURLSearchParameter(parameters, "iss");
+    const state = getURLSearchParameter(parameters, "state");
+    if (!iss && as.authorization_response_iss_parameter_supported) {
+      throw OPE('response parameter "iss" (issuer) missing', INVALID_RESPONSE, { parameters });
+    }
+    if (iss && iss !== as.issuer) {
+      throw OPE('unexpected "iss" (issuer) response parameter value', INVALID_RESPONSE, {
+        expected: as.issuer,
+        parameters
+      });
+    }
+    switch (expectedState) {
+      case void 0:
+      case expectNoState:
+        if (state !== void 0) {
+          throw OPE('unexpected "state" response parameter encountered', INVALID_RESPONSE, {
+            expected: void 0,
+            parameters
+          });
+        }
+        break;
+      case skipStateCheck:
+        break;
+      default:
+        assertString(expectedState, '"expectedState" argument');
+        if (state !== expectedState) {
+          throw OPE(state === void 0 ? 'response parameter "state" missing' : 'unexpected "state" response parameter value', INVALID_RESPONSE, { expected: expectedState, parameters });
+        }
+    }
+    const error = getURLSearchParameter(parameters, "error");
+    if (error) {
+      throw new AuthorizationResponseError("authorization response from the server is an error", {
+        cause: parameters
+      });
+    }
+    const id_token = getURLSearchParameter(parameters, "id_token");
+    const token = getURLSearchParameter(parameters, "token");
+    if (id_token !== void 0 || token !== void 0) {
+      throw new UnsupportedOperationError("implicit and hybrid flows are not supported");
+    }
+    return brand(new URLSearchParams(parameters));
+  }
+  function algToSubtle(alg) {
+    switch (alg) {
+      case "PS256":
+      case "PS384":
+      case "PS512":
+        return { name: "RSA-PSS", hash: `SHA-${alg.slice(-3)}` };
+      case "RS256":
+      case "RS384":
+      case "RS512":
+        return { name: "RSASSA-PKCS1-v1_5", hash: `SHA-${alg.slice(-3)}` };
+      case "ES256":
+      case "ES384":
+        return { name: "ECDSA", namedCurve: `P-${alg.slice(-3)}` };
+      case "ES512":
+        return { name: "ECDSA", namedCurve: "P-521" };
+      case "EdDSA":
+        return "Ed25519";
+      case "Ed25519":
+      case "ML-DSA-44":
+      case "ML-DSA-65":
+      case "ML-DSA-87":
+        return alg;
+      default:
+        throw new UnsupportedOperationError("unsupported JWS algorithm", { cause: { alg } });
+    }
+  }
+  async function importJwk(alg, jwk) {
+    const { ext, key_ops, use, ...key } = jwk;
+    return crypto.subtle.importKey("jwk", key, algToSubtle(alg), true, ["verify"]);
+  }
+  async function deviceAuthorizationRequest(as, client, clientAuthentication, parameters, options) {
+    assertAs(as);
+    assertClient(client);
+    const url = resolveEndpoint(as, "device_authorization_endpoint", client.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    const body = new URLSearchParams(parameters);
+    body.set("client_id", client.client_id);
+    const headers = prepareHeaders(options?.headers);
+    headers.set("accept", "application/json");
+    return authenticatedRequest(as, client, clientAuthentication, url, body, headers, options);
+  }
+  async function processDeviceAuthorizationResponse(as, client, response) {
+    assertAs(as);
+    assertClient(client);
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    await checkOAuthBodyError(response, 200, "Device Authorization Endpoint");
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response);
+    assertString(json.device_code, '"response" body "device_code" property', INVALID_RESPONSE, {
+      body: json
+    });
+    assertString(json.user_code, '"response" body "user_code" property', INVALID_RESPONSE, {
+      body: json
+    });
+    assertString(json.verification_uri, '"response" body "verification_uri" property', INVALID_RESPONSE, { body: json });
+    let expiresIn = typeof json.expires_in !== "number" ? parseFloat(json.expires_in) : json.expires_in;
+    assertNumber(expiresIn, true, '"response" body "expires_in" property', INVALID_RESPONSE, {
+      body: json
+    });
+    json.expires_in = expiresIn;
+    if (json.verification_uri_complete !== void 0) {
+      assertString(json.verification_uri_complete, '"response" body "verification_uri_complete" property', INVALID_RESPONSE, { body: json });
+    }
+    if (json.interval !== void 0) {
+      assertNumber(json.interval, false, '"response" body "interval" property', INVALID_RESPONSE, {
+        body: json
+      });
+    }
+    return json;
+  }
+  async function deviceCodeGrantRequest(as, client, clientAuthentication, deviceCode, options) {
+    assertAs(as);
+    assertClient(client);
+    assertString(deviceCode, '"deviceCode"');
+    const parameters = new URLSearchParams(options?.additionalParameters);
+    parameters.set("device_code", deviceCode);
+    return tokenEndpointRequest(as, client, clientAuthentication, "urn:ietf:params:oauth:grant-type:device_code", parameters, options);
+  }
+  async function processDeviceCodeResponse(as, client, response, options) {
+    return processGenericAccessTokenResponse(as, client, response, void 0, options?.[jweDecrypt], options?.recognizedTokenTypes);
+  }
+  async function generateKeyPair(alg, options) {
+    assertString(alg, '"alg"');
+    const algorithm = algToSubtle(alg);
+    if (alg.startsWith("PS") || alg.startsWith("RS")) {
+      Object.assign(algorithm, {
+        modulusLength: options?.modulusLength ?? 2048,
+        publicExponent: new Uint8Array([1, 0, 1])
+      });
+    }
+    return crypto.subtle.generateKey(algorithm, options?.extractable ?? false, [
+      "sign",
+      "verify"
+    ]);
+  }
+  function normalizeHtu(htu) {
+    const url = new URL(htu);
+    url.search = "";
+    url.hash = "";
+    return url.href;
+  }
+  async function validateDPoP(request, accessToken, accessTokenClaims, options) {
+    const headerValue = request.headers.get("dpop");
+    if (headerValue === null) {
+      throw OPE("operation indicated DPoP use but the request has no DPoP HTTP Header", INVALID_REQUEST, { headers: request.headers });
+    }
+    if (request.headers.get("authorization")?.toLowerCase().startsWith("dpop ") === false) {
+      throw OPE(`operation indicated DPoP use but the request's Authorization HTTP Header scheme is not DPoP`, INVALID_REQUEST, { headers: request.headers });
+    }
+    if (typeof accessTokenClaims.cnf?.jkt !== "string") {
+      throw OPE("operation indicated DPoP use but the JWT Access Token has no jkt confirmation claim", INVALID_REQUEST, { claims: accessTokenClaims });
+    }
+    const clockSkew2 = getClockSkew(options);
+    const proof = await validateJwt(headerValue, checkSigningAlgorithm.bind(void 0, options?.signingAlgorithms, void 0, supported), clockSkew2, getClockTolerance(options), void 0).then(checkJwtType.bind(void 0, "dpop+jwt")).then(validatePresence.bind(void 0, ["iat", "jti", "ath", "htm", "htu"])).then(validateStringClaim.bind(void 0, "jti"));
+    const now = epochTime() + clockSkew2;
+    const diff = Math.abs(now - proof.claims.iat);
+    if (diff > 300) {
+      throw OPE("DPoP Proof iat is not recent enough", JWT_TIMESTAMP_CHECK, {
+        now,
+        claims: proof.claims,
+        claim: "iat"
+      });
+    }
+    if (proof.claims.htm !== request.method) {
+      throw OPE("DPoP Proof htm mismatch", JWT_CLAIM_COMPARISON, {
+        expected: request.method,
+        claims: proof.claims,
+        claim: "htm"
+      });
+    }
+    if (typeof proof.claims.htu !== "string" || normalizeHtu(proof.claims.htu) !== normalizeHtu(request.url)) {
+      throw OPE("DPoP Proof htu mismatch", JWT_CLAIM_COMPARISON, {
+        expected: normalizeHtu(request.url),
+        claims: proof.claims,
+        claim: "htu"
+      });
+    }
+    {
+      const expected = b64u(await crypto.subtle.digest("SHA-256", buf(accessToken)));
+      if (proof.claims.ath !== expected) {
+        throw OPE("DPoP Proof ath mismatch", JWT_CLAIM_COMPARISON, {
+          expected,
+          claims: proof.claims,
+          claim: "ath"
+        });
+      }
+    }
+    const { jwk, alg } = proof.header;
+    if (!isJsonObject(jwk)) {
+      throw OPE("DPoP Proof jwk header parameter must be a JSON object", INVALID_REQUEST, {
+        header: proof.header
+      });
+    }
+    {
+      const expected = await calculateJwkThumbprint(jwk);
+      if (accessTokenClaims.cnf.jkt !== expected) {
+        throw OPE("JWT Access Token confirmation mismatch", JWT_CLAIM_COMPARISON, {
+          expected,
+          claims: accessTokenClaims,
+          claim: "cnf.jkt"
+        });
+      }
+    }
+    const { 0: protectedHeader, 1: payload, 2: encodedSignature } = headerValue.split(".");
+    const signature = b64u(encodedSignature);
+    const key = await importJwk(alg, jwk);
+    if (key.type !== "public") {
+      throw OPE("DPoP Proof jwk header parameter must contain a public key", INVALID_REQUEST, {
+        header: proof.header
+      });
+    }
+    await validateJwsSignature(protectedHeader, payload, key, signature);
+  }
+  async function validateJwtAccessToken(as, request, expectedAudience, options) {
+    assertAs(as);
+    if (!looseInstanceOf(request, Request)) {
+      throw CodedTypeError('"request" must be an instance of Request', ERR_INVALID_ARG_TYPE);
+    }
+    assertString(expectedAudience, '"expectedAudience"');
+    const authorization = request.headers.get("authorization");
+    if (authorization === null) {
+      throw OPE('"request" is missing an Authorization HTTP Header', INVALID_REQUEST, {
+        headers: request.headers
+      });
+    }
+    let { 0: scheme, 1: accessToken, length } = authorization.split(/ +/);
+    scheme = scheme.toLowerCase();
+    switch (scheme) {
+      case "dpop":
+      case "bearer":
+        break;
+      default:
+        throw new UnsupportedOperationError("unsupported Authorization HTTP Header scheme", {
+          cause: { headers: request.headers }
+        });
+    }
+    if (length !== 2) {
+      throw OPE("invalid Authorization HTTP Header format", INVALID_REQUEST, {
+        headers: request.headers
+      });
+    }
+    const requiredClaims = [
+      "iss",
+      "exp",
+      "aud",
+      "sub",
+      "iat",
+      "jti",
+      "client_id"
+    ];
+    if (options?.requireDPoP || scheme === "dpop" || request.headers.has("dpop")) {
+      requiredClaims.push("cnf");
+    }
+    const { claims, header } = await validateJwt(accessToken, checkSigningAlgorithm.bind(void 0, options?.signingAlgorithms, void 0, supported), getClockSkew(options), getClockTolerance(options), void 0).then(checkJwtType.bind(void 0, "at+jwt")).then(validatePresence.bind(void 0, requiredClaims)).then(validateIssuer.bind(void 0, as)).then(validateAudience.bind(void 0, expectedAudience)).catch(reassignRSCode);
+    for (const claim of ["client_id", "jti", "sub"]) {
+      if (typeof claims[claim] !== "string") {
+        throw OPE(`unexpected JWT "${claim}" claim type`, INVALID_REQUEST, { claims });
+      }
+    }
+    if ("cnf" in claims) {
+      if (!isJsonObject(claims.cnf)) {
+        throw OPE('unexpected JWT "cnf" (confirmation) claim value', INVALID_REQUEST, { claims });
+      }
+      const { 0: cnf, length: length2 } = Object.keys(claims.cnf);
+      if (length2) {
+        if (length2 !== 1) {
+          throw new UnsupportedOperationError("multiple confirmation claims are not supported", {
+            cause: { claims }
+          });
+        }
+        if (cnf !== "jkt") {
+          throw new UnsupportedOperationError("unsupported JWT Confirmation method", {
+            cause: { claims }
+          });
+        }
+      }
+    }
+    const { 0: protectedHeader, 1: payload, 2: encodedSignature } = accessToken.split(".");
+    const signature = b64u(encodedSignature);
+    const key = await getPublicSigKeyFromIssuerJwksUri(as, options, header);
+    await validateJwsSignature(protectedHeader, payload, key, signature);
+    if (options?.requireDPoP || scheme === "dpop" || claims.cnf?.jkt !== void 0 || request.headers.has("dpop")) {
+      await validateDPoP(request, accessToken, claims, options).catch(reassignRSCode);
+    }
+    return claims;
+  }
+  function reassignRSCode(err) {
+    if (err instanceof OperationProcessingError && err?.code === INVALID_REQUEST) {
+      err.code = INVALID_RESPONSE;
+    }
+    throw err;
+  }
+  async function backchannelAuthenticationRequest(as, client, clientAuthentication, parameters, options) {
+    assertAs(as);
+    assertClient(client);
+    const url = resolveEndpoint(as, "backchannel_authentication_endpoint", client.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    const body = new URLSearchParams(parameters);
+    body.set("client_id", client.client_id);
+    const headers = prepareHeaders(options?.headers);
+    headers.set("accept", "application/json");
+    return authenticatedRequest(as, client, clientAuthentication, url, body, headers, options);
+  }
+  async function processBackchannelAuthenticationResponse(as, client, response) {
+    assertAs(as);
+    assertClient(client);
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    await checkOAuthBodyError(response, 200, "Backchannel Authentication Endpoint");
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response);
+    assertString(json.auth_req_id, '"response" body "auth_req_id" property', INVALID_RESPONSE, {
+      body: json
+    });
+    let expiresIn = typeof json.expires_in !== "number" ? parseFloat(json.expires_in) : json.expires_in;
+    assertNumber(expiresIn, true, '"response" body "expires_in" property', INVALID_RESPONSE, {
+      body: json
+    });
+    json.expires_in = expiresIn;
+    if (json.interval !== void 0) {
+      assertNumber(json.interval, false, '"response" body "interval" property', INVALID_RESPONSE, {
+        body: json
+      });
+    }
+    return json;
+  }
+  async function backchannelAuthenticationGrantRequest(as, client, clientAuthentication, authReqId, options) {
+    assertAs(as);
+    assertClient(client);
+    assertString(authReqId, '"authReqId"');
+    const parameters = new URLSearchParams(options?.additionalParameters);
+    parameters.set("auth_req_id", authReqId);
+    return tokenEndpointRequest(as, client, clientAuthentication, "urn:openid:params:grant-type:ciba", parameters, options);
+  }
+  async function processBackchannelAuthenticationGrantResponse(as, client, response, options) {
+    return processGenericAccessTokenResponse(as, client, response, void 0, options?.[jweDecrypt], options?.recognizedTokenTypes);
+  }
+  async function dynamicClientRegistrationRequest(as, metadata, options) {
+    assertAs(as);
+    const url = resolveEndpoint(as, "registration_endpoint", metadata.use_mtls_endpoint_aliases, options?.[allowInsecureRequests] !== true);
+    const headers = prepareHeaders(options?.headers);
+    headers.set("accept", "application/json");
+    headers.set("content-type", "application/json");
+    const method = "POST";
+    if (options?.DPoP) {
+      assertDPoP(options.DPoP);
+      await options.DPoP.addProof(url, headers, method, options.initialAccessToken);
+    }
+    if (options?.initialAccessToken) {
+      headers.set("authorization", `${headers.has("dpop") ? "DPoP" : "Bearer"} ${options.initialAccessToken}`);
+    }
+    const response = await (options?.[customFetch] || fetch)(url.href, {
+      body: JSON.stringify(metadata),
+      headers: Object.fromEntries(headers.entries()),
+      method,
+      redirect: "manual",
+      signal: signal(url, options?.signal)
+    });
+    options?.DPoP?.cacheNonce(response, url);
+    return response;
+  }
+  async function processDynamicClientRegistrationResponse(response) {
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    await checkOAuthBodyError(response, 201, "Dynamic Client Registration Endpoint");
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response);
+    assertString(json.client_id, '"response" body "client_id" property', INVALID_RESPONSE, {
+      body: json
+    });
+    if (json.client_secret !== void 0) {
+      assertString(json.client_secret, '"response" body "client_secret" property', INVALID_RESPONSE, {
+        body: json
+      });
+    }
+    if (json.client_secret) {
+      assertNumber(json.client_secret_expires_at, true, '"response" body "client_secret_expires_at" property', INVALID_RESPONSE, {
+        body: json
+      });
+    }
+    return json;
+  }
+  async function resourceDiscoveryRequest(resourceIdentifier, options) {
+    return performDiscovery(resourceIdentifier, "resourceIdentifier", (url) => {
+      prependWellKnown(url, ".well-known/oauth-protected-resource", true);
+      return url;
+    }, options);
+  }
+  async function processResourceDiscoveryResponse(expectedResourceIdentifier, response) {
+    const expected = expectedResourceIdentifier;
+    if (!(expected instanceof URL) && expected !== _nodiscoverycheck) {
+      throw CodedTypeError('"expectedResourceIdentifier" must be an instance of URL', ERR_INVALID_ARG_TYPE);
+    }
+    if (!looseInstanceOf(response, Response)) {
+      throw CodedTypeError('"response" must be an instance of Response', ERR_INVALID_ARG_TYPE);
+    }
+    if (response.status !== 200) {
+      throw OPE('"response" is not a conform Resource Server Metadata response (unexpected HTTP status code)', RESPONSE_IS_NOT_CONFORM, response);
+    }
+    assertReadableResponse(response);
+    const json = await getResponseJsonBody(response);
+    assertString(json.resource, '"response" body "resource" property', INVALID_RESPONSE, {
+      body: json
+    });
+    if (expected !== _nodiscoverycheck && new URL(json.resource).href !== expected.href) {
+      throw OPE('"response" body "resource" property does not match the expected value', JSON_ATTRIBUTE_COMPARISON, { expected: expected.href, body: json, attribute: "resource" });
+    }
+    return json;
+  }
+  async function getResponseJsonBody(response, check = assertApplicationJson) {
+    let json;
+    try {
+      json = await response.json();
+    } catch (cause) {
+      check(response);
+      throw OPE('failed to parse "response" body as JSON', PARSE_ERROR, cause);
+    }
+    if (!isJsonObject(json)) {
+      throw OPE('"response" body must be a top level object', INVALID_RESPONSE, { body: json });
+    }
+    return json;
+  }
+  var USER_AGENT, ERR_INVALID_ARG_VALUE, ERR_INVALID_ARG_TYPE, allowInsecureRequests, clockSkew, clockTolerance, customFetch, modifyAssertion, jweDecrypt, jwksCache, encoder, decoder, encodeBase64Url, decodeBase64Url, UnsupportedOperationError, OperationProcessingError, jwkCache, URLParse, DPoPHandler, ResponseBodyError, AuthorizationResponseError, WWWAuthenticateChallengeError, tokenMatch, token68Match, quotedMatch, quotedParamMatcher, paramMatcher, schemeRE, quotedParamRE, unquotedParamRE, token68ParamRE, jwksMap, jwksRequests, jwksKeys, skipSubjectCheck, idTokenClaims, jwtRefs, branded, nopkce, jwtClaimNames, expectNoNonce, skipAuthTimeCheck, WWW_AUTHENTICATE_CHALLENGE, RESPONSE_BODY_ERROR, UNSUPPORTED_OPERATION, AUTHORIZATION_RESPONSE_ERROR, JWT_USERINFO_EXPECTED, PARSE_ERROR, INVALID_RESPONSE, INVALID_REQUEST, RESPONSE_IS_NOT_JSON, RESPONSE_IS_NOT_CONFORM, HTTP_REQUEST_FORBIDDEN, REQUEST_PROTOCOL_FORBIDDEN, JWT_TIMESTAMP_CHECK, JWT_CLAIM_COMPARISON, JSON_ATTRIBUTE_COMPARISON, KEY_SELECTION, MISSING_SERVER_METADATA, INVALID_SERVER_METADATA, skipStateCheck, expectNoState, _nopkce, _nodiscoverycheck, _expectedIssuer;
+  var init_build = __esm({
+    "node_modules/oauth4webapi/build/index.js"() {
+      if (typeof navigator === "undefined" || !navigator.userAgent?.startsWith?.("Mozilla/5.0 ")) {
+        const NAME = "oauth4webapi";
+        const VERSION = "v3.8.9";
+        USER_AGENT = `${NAME}/${VERSION}`;
+      }
+      ERR_INVALID_ARG_VALUE = "ERR_INVALID_ARG_VALUE";
+      ERR_INVALID_ARG_TYPE = "ERR_INVALID_ARG_TYPE";
+      allowInsecureRequests = /* @__PURE__ */ Symbol();
+      clockSkew = /* @__PURE__ */ Symbol();
+      clockTolerance = /* @__PURE__ */ Symbol();
+      customFetch = /* @__PURE__ */ Symbol();
+      modifyAssertion = /* @__PURE__ */ Symbol();
+      jweDecrypt = /* @__PURE__ */ Symbol();
+      jwksCache = /* @__PURE__ */ Symbol();
+      encoder = new TextEncoder();
+      decoder = new TextDecoder();
+      if (Uint8Array.prototype.toBase64) {
+        encodeBase64Url = (input) => {
+          if (input instanceof ArrayBuffer) {
+            input = new Uint8Array(input);
+          }
+          return input.toBase64({ alphabet: "base64url", omitPadding: true });
+        };
+      } else {
+        const CHUNK_SIZE = 32768;
+        encodeBase64Url = (input) => {
+          if (input instanceof ArrayBuffer) {
+            input = new Uint8Array(input);
+          }
+          const arr = [];
+          for (let i = 0; i < input.byteLength; i += CHUNK_SIZE) {
+            arr.push(String.fromCharCode.apply(null, input.subarray(i, i + CHUNK_SIZE)));
+          }
+          return btoa(arr.join("")).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+        };
+      }
+      if (Uint8Array.fromBase64) {
+        decodeBase64Url = (input) => {
+          try {
+            return Uint8Array.fromBase64(input, { alphabet: "base64url" });
+          } catch (cause) {
+            throw CodedTypeError("The input to be decoded is not correctly encoded.", ERR_INVALID_ARG_VALUE, cause);
+          }
+        };
+      } else {
+        decodeBase64Url = (input) => {
+          try {
+            const binary = atob(input.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, ""));
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+              bytes[i] = binary.charCodeAt(i);
+            }
+            return bytes;
+          } catch (cause) {
+            throw CodedTypeError("The input to be decoded is not correctly encoded.", ERR_INVALID_ARG_VALUE, cause);
+          }
+        };
+      }
+      UnsupportedOperationError = class extends Error {
+        code;
+        constructor(message, options) {
+          super(message, options);
+          this.name = this.constructor.name;
+          this.code = UNSUPPORTED_OPERATION;
+          Error.captureStackTrace?.(this, this.constructor);
+        }
+      };
+      OperationProcessingError = class extends Error {
+        code;
+        constructor(message, options) {
+          super(message, options);
+          this.name = this.constructor.name;
+          if (options?.code) {
+            this.code = options?.code;
+          }
+          Error.captureStackTrace?.(this, this.constructor);
+        }
+      };
+      URLParse = URL.parse ? (url, base) => URL.parse(url, base) : (url, base) => {
+        try {
+          return new URL(url, base);
+        } catch {
+          return null;
+        }
+      };
+      DPoPHandler = class {
+        #header;
+        #privateKey;
+        #publicKey;
+        #clockSkew;
+        #modifyAssertion;
+        #map;
+        #jkt;
+        constructor(client, keyPair, options) {
+          assertPrivateKey(keyPair?.privateKey, '"DPoP.privateKey"');
+          assertPublicKey(keyPair?.publicKey, '"DPoP.publicKey"');
+          if (!keyPair.publicKey.extractable) {
+            throw CodedTypeError('"DPoP.publicKey.extractable" must be true', ERR_INVALID_ARG_VALUE);
+          }
+          this.#modifyAssertion = options?.[modifyAssertion];
+          this.#clockSkew = getClockSkew(client);
+          this.#privateKey = keyPair.privateKey;
+          this.#publicKey = keyPair.publicKey;
+          branded.add(this);
+        }
+        #get(key) {
+          this.#map ||= /* @__PURE__ */ new Map();
+          let item = this.#map.get(key);
+          if (item) {
+            this.#map.delete(key);
+            this.#map.set(key, item);
+          }
+          return item;
+        }
+        #set(key, val) {
+          this.#map ||= /* @__PURE__ */ new Map();
+          this.#map.delete(key);
+          if (this.#map.size === 100) {
+            this.#map.delete(this.#map.keys().next().value);
+          }
+          this.#map.set(key, val);
+        }
+        async calculateThumbprint() {
+          if (!this.#jkt) {
+            const jwk = await crypto.subtle.exportKey("jwk", this.#publicKey);
+            this.#jkt ||= await calculateJwkThumbprint(jwk);
+          }
+          return this.#jkt;
+        }
+        async addProof(url, headers, htm, accessToken) {
+          const alg = keyToJws(this.#privateKey);
+          this.#header ||= {
+            alg,
+            typ: "dpop+jwt",
+            jwk: await publicJwk(this.#publicKey, alg)
+          };
+          const nonce = this.#get(url.origin);
+          const now = epochTime() + this.#clockSkew;
+          const payload = {
+            iat: now,
+            jti: randomBytes(),
+            htm,
+            nonce,
+            htu: `${url.origin}${url.pathname}`,
+            ath: accessToken ? b64u(await crypto.subtle.digest("SHA-256", buf(accessToken))) : void 0
+          };
+          this.#modifyAssertion?.(this.#header, payload);
+          headers.set("dpop", await signJwt(this.#header, payload, this.#privateKey));
+        }
+        cacheNonce(response, url) {
+          try {
+            const nonce = response.headers.get("dpop-nonce");
+            if (nonce) {
+              this.#set(url.origin, nonce);
+            }
+          } catch {
+          }
+        }
+      };
+      ResponseBodyError = class extends Error {
+        cause;
+        code;
+        error;
+        status;
+        error_description;
+        response;
+        constructor(message, options) {
+          super(message, options);
+          this.name = this.constructor.name;
+          this.code = RESPONSE_BODY_ERROR;
+          this.cause = options.cause;
+          this.error = options.cause.error;
+          this.status = options.response.status;
+          this.error_description = options.cause.error_description;
+          Object.defineProperty(this, "response", { enumerable: false, value: options.response });
+          Error.captureStackTrace?.(this, this.constructor);
+        }
+      };
+      AuthorizationResponseError = class extends Error {
+        cause;
+        code;
+        error;
+        error_description;
+        constructor(message, options) {
+          super(message, options);
+          this.name = this.constructor.name;
+          this.code = AUTHORIZATION_RESPONSE_ERROR;
+          this.cause = options.cause;
+          this.error = options.cause.get("error");
+          this.error_description = options.cause.get("error_description") ?? void 0;
+          Error.captureStackTrace?.(this, this.constructor);
+        }
+      };
+      WWWAuthenticateChallengeError = class extends Error {
+        cause;
+        code;
+        response;
+        status;
+        constructor(message, options) {
+          super(message, options);
+          this.name = this.constructor.name;
+          this.code = WWW_AUTHENTICATE_CHALLENGE;
+          this.cause = options.cause;
+          this.status = options.response.status;
+          this.response = options.response;
+          Object.defineProperty(this, "response", { enumerable: false });
+          Error.captureStackTrace?.(this, this.constructor);
+        }
+      };
+      tokenMatch = "[a-zA-Z0-9!#$%&\\'\\*\\+\\-\\.\\^_`\\|~]+";
+      token68Match = "[a-zA-Z0-9\\-\\._\\~\\+\\/]+={0,2}";
+      quotedMatch = '"((?:[^"\\\\]|\\\\[\\s\\S])*)"';
+      quotedParamMatcher = "(" + tokenMatch + ")\\s*=\\s*" + quotedMatch;
+      paramMatcher = "(" + tokenMatch + ")\\s*=\\s*(" + tokenMatch + ")";
+      schemeRE = new RegExp("^[,\\s]*(" + tokenMatch + ")");
+      quotedParamRE = new RegExp("^[,\\s]*" + quotedParamMatcher + "[,\\s]*(.*)");
+      unquotedParamRE = new RegExp("^[,\\s]*" + paramMatcher + "[,\\s]*(.*)");
+      token68ParamRE = new RegExp("^(" + token68Match + ")(?:$|[,\\s])(.*)");
+      skipSubjectCheck = /* @__PURE__ */ Symbol();
+      idTokenClaims = /* @__PURE__ */ new WeakMap();
+      jwtRefs = /* @__PURE__ */ new WeakMap();
+      branded = /* @__PURE__ */ new WeakSet();
+      nopkce = /* @__PURE__ */ Symbol();
+      jwtClaimNames = {
+        aud: "audience",
+        c_hash: "code hash",
+        client_id: "client id",
+        exp: "expiration time",
+        iat: "issued at",
+        iss: "issuer",
+        jti: "jwt id",
+        nonce: "nonce",
+        s_hash: "state hash",
+        sub: "subject",
+        ath: "access token hash",
+        htm: "http method",
+        htu: "http uri",
+        cnf: "confirmation",
+        auth_time: "authentication time"
+      };
+      expectNoNonce = /* @__PURE__ */ Symbol();
+      skipAuthTimeCheck = /* @__PURE__ */ Symbol();
+      WWW_AUTHENTICATE_CHALLENGE = "OAUTH_WWW_AUTHENTICATE_CHALLENGE";
+      RESPONSE_BODY_ERROR = "OAUTH_RESPONSE_BODY_ERROR";
+      UNSUPPORTED_OPERATION = "OAUTH_UNSUPPORTED_OPERATION";
+      AUTHORIZATION_RESPONSE_ERROR = "OAUTH_AUTHORIZATION_RESPONSE_ERROR";
+      JWT_USERINFO_EXPECTED = "OAUTH_JWT_USERINFO_EXPECTED";
+      PARSE_ERROR = "OAUTH_PARSE_ERROR";
+      INVALID_RESPONSE = "OAUTH_INVALID_RESPONSE";
+      INVALID_REQUEST = "OAUTH_INVALID_REQUEST";
+      RESPONSE_IS_NOT_JSON = "OAUTH_RESPONSE_IS_NOT_JSON";
+      RESPONSE_IS_NOT_CONFORM = "OAUTH_RESPONSE_IS_NOT_CONFORM";
+      HTTP_REQUEST_FORBIDDEN = "OAUTH_HTTP_REQUEST_FORBIDDEN";
+      REQUEST_PROTOCOL_FORBIDDEN = "OAUTH_REQUEST_PROTOCOL_FORBIDDEN";
+      JWT_TIMESTAMP_CHECK = "OAUTH_JWT_TIMESTAMP_CHECK_FAILED";
+      JWT_CLAIM_COMPARISON = "OAUTH_JWT_CLAIM_COMPARISON_FAILED";
+      JSON_ATTRIBUTE_COMPARISON = "OAUTH_JSON_ATTRIBUTE_COMPARISON_FAILED";
+      KEY_SELECTION = "OAUTH_KEY_SELECTION_FAILED";
+      MISSING_SERVER_METADATA = "OAUTH_MISSING_SERVER_METADATA";
+      INVALID_SERVER_METADATA = "OAUTH_INVALID_SERVER_METADATA";
+      skipStateCheck = /* @__PURE__ */ Symbol();
+      expectNoState = /* @__PURE__ */ Symbol();
+      _nopkce = nopkce;
+      _nodiscoverycheck = /* @__PURE__ */ Symbol();
+      _expectedIssuer = /* @__PURE__ */ Symbol();
+    }
+  });
+
+  // node_modules/pryv/src/OAuth2Client.js
+  var require_OAuth2Client = __commonJS({
+    "node_modules/pryv/src/OAuth2Client.js"(exports, module) {
+      var oauth = (init_build(), __toCommonJS(build_exports));
+      var Connection = require_Connection();
+      var SignedConnection = require_SignedConnection();
+      var utils = require_utils();
+      var VERIFIER_KEY_PREFIX = "pryv-oauth2-verifier:";
+      var OAuth2Client = class {
+        /**
+         * @param {Object} [options]
+         * @param {string} [options.authorizationServer] - Issuer / Pryv API base URL. The
+         *   discovery document is fetched from `<authorizationServer>/.well-known/oauth-authorization-server`.
+         *   (This is the concrete issuer URL, not the `/service/info` URL — client-side
+         *   derivation from the per-user `service:api` template is unreliable for multi-core.)
+         *   Required at runtime.
+         * @param {string} [options.clientId] - App-account client id. Required at runtime.
+         * @param {string} [options.redirectUri] - Registered redirect URI. Required at runtime.
+         * @param {string} [options.scope] - Consent-offer reference registered on the client, e.g. `'cmc:study-A'`.
+         * @param {OAuth2Storage} [options.storage] - Web-Storage-like `{ getItem, setItem, removeItem }`.
+         *   Defaults to `globalThis.sessionStorage` in a browser, else an in-memory store.
+         * @param {string} [options.refreshToken] - Seed the client with a previously-persisted
+         *   refresh token so `refresh()` works after a page reload WITHOUT re-running the
+         *   authorization flow. Persist ONLY this value (read it from `client.refreshToken`
+         *   or the `onTokenRotated` callback) — never the whole `lastTokenResponse`, which
+         *   also carries the access token and so is a larger XSS surface.
+         * @param {(refreshToken: string) => void} [options.onTokenRotated] - Called with the
+         *   NEW refresh token every time it rotates (after `handleCallback()` and each
+         *   `refresh()`), so the app can persist the minimal secret. Exceptions it throws
+         *   are swallowed (persistence must not break the token exchange).
+         * @param {boolean} [options.dpop=false] - Opt into RFC 9449 DPoP: an ES256 key
+         *   pair is generated per client, the token is bound to it at issuance, and
+         *   `handleCallback()` / `refresh()` return a {@link SignedConnection} that
+         *   proves possession of the key on every request. A token stolen from the
+         *   resulting connection is useless without the private key. The key is
+         *   session-scoped (not persisted) — re-seeding a `refreshToken` after reload
+         *   mints a fresh binding for the new key.
+         */
+        constructor(options = {}) {
+          const { authorizationServer, clientId, redirectUri, scope, storage, refreshToken, onTokenRotated, dpop } = options;
+          if (!authorizationServer) throw new Error('OAuth2Client: "authorizationServer" is required');
+          if (!clientId) throw new Error('OAuth2Client: "clientId" is required');
+          if (!redirectUri) throw new Error('OAuth2Client: "redirectUri" is required');
+          this.issuer = new URL(authorizationServer);
+          this.clientId = clientId;
+          this.redirectUri = redirectUri;
+          this.scope = scope;
+          this.storage = storage || defaultStorage();
+          this._client = { client_id: clientId };
+          this._clientAuth = oauth.None();
+          this._as = null;
+          this._refreshToken = refreshToken || null;
+          this._onTokenRotated = typeof onTokenRotated === "function" ? onTokenRotated : null;
+          this._dpop = dpop === true;
+          this._dpopKeyPair = null;
+          this._dpopHandle = null;
+          this._refreshInFlight = null;
+          this.lastTokenResponse = null;
+        }
+        /**
+         * The current refresh token (rotates on every `handleCallback()` / `refresh()`).
+         * Read it to persist the minimal secret across reloads; re-seed via the
+         * `refreshToken` constructor option. `null` before the first exchange.
+         * @returns {string | null}
+         */
+        get refreshToken() {
+          return this._refreshToken;
+        }
+        /**
+         * @private
+         * Lazily generate the DPoP ES256 key pair + oauth4webapi handle (once).
+         * Returns `undefined` when DPoP is off, so call sites can spread it as an
+         * absent option. The key is `extractable` so the resulting
+         * {@link SignedConnection} can export the public JWK into each proof.
+         * @returns {Promise<Object|undefined>} the DPoP handle, or undefined
+         */
+        async _ensureDPoP() {
+          if (!this._dpop) return void 0;
+          if (this._dpopHandle == null) {
+            this._dpopKeyPair = await oauth.generateKeyPair("ES256", { extractable: true });
+            this._dpopHandle = oauth.DPoP(
+              /** @type {any} */
+              this._client,
+              this._dpopKeyPair
+            );
+          }
+          return this._dpopHandle;
+        }
+        /**
+         * @private
+         * Lazily discover + cache the authorization-server metadata (RFC 8414).
+         * @returns {Promise<Object>} the `AuthorizationServer` metadata
+         */
+        async _discover() {
+          if (this._as) return this._as;
+          const response = await oauth.discoveryRequest(this.issuer, { algorithm: "oauth2" });
+          this._as = await oauth.processDiscoveryResponse(this.issuer, response);
+          return this._as;
+        }
+        /**
+         * Build the `/oauth2/authorize` URL (generating + storing the PKCE verifier)
+         * and navigate to it. Returns the URL so non-browser callers can drive the
+         * redirect themselves.
+         *
+         * @param {Object} [options]
+         * @param {string} [options.state] - CSRF/correlation value; a random one is generated when omitted.
+         * @param {(url: string) => void} [options.redirect] - Navigation function; defaults to
+         *   `globalThis.location.assign` when available, else a no-op (URL still returned).
+         * @returns {Promise<string>} the authorization URL
+         */
+        async redirectToAuthorize(options = {}) {
+          const as = await this._discover();
+          const state = options.state || oauth.generateRandomState();
+          const codeVerifier = oauth.generateRandomCodeVerifier();
+          const codeChallenge = await oauth.calculatePKCECodeChallenge(codeVerifier);
+          this.storage.setItem(VERIFIER_KEY_PREFIX + state, codeVerifier);
+          const url = new URL(as.authorization_endpoint);
+          assertHttpsOrLoopback(url, "authorization_endpoint");
+          url.searchParams.set("response_type", "code");
+          url.searchParams.set("client_id", this.clientId);
+          url.searchParams.set("redirect_uri", this.redirectUri);
+          if (this.scope) url.searchParams.set("scope", this.scope);
+          url.searchParams.set("code_challenge", codeChallenge);
+          url.searchParams.set("code_challenge_method", "S256");
+          url.searchParams.set("state", state);
+          const authorizationUrl = url.href;
+          const redirect = options.redirect || defaultRedirect;
+          redirect(authorizationUrl);
+          return authorizationUrl;
+        }
+        /**
+         * Validate the redirect_uri callback, exchange the code for tokens (PKCE),
+         * and build a {@link Connection} from the Pryv `apiEndpoint` extension.
+         *
+         * @param {string} queryString - `window.location.search` (with or without leading `?`).
+         * @returns {Promise<Connection>} an authenticated Pryv connection
+         */
+        async handleCallback(queryString) {
+          const as = await this._discover();
+          const params = new URLSearchParams(stripLeadingQuestionMark(queryString));
+          const state = params.get("state");
+          if (!state) throw new Error('OAuth2Client: callback is missing "state"');
+          const storageKey = VERIFIER_KEY_PREFIX + state;
+          const codeVerifier = this.storage.getItem(storageKey);
+          if (!codeVerifier) {
+            throw new Error("OAuth2Client: no stored PKCE verifier for this state (expired session or forged callback)");
+          }
+          try {
+            const callbackParams = oauth.validateAuthResponse(as, this._client, params, state);
+            const dpopHandle = await this._ensureDPoP();
+            const response = await oauth.authorizationCodeGrantRequest(
+              as,
+              this._client,
+              this._clientAuth,
+              callbackParams,
+              this.redirectUri,
+              codeVerifier,
+              dpopHandle ? { DPoP: dpopHandle } : void 0
+            );
+            const result = await oauth.processAuthorizationCodeResponse(as, this._client, response);
+            return this._connectionFromTokenResponse(result);
+          } finally {
+            this.storage.removeItem(storageKey);
+          }
+        }
+        /**
+         * Exchange the stored refresh token for a fresh access token and return a
+         * new {@link Connection}. Requires a prior successful `handleCallback()`.
+         *
+         * @returns {Promise<Connection>}
+         */
+        async refresh() {
+          if (this._refreshInFlight) return this._refreshInFlight;
+          this._refreshInFlight = this._doRefresh();
+          this._refreshInFlight.catch(() => {
+          }).finally(() => {
+            this._refreshInFlight = null;
+          });
+          return this._refreshInFlight;
+        }
+        /**
+         * @private
+         * The actual refresh exchange, wrapped by `refresh()`'s in-flight dedup.
+         * @returns {Promise<Connection>}
+         */
+        async _doRefresh() {
+          if (!this._refreshToken) {
+            throw new Error("OAuth2Client: no refresh token available; call handleCallback() first");
+          }
+          const as = await this._discover();
+          const dpopHandle = await this._ensureDPoP();
+          const response = await oauth.refreshTokenGrantRequest(
+            as,
+            this._client,
+            this._clientAuth,
+            this._refreshToken,
+            dpopHandle ? { DPoP: dpopHandle } : void 0
+          );
+          const result = await oauth.processRefreshTokenResponse(as, this._client, response);
+          return this._connectionFromTokenResponse(result);
+        }
+        /**
+         * @private
+         * @param {Object} tokenResponse - a processed token-endpoint response
+         * @returns {Connection}
+         */
+        _connectionFromTokenResponse(tokenResponse) {
+          this._ingestTokens(tokenResponse);
+          const apiEndpoint = tokenResponse.apiEndpoint;
+          if (!apiEndpoint) {
+            throw new Error('OAuth2Client: token response is missing the Pryv "apiEndpoint" extension');
+          }
+          const { endpoint } = utils.extractTokenAndAPIEndpoint(String(apiEndpoint));
+          assertSecureApiEndpoint(endpoint);
+          if (this._dpop) return new SignedConnection(String(apiEndpoint), this._dpopKeyPair);
+          return new Connection(String(apiEndpoint));
+        }
+        /**
+         * @private
+         * Non-throwing: record the rotated refresh token + raw response and notify the
+         * app so it can persist the minimal secret. Runs before validation so a
+         * validation failure never loses the rotation (see `_connectionFromTokenResponse`).
+         * @param {Object} tokenResponse - a processed token-endpoint response
+         */
+        _ingestTokens(tokenResponse) {
+          this.lastTokenResponse = tokenResponse;
+          if (!tokenResponse.refresh_token) return;
+          this._refreshToken = tokenResponse.refresh_token;
+          if (this._onTokenRotated) {
+            try {
+              this._onTokenRotated(this._refreshToken);
+            } catch (_) {
+            }
+          }
+        }
+      };
+      function assertSecureApiEndpoint(apiEndpoint) {
+        assertHttpsOrLoopback(apiEndpoint, "apiEndpoint");
+      }
+      function assertHttpsOrLoopback(rawUrl, label) {
+        let url;
+        try {
+          url = rawUrl instanceof URL ? rawUrl : new URL(rawUrl);
+        } catch {
+          throw new Error("OAuth2Client: " + label + " is not a valid URL");
+        }
+        const host = url.hostname;
+        const isLoopback = host === "localhost" || host === "127.0.0.1" || host === "[::1]" || host === "::1";
+        if (url.protocol === "https:") return;
+        if (url.protocol === "http:" && isLoopback) return;
+        throw new Error("OAuth2Client: refusing insecure " + label + " (" + url.protocol + "//" + host + "); https is required");
+      }
+      function defaultRedirect(url) {
+        const loc = typeof globalThis !== "undefined" ? globalThis.location : void 0;
+        if (loc && typeof loc.assign === "function") loc.assign(url);
+      }
+      function defaultStorage() {
+        if (typeof globalThis !== "undefined" && globalThis.sessionStorage) return globalThis.sessionStorage;
+        const map = /* @__PURE__ */ new Map();
+        return {
+          getItem: (k) => map.has(k) ? map.get(k) : null,
+          setItem: (k, v) => {
+            map.set(k, String(v));
+          },
+          removeItem: (k) => {
+            map.delete(k);
+          }
+        };
+      }
+      function stripLeadingQuestionMark(queryString) {
+        const s = queryString || "";
+        return s.charAt(0) === "?" ? s.slice(1) : s;
+      }
+      module.exports = OAuth2Client;
     }
   });
 
@@ -8726,7 +13258,7 @@
     "node_modules/pryv/package.json"(exports, module) {
       module.exports = {
         name: "pryv",
-        version: "3.6.0",
+        version: "3.20.0",
         description: "Pryv JavaScript library",
         keywords: [
           "Pryv",
@@ -8741,12 +13273,14 @@
           url: "git://github.com/pryv/lib-js.git"
         },
         license: "BSD-3-Clause",
-        author: "Pryv S.A. <info@pryv.com> (https://pryv.com)",
+        author: "Pryv <info@pryv.com> (https://pryv.com)",
         main: "src/index.js",
         types: "src/index.d.ts",
-        dependencies: {},
+        dependencies: {
+          oauth4webapi: "^3.8.6"
+        },
         engines: {
-          node: ">=20.0.0"
+          node: ">=20.19.0"
         }
       };
     }
@@ -8759,8 +13293,11 @@
       module.exports = {
         Service,
         Connection: require_Connection(),
+        SignedConnection: require_SignedConnection(),
         Auth: require_Auth(),
         Browser: require_Browser(),
+        OAuth2Client: require_OAuth2Client(),
+        SharedSecrets: require_SharedSecrets(),
         utils: require_utils(),
         PryvError: require_PryvError(),
         MfaRequiredError: require_MfaRequiredError(),
@@ -8902,7 +13439,7 @@
             logToConsole("# Error resolving access from key: " + err);
           }
         }
-        if (state.id === Pryv.Browser.AuthStates.LOGOUT) {
+        if (state.id === Pryv.Browser.AuthStates.SIGNOUT) {
           logToConsole("# Logout");
         }
       };
@@ -8941,6 +13478,8 @@ pryv/src/lib/buildSearchParams.js:
 pryv/src/utils.js:
 pryv/src/lib/PryvError.js:
 pryv/src/lib/MfaRequiredError.js:
+pryv/src/lib/handoff.js:
+pryv/src/lib/pollUrls.js:
 pryv/src/ServiceAssets.js:
 pryv/src/lib/json-parser.js:
 pryv/src/lib/getEventStreamed.js:
@@ -8948,17 +13487,32 @@ pryv/src/lib/StaleAccessIdError.js:
 pryv/src/lib/resolveDotPath.js:
 pryv/src/Connection.js:
 pryv/src/Service.js:
+pryv/src/dpopProof.js:
+pryv/src/SignedConnection.js:
 pryv/src/Auth/AuthStates.js:
 pryv/src/Auth/LoginMessages.js:
+pryv/src/Auth/ProfileStore.js:
+pryv/src/Auth/pollOutcome.js:
+pryv/src/Auth/permissionsCoverage.js:
 pryv/src/Auth/AuthController.js:
 pryv/src/Browser/CookieUtils.js:
+pryv/src/Browser/buttonHtml.js:
 pryv/src/Browser/LoginButton.js:
 pryv/src/Auth/index.js:
 pryv/src/Browser/index.js:
+pryv/src/OAuth2Client.js:
 pryv/src/lib/errorIds.js:
 pryv/src/index.js:
   (**
    * @license
    * [BSD-3-Clause](https://github.com/pryv/lib-js/blob/master/LICENSE)
+   *)
+
+pryv/src/SharedSecrets.js:
+  (**
+   * @license
+   * Copyright (C) Pryv https://pryv.com
+   * This file is part of Pryv.io and released under BSD-Clause-3 License
+   * Refer to LICENSE file
    *)
 */
